@@ -1,0 +1,48 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>IlluminantA.as</title>
+<link rel="stylesheet" type="text/css" href="../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">// ==================================================================
+</span><span class="ActionScriptComment">// Module:        IlluminantA
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Description:    a curve class for light source, A
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Reference:    Billmeyer &amp; Saltzman, Principle of Color Technology
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Input:        x coordinate (wavelength)
+</span><span class="ActionScriptComment">// Output:        interpolated y coordinate data 
+</span><span class="ActionScriptComment">//                (percent reflectance, source)
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Author(s):    C.T. Yeung        cty
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// History:
+</span><span class="ActionScriptComment">// 24Dec08        first started                                    cty
+</span><span class="ActionScriptComment">// ==================================================================
+</span><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">com</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">IlluminantA</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">SpectralData</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">NAME</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&quot;A&quot;</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">IlluminantA</span><span class="ActionScriptBracket/Brace">()</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">()</span>;
+            <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">NAME</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onInitPercentData</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>                           
+            <span class="ActionScriptDefault_Text">percent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span>14.71, 17.68, 20.99, 24.67, 28.70, 
+                                33.09, 37.81, 42.87, 48.24, 53.91, 
+                                59.86, 66.06, 72.50, 79.13, 85.95, 
+                                92.91, 100.00, 107.18, 114.44, 121.73, 
+                                129.04, 136.35, 143.62, 150.84, 157.98, 
+                                165.03, 171.96, 178.77, 185.43, 191.93, 198.26<span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

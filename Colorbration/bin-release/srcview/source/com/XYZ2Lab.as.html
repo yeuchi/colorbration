@@ -1,0 +1,90 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>XYZ2Lab.as</title>
+<link rel="stylesheet" type="text/css" href="../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">// ==================================================================
+</span><span class="ActionScriptComment">// Module:        XYZ2Lab
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Description:    calculation Tristimulus XYZ to and from L*a*b* coordinates
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Reference:    Billmeyer &amp; Saltzman, Principle of Color Technology
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Author(s):    C.T. Yeung        cty
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Input:        TristimulusXZY object or L, a, b values for inverse
+</span><span class="ActionScriptComment">// Ouptut:        L, a, b or TristimulusXYZ for inverse
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// History:
+</span><span class="ActionScriptComment">// 24Dec08        first started, functional                        cty
+</span><span class="ActionScriptComment">// ==================================================================
+</span><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">com</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">XYZ2Lab</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cieXYZ</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Spectral2XYZ</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">L</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Number</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">a</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Number</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">b</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Number</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">XYZ2Lab</span><span class="ActionScriptBracket/Brace">()</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">empty</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">cieXYZ</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">empty</span><span class="ActionScriptBracket/Brace">()</span>;
+                
+            <span class="ActionScriptDefault_Text">cieXYZ</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">L</span> <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptDefault_Text">a</span> <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptDefault_Text">b</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">isEmpty</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Boolean</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(!</span><span class="ActionScriptDefault_Text">cieXYZ</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">true</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">forward</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Boolean</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// CIE 1976 formulation
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">Y</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Ys</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Yw</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">Y</span> <span class="ActionScriptOperator">&lt;</span> .008856 <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">L</span> <span class="ActionScriptOperator">=</span> 903.3 <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">Y</span>;
+                <span class="ActionScriptDefault_Text">a</span> <span class="ActionScriptOperator">=</span> 500 <span class="ActionScriptOperator">*</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Math</span>.<span class="ActionScriptDefault_Text">pow</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Xs</span><span class="ActionScriptOperator">/</span><span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Xw</span>, 1<span class="ActionScriptOperator">/</span>3<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">Math</span>.<span class="ActionScriptDefault_Text">pow</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Y</span>, 1<span class="ActionScriptOperator">/</span>3<span class="ActionScriptBracket/Brace">))</span>;
+                <span class="ActionScriptDefault_Text">b</span> <span class="ActionScriptOperator">=</span> 200 <span class="ActionScriptOperator">*</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Math</span>.<span class="ActionScriptDefault_Text">pow</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Y</span>, 1<span class="ActionScriptOperator">/</span>3<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">Math</span>.<span class="ActionScriptDefault_Text">pow</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Zs</span><span class="ActionScriptOperator">/</span><span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Zw</span>, 1<span class="ActionScriptOperator">/</span>3<span class="ActionScriptBracket/Brace">))</span>;    
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">L</span> <span class="ActionScriptOperator">=</span> 116 <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">Math</span>.<span class="ActionScriptDefault_Text">pow</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Y</span>, 1<span class="ActionScriptOperator">/</span>3<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">-</span> 16;
+                <span class="ActionScriptDefault_Text">a</span> <span class="ActionScriptOperator">=</span> 500 <span class="ActionScriptOperator">*</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Xs</span><span class="ActionScriptOperator">/</span><span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Xw</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">Y</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">b</span> <span class="ActionScriptOperator">=</span> 200 <span class="ActionScriptOperator">*</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Y</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Zs</span><span class="ActionScriptOperator">/</span><span class="ActionScriptDefault_Text">cieXYZ</span>.<span class="ActionScriptDefault_Text">Zw</span><span class="ActionScriptBracket/Brace">)</span>;    
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">true</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">backward</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Boolean</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">Y</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Math</span>.<span class="ActionScriptDefault_Text">pow</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">L</span> <span class="ActionScriptOperator">/</span> 116 <span class="ActionScriptOperator">+</span> 16, 3<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">Y</span> <span class="ActionScriptOperator">&lt;</span> .008856 <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">Y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">L</span> <span class="ActionScriptOperator">/</span> 903.3;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">true</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

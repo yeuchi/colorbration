@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of Colorbration</title>
+	<nodes>
+		<node label="html-template">
+			<node label="history">
+				<node label="history.css" icon="cssIcon" url="source/html-template/history/history.css.html"/>
+				<node label="history.js" url="source/html-template/history/history.js.txt"/>
+				<node label="historyFrame.html" icon="htmlIcon" url="source/html-template/history/historyFrame.html"/>
+			</node>
+			<node label="AC_OETags.js" url="source/html-template/AC_OETags.js.txt"/>
+			<node label="index.template.html" icon="htmlIcon" url="source/html-template/index.template.html"/>
+			<node label="playerProductInstall.swf" icon="swfIcon" url="source/html-template/playerProductInstall.swf"/>
+		</node>
+		<node label="libs">
+		</node>
+		<node label="src" icon="classpathIcon" expanded="true">
+			<node label="com" icon="packageIcon" expanded="true">
+				<node label="ColorSamples.as" icon="actionScriptIcon" url="source/com/ColorSamples.as.html"/>
+				<node label="IlluminantA.as" icon="actionScriptIcon" url="source/com/IlluminantA.as.html"/>
+				<node label="IlluminantB.as" icon="actionScriptIcon" url="source/com/IlluminantB.as.html"/>
+				<node label="IlluminantC.as" icon="actionScriptIcon" url="source/com/IlluminantC.as.html"/>
+				<node label="IlluminantD50.as" icon="actionScriptIcon" url="source/com/IlluminantD50.as.html"/>
+				<node label="IlluminantD65.as" icon="actionScriptIcon" url="source/com/IlluminantD65.as.html"/>
+				<node label="Illuminants.as" icon="actionScriptIcon" url="source/com/Illuminants.as.html"/>
+				<node label="Interpolate.as" icon="actionScriptIcon" url="source/com/Interpolate.as.html"/>
+				<node label="Matrix3x3.as" icon="actionScriptIcon" url="source/com/Matrix3x3.as.html"/>
+				<node label="Spectral2XYZ.as" icon="actionScriptIcon" url="source/com/Spectral2XYZ.as.html"/>
+				<node label="SpectralData.as" icon="actionScriptIcon" url="source/com/SpectralData.as.html"/>
+				<node label="StandardObserver.as" icon="actionScriptIcon" url="source/com/StandardObserver.as.html"/>
+				<node label="StandardObserver10Degree1964X.as" icon="actionScriptIcon" url="source/com/StandardObserver10Degree1964X.as.html"/>
+				<node label="StandardObserver10Degree1964Y.as" icon="actionScriptIcon" url="source/com/StandardObserver10Degree1964Y.as.html"/>
+				<node label="StandardObserver10Degree1964Z.as" icon="actionScriptIcon" url="source/com/StandardObserver10Degree1964Z.as.html"/>
+				<node label="StandardObserver2Degree1931X.as" icon="actionScriptIcon" url="source/com/StandardObserver2Degree1931X.as.html"/>
+				<node label="StandardObserver2Degree1931Y.as" icon="actionScriptIcon" url="source/com/StandardObserver2Degree1931Y.as.html"/>
+				<node label="StandardObserver2Degree1931Z.as" icon="actionScriptIcon" url="source/com/StandardObserver2Degree1931Z.as.html"/>
+				<node label="XYZ2Lab.as" icon="actionScriptIcon" url="source/com/XYZ2Lab.as.html"/>
+				<node label="XYZ2sRGB.as" icon="actionScriptIcon" url="source/com/XYZ2sRGB.as.html"/>
+				<node label="XYZ2xyY.as" icon="actionScriptIcon" url="source/com/XYZ2xyY.as.html"/>
+			</node>
+			<node label="events" icon="packageIcon" expanded="true">
+				<node label="ControlPanelEvent.as" icon="actionScriptIcon" url="source/events/ControlPanelEvent.as.html"/>
+				<node label="SpectralGraphEvent.as" icon="actionScriptIcon" url="source/events/SpectralGraphEvent.as.html"/>
+			</node>
+			<node label="views" icon="packageIcon" expanded="true">
+				<node label="Chromaticity.mxml" icon="mxmlIcon" url="source/views/Chromaticity.mxml.html"/>
+				<node label="CIELab.mxml" icon="mxmlIcon" url="source/views/CIELab.mxml.html"/>
+				<node label="ControlPanel.mxml" icon="mxmlIcon" url="source/views/ControlPanel.mxml.html"/>
+				<node label="SpectralGraph.mxml" icon="mxmlIcon" url="source/views/SpectralGraph.mxml.html"/>
+				<node label="sRGB.mxml" icon="mxmlIcon" url="source/views/sRGB.mxml.html"/>
+				<node label="StandardObserverGraph.mxml" icon="mxmlIcon" url="source/views/StandardObserverGraph.mxml.html"/>
+				<node label="Tristimulus.mxml" icon="mxmlIcon" url="source/views/Tristimulus.mxml.html"/>
+			</node>
+			<node selected="true" label="Colorbration.mxml" icon="mxmlAppIcon" url="source/Colorbration.mxml.html"/>
+		</node>
+	</nodes>
+</index>
