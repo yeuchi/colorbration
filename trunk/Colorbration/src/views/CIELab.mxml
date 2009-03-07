@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+//	Module:			CIELab.mxml
+//	Description: 	conversion class
+//
+// 	Author(s):		C.T.Yeung		(cty)
+//
+// Copyright (c) 2009 C.T.Yeung
+
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+			width="100%" height="100%" 
+			creationComplete="onCreationComplete()">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.XYZ2Lab;
+			import com.Spectral2XYZ;
+			[Bindable] public var wid:int = 80;
+			public var oXYZ2Lab:XYZ2Lab;
+			
+			protected function onCreationComplete():void
+			{
+				oXYZ2Lab = new XYZ2Lab();
+			}
+			
+			public function set XYZ (sampleXYZ:Spectral2XYZ):void
+			{
+				oXYZ2Lab.cieXYZ = sampleXYZ;
+				if ( !oXYZ2Lab.isEmpty() ) {
+					oXYZ2Lab.forward();
+					txtL.text = oXYZ2Lab.L.toString();
+					txta.text = oXYZ2Lab.a.toString();
+					txtb.text = oXYZ2Lab.b.toString();
+				}
+			}
+
+		]]>
+	</mx:Script>
+	
+	<mx:VBox width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<mx:HBox>
+			<mx:VBox>
+				<mx:Label text="L*"/>
+				<mx:TextInput id="txtL" width="{wid}"/>
+			</mx:VBox>
+			<mx:VBox>
+				<mx:Label text="a*"/>
+				<mx:TextInput id="txta" width="{wid}"/>
+			</mx:VBox>
+			<mx:VBox>
+				<mx:Label text="b*"/>
+				<mx:TextInput id="txtb" width="{wid}"/>
+			</mx:VBox>
+		</mx:HBox>
+	</mx:VBox>
+</mx:Canvas>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+//	Module:			ControlPanel.mxml
+//	Description: 	view class of Controls
+//
+// 	Author(s):		C.T.Yeung		(cty)
+//
+// Copyright (c) 2009 C.T.Yeung
+
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+		   width="200" height="100%"
+		   creationComplete="onCreationComplete()" verticalScrollPolicy="off">
+		   
+	<mx:Metadata>
+		[Event(name="controlPanelCreate", type="events.ControlPanelEvent")]
+		[Event(name="controlPanelDelete", type="events.ControlPanelEvent")]
+		[Event(name="controlPanelSourceChange", type="events.ControlPanelEvent")]
+		[Event(name="controlPanelSampleChange", type="events.ControlPanelEvent")]
+		[Event(name="controlPanelObserverChange", type="events.ControlPanelEvent")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import events.ControlPanelEvent;
+			import com.SpectralData;
+			import com.Spectral2XYZ;
+			import com.IlluminantD65;
+			import com.IlluminantD50;
+			import com.IlluminantA;
+			import com.IlluminantB;
+			import com.IlluminantC;
+			import com.SpectralData;
+			import com.StandardObserver;
+			
+			[Bindable]public var wid:int = 80;
+			[Bindable] public var sampleList:Array;
+			[Bindable] public var sourceList:Array;
+			[Bindable] public var observerList:Array;
+			
+			protected function onCreationComplete():void
+			{
+				sourceList = new Array(	IlluminantD65.NAME, 
+										IlluminantD50.NAME, 
+										IlluminantA.NAME, 
+										IlluminantB.NAME, 
+										IlluminantC.NAME);
+				sampleList = new Array(SpectralData.NAME);
+				observerList = new Array(StandardObserver.FUNC_2D_1931, StandardObserver.FUNC_10D_1964);
+			}
+			
+			public function addSample(name:String, samXYZ:Spectral2XYZ):void
+			{
+				sampleList.push(name);
+			}
+			
+			public function addSource(name:String, srcXYZ:Spectral2XYZ):void
+			{
+				sourceList.push(name);
+			}
+
+/////////////////////////////////////////////////////////////////////
+// UI events
+			
+			public function onChangeObserver():void
+			{
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.CTRL_PANEL_OBSERVER_CHANGE);
+				event.cmbSelectedIndex = cmbObserver.selectedIndex;
+				event.cmbSelectedLabel = cmbObserver.selectedLabel;
+				dispatchEvent(event);
+			}
+			
+			public function onChangeSource():void
+			{
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.CTRL_PANEL_SOURCE_CHANGE);
+				event.cmbSelectedIndex = cmbSource.selectedIndex;
+				event.cmbSelectedLabel = cmbSource.selectedLabel;
+				dispatchEvent(event);
+			}
+			
+			public function onChangeSample():void
+			{
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.CTRL_PANEL_SAMPLE_CHANGE);
+				event.cmbSelectedIndex = cmbSample.selectedIndex;
+				event.cmbSelectedLabel = cmbSample.selectedLabel;
+				dispatchEvent(event);
+			}
+			
+			protected function onClickButtonCreate():void
+			{
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.CTRL_PANEL_CREATE);
+				event.cmbSelectedLabel = txtSample.text;
+				txtSample.text = "";
+				dispatchEvent(event);
+			}
+			
+			protected function onClickButtonDelete():void
+			{
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.CTRL_PANEL_DELETE);
+				event.cmbSelectedIndex = cmbSample.selectedIndex
+				event.cmbSelectedLabel = cmbSample.selectedLabel;
+				dispatchEvent(event);
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" height="100%">
+		<mx:HBox>
+			<mx:Label text="Observer:" width="{wid-20}"/>
+			<mx:ComboBox id="cmbObserver" width="{wid*1.7}" dataProvider="{observerList}" change="onChangeObserver()"/>
+		</mx:HBox>
+		<mx:HBox>
+			<mx:Label text="Source:" width="{wid-20}"/>
+			<mx:ComboBox id="cmbSource" width="{wid*1.7}" dataProvider="{sourceList}" change="onChangeSource()"/>
+		</mx:HBox>
+		<mx:HBox>
+			<mx:Label text="Sample:" width="{wid-20}"/>
+			<mx:ComboBox id="cmbSample" width="{wid*1.7}" dataProvider="{sampleList}" change="onChangeSample()"/>
+		</mx:HBox>
+		<mx:HBox>
+			<mx:Label text="Sample:" width="{wid-22}"/>
+			<mx:TextInput id="txtSample" />
+		</mx:HBox>
+		<mx:Spacer height="10"/>
+		<mx:Button id="btnCreate" label="Create" width="{wid}" click="onClickButtonCreate()"/>
+		<mx:Button id="btnDelete" label="Delete" width="{wid}" click="onClickButtonDelete()"/>
+		
+	</mx:VBox>
+</mx:Canvas>

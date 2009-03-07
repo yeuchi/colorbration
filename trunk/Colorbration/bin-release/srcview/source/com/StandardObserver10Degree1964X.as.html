@@ -1,0 +1,48 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>StandardObserver10Degree1964X.as</title>
+<link rel="stylesheet" type="text/css" href="../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">// ==================================================================
+</span><span class="ActionScriptComment">// Module:        StandardObserverX
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Description:    curve class for standard observer function
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Reference:    CIE Standard Observer x bar function, 10 degrees, 1964
+</span><span class="ActionScriptComment">//                source from Dr. Hunt&apos;s Measuring Color Text.
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Input:        wavelength between 400 to 700 nm (visible)
+</span><span class="ActionScriptComment">// Output:        interpolated standard observer data
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Author(s):    C.T. Yeung            cty
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// History:
+</span><span class="ActionScriptComment">// 24Dec08        first started                                     cty        
+</span><span class="ActionScriptComment">// ==================================================================
+</span><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">com</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span>.<span class="ActionScriptDefault_Text">geom</span>.<span class="ActionScriptDefault_Text">Point</span>;
+    
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">StandardObserver10Degree1964X</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">SpectralData</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">StandardObserver10Degree1964X</span><span class="ActionScriptBracket/Brace">()</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">()</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onInitPercentData</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">percent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span>.0191, .0847, .2045, .3147, .3837,  
+                                .3707, .3023, .1956, .0805, .0162, 
+                                .0038, .0375, .1177, .2365, .3768, 
+                                .5298, .7052, .8787, 1.0142, 1.1185, 
+                                1.1240, 1.0305, .8563, .6475, .4316, 
+                                .2683, .1526, .0813, .0409, .0199, .0096<span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>
