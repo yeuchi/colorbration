@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of TestAdjustCIELab</title>
+	<nodes>
+		<node label="html-template">
+		</node>
+		<node label="libs">
+		</node>
+		<node label="src" icon="classpathIcon" expanded="true">
+			<node label="assets">
+				<node label="AdjustCIELab.pbj" url="source/assets/AdjustCIELab.pbj"/>
+				<node label="AdjustCIELab.pbk" url="source/assets/AdjustCIELab.pbk"/>
+				<node label="Bill.JPG" icon="imageIcon" url="source/assets/Bill.JPG.html"/>
+				<node label="gene_Marc.JPG" icon="imageIcon" url="source/assets/gene_Marc.JPG.html"/>
+			</node>
+			<node selected="true" label="TestAdjustCIELab.mxml" icon="mxmlAppIcon" url="source/TestAdjustCIELab.mxml.html"/>
+		</node>
+	</nodes>
+</index>
