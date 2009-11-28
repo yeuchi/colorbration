@@ -1,0 +1,125 @@
+// =========================================================
+// Module:      AdjustCIELab
+//
+// Description: Change CIE L*a*b* values assuming sRGB values.
+//              using sRGB matrix for D50 light source.
+//              (not apply gamma correction !)
+//
+// Author(s):   CT Yeung (cty)
+//
+// History:
+// 27Nov09      1st implementation                      cty
+// =========================================================
+<languageVersion : 1.0;>
+
+kernel AdjustCIELab
+<   namespace : "CT Yeung";
+    vendor : "";
+    version : 1;
+    description : "Change CIE L*a*b* values assuming sRGB values.";
+>
+{
+    // brigthness adjustment to add (L*)
+    parameter float L
+    <
+        minValue: -100.0;
+        maxValue: 100.0;
+        defaultValue: 0.0;
+    >;
+     
+    // red / greenish axis of CIE a*
+    parameter float a
+    <
+        minValue: -127.0;
+        maxValue: 127.0;
+        defaultValue: 0.0;
+    >;
+    
+    // yellow / bluish axis of CIE b*
+    parameter float b
+    <
+        minValue: -127.0;
+        maxValue: 127.0;
+        defaultValue: 0.0;
+    >;
+    
+    input image4 src1;
+    output pixel4 dst;
+
+    void
+    evaluatePixel() {
+        // D50 reference white
+        float Xw = 0.9642;
+        float Yw = 1.0;
+        float Zw = 0.8249;
+        
+        float4 inClr1;                              // image 1 pixel
+        inClr1 = sampleNearest(src1, outCoord());
+        
+        float4 rgb;
+        float4 XYZ;
+        float4 Lab;
+        
+        rgb[0] = inClr1.r;
+        rgb[1] = inClr1.g;
+        rgb[2] = inClr1.b;
+        
+        // rgb to XYZ
+        XYZ[0] = rgb[0]*0.436043 + rgb[1]*0.385095 + rgb[2]*0.14306;     // X
+        XYZ[1] = rgb[0]*0.222445 + rgb[1]*0.716902+ rgb[2]*0.0606522;    // Y
+        XYZ[2] = rgb[0]*0.013904 + rgb[1]*0.0970645 + rgb[2]*0.713943;   // Z 
+        // should apply gamma correction.
+
+        // XYZ to Lab
+        float Yd = XYZ[1]/Yw; 
+        float fY = pow(Yd, 1.0/3.0);
+        
+        if(Yd > 0.008856) {
+            Lab[0] = 116.0*fY - 16.0;
+            Lab[1] = 500.0 * (pow(XYZ[0]/Xw, 1.0/3.0) - fY);       // a*
+            Lab[2] = 200.0 * (fY - pow(XYZ[2]/Zw, 1.0/3.0));       // b*
+        }
+        else {
+            Lab[0] = 116.0 * (7.787*Yd);        
+            Lab[1] = 500.0 * ((7.787*XYZ[0]/Xw-16.0/116.0)-(7.787*Yd-16.0/116.0));
+            Lab[2] = 200.0 * ((7.787*Yd-16.0/116.0)-(7.787*XYZ[2]/Zw-16.0/116.0));
+        }    
+        
+        // Change Lab
+        Lab[0] += L;
+        Lab[1] += a;
+        Lab[2] += b;
+
+        // Lab to XYZ
+        float sigma = 6.0 / 29.0;
+        
+        // Y
+        float fy = (Lab[0]+16.0)/116.0;
+        XYZ[1] = Yw * pow(fy, 3.0); 
+        if(fy <= sigma) 
+            XYZ[1] = (fy - 16.0/116.0)*3.0*sigma*sigma*Yw;
+        
+        // X
+        float fx = (fy + Lab[1]/500.0);
+        XYZ[0] = Xw * pow(fx, 3.0);
+        if(fx <= sigma)
+            XYZ[0] = (fx - 16.0/116.0)*3.0*sigma*sigma*Xw;
+        
+        // Z
+        float fz = (fy - Lab[2]/200.0);
+        XYZ[2] = Zw * pow(fz, 3.0);
+        if(fz <= sigma)
+            XYZ[2] = (fz-16.0/116.0)*3.0*sigma*sigma*Zw;
+
+        // XYZ to rgb
+        rgb[0] = XYZ[0]*3.1339 + XYZ[1]*-1.6170 + XYZ[2]*-0.4906;
+        rgb[1] = XYZ[0]*-0.9785 + XYZ[1]*1.9160 + XYZ[2]*0.0333;
+        rgb[2] = XYZ[0]*0.0720 + XYZ[1]*-0.229 + XYZ[2]*1.4057;
+        // should apply gamma correction.
+        
+        inClr1.r = rgb[0];
+        inClr1.g = rgb[1];
+        inClr1.b = rgb[2];
+        dst = inClr1;
+    }
+}
