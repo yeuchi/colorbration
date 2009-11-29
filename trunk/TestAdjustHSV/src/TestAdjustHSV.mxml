@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+				layout="absolute"
+			    backgroundColor="0x888888"
+			    creationComplete="onCreationComplete()" viewSourceURL="srcview/index.html">
+	
+	<mx:Script>
+		<![CDATA[
+			[Bindable][Embed(source="assets/gene_Marc.jpg")]public var photoClass1:Class;
+			[Bindable][Embed(source="assets/bill.jpg")]public var photoClass2:Class;
+			[Bindable]protected var list:Array;
+			private var bmd:BitmapData;
+
+			[Embed(source="assets/AdjustHSV.pbj", mimeType="application/octet-stream")]
+			protected var PBClass:Class;
+			private var shader:Shader;
+            private var filter:ShaderFilter;
+            
+			protected function onCreationComplete():void {
+				init();
+			}
+			
+			protected function empty():void {
+				if(uicImage.numChildren) {
+					var bmp:Bitmap = uicImage.getChildAt(0) as Bitmap;
+					uicImage.removeChildAt(0);
+					bmp.bitmapData.dispose();
+					bmp = null;
+				}
+			}
+			
+			protected function init():void {
+				list = ["Gene and Marc","Bill"];
+				onChangeCombo();
+				shader=new Shader()
+				shader.byteCode=new PBClass();
+			}
+			
+			protected function onChangeCombo():void {
+				switch(cmb.selectedIndex) {
+					case 0:
+						bmd = new photoClass1().bitmapData;
+						break;
+						
+					case 1:
+						bmd = new photoClass2().bitmapData;
+						break;
+				}
+				uicImage.addChild(new Bitmap(bmd));
+				uicImage.width =bmd.width;
+				uicImage.height = bmd.height;
+			}
+			
+			protected function onSlideH():void {
+				shader.data.hue.value = [slideH.value];
+				filter = new ShaderFilter(shader);
+				uicImage.filters = [filter];
+			}
+			
+			protected function onSlideS():void {
+				shader.data.saturation.value = [slideS.value];
+				filter = new ShaderFilter(shader);
+				uicImage.filters = [filter];
+			}
+			
+			protected function onSlideV():void {
+				shader.data.value.value = [slideV.value];
+				filter = new ShaderFilter(shader);
+				uicImage.filters = [filter];
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:VBox horizontalAlign="center" width="100%" height="100%">
+		<mx:ComboBox id="cmb" change="onChangeCombo()" dataProvider="{list}"/>
+		<mx:HBox>
+			<mx:UIComponent id="uicImage"/>
+			<mx:VSlider id="slideH" labels="h" change="onSlideH()" minimum="-360" maximum="360" value="0"/>
+			<mx:VSlider id="slideS" labels="s" change="onSlideS()" minimum="-1" maximum="1" value="0"/>
+			<mx:VSlider id="slideV" labels="v" change="onSlideV()" minimum="-1" maximum="1" value="0"/>		
+		</mx:HBox>
+	</mx:VBox>
+</mx:Application>
