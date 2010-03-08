@@ -72,13 +72,13 @@ package com
 			var Y:Number = ( cieXYZ.Ys / cieXYZ.Yw );
 			if ( Y < .008856 ) {
 				L = 903.3 * Y;
-				a = 500 * (Math.pow(cieXYZ.Xs/cieXYZ.Xw, 1/3) - Math.pow(Y, 1/3));
-				b = 200 * (Math.pow(Y, 1/3) - Math.pow(cieXYZ.Zs/cieXYZ.Zw, 1/3));	
+				a = 500 * (cieXYZ.Xs/cieXYZ.Xw - Y);
+				b = 200 * (Y - cieXYZ.Zs/cieXYZ.Zw);	
 			}
 			else {
 				L = 116 * Math.pow(Y, 1/3) - 16;
-				a = 500 * (cieXYZ.Xs/cieXYZ.Xw - Y);
-				b = 200 * (Y - cieXYZ.Zs/cieXYZ.Zw);	
+				a = 500 * (Math.pow(cieXYZ.Xs/cieXYZ.Xw, 1/3) - Math.pow(Y, 1/3));
+				b = 200 * (Math.pow(Y, 1/3) - Math.pow(cieXYZ.Zs/cieXYZ.Zw, 1/3));	
 			}
 			
 			return true;
