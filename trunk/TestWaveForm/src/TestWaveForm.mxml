@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   xmlns:v="*"
+			   minWidth="1000" minHeight="600"
+			   creationComplete="onCreationComplete()" viewSourceURL="srcview/index.html">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.events.VideoEvent;
+			
+			import spark.components.VideoPlayer;
+			
+			public static const DEFAULT_WID:int = 500;
+			public static const VIDEO_SOURCE:String = "http://www.ctyeung.com/FLV/MVI_0206.f4v";
+			protected var count:int = 0;
+			protected var bmd:BitmapData;
+			protected var hasVideo:Boolean;
+			
+			protected function onCreationComplete():void {
+				player.source = VIDEO_SOURCE;
+				player.addEventListener(VideoEvent.READY, onReadyVideo, false, 0, true);
+				this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+				bmd = new BitmapData(player.width, player.height);
+			}
+			
+			protected function onEnterFrame(e:Event):void {
+				// copy image for waveform monitor
+				if(!hasVideo)
+					return;
+				
+				count = (count >= monitor.sampleRate)?0:count++;
+				if(!count){
+					bmd.draw(player);
+					monitor.source = bmd;
+				}
+			}
+			
+			protected function onReadyVideo(e:Event):void {
+				player.play();
+				hasVideo = true;
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:VBox width="100%" >
+		<mx:Label text="Test Waveform monitor"/>
+		<mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle">
+			<mx:Box width="{DEFAULT_WID}" height="{DEFAULT_WID}" borderColor="0" borderStyle="solid"
+					verticalScrollPolicy="off" horizontalScrollPolicy="off">
+				<mx:VideoDisplay id="player"/>
+			</mx:Box>
+			<v:MainPanel id="monitor"/>
+		</mx:HBox>
+	</mx:VBox>
+</s:Application>
