@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:v="Views.*"
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" 
+		   width="500" height="330"
+		   creationComplete="onCreationComplete()"
+		   backgroundColor="0xBBBBBB"
+		   horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			protected function onCreationComplete():void {
+				
+			}
+			
+			public function get sampleRate():Number {
+				return control.sampleRate;
+			}
+			
+			public function set source(bmd:BitmapData):void {
+				display.source = bmd;
+			}
+		]]>
+	</fx:Script>
+	<mx:VBox width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" 
+			 verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		<mx:Label text="Waveform Monitor"/>
+		<mx:HBox width="100%" cornerRadius="5" horizontalAlign="center" verticalAlign="middle">
+			<mx:Box  borderColor="0" borderStyle="solid" 
+					verticalScrollPolicy="off" horizontalScrollPolicy="off">
+				<v:Display id="display"/>
+			</mx:Box>
+			<mx:Box width="150" height="300" cornerRadius="5" borderColor="0" borderStyle="solid" 
+					verticalScrollPolicy="off" horizontalScrollPolicy="off">
+				<v:Controls id="control"/>
+			</mx:Box>
+		</mx:HBox>
+	</mx:VBox>
+</mx:Module>

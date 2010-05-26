@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" version="3">
+  <includeClasses>
+    <classEntry path="MainPanel"/>
+    <classEntry path="Views.Display"/>
+    <classEntry path="Views.Controls"/>
+    <classEntry path="Views.HueSatPlot"/>
+    <classEntry path="Views.ValuePlot"/>
+    <classEntry path="Views.Plot"/>
+    <classEntry path="pb.RGB2HSV"/>
+    <classEntry path="Views.VControls"/>
+    <classEntry path="Views.HSControls"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" 
+		   xmlns:v="Views.*"
+		   creationComplete="onCreationComplete()"
+		   width="{Plot.DEFAULT_WID}" height="{Plot.DEFAULT_LEN}">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			
+			public static const MODE_HS:String = "MODEHS";
+			public static const MODE_V:String  = "MODEV";
+			
+			protected function onCreationComplete():void {
+				mode = MODE_V;
+			}
+			
+			public function set mode(value:String):void {
+				plotHS.visible = false;
+				plotV.visible  = false;
+				plotHS.includeInLayout = false;
+				plotV.includeInLayout  = false;
+				
+				switch(value.toUpperCase()) {
+					case MODE_HS:
+						plotHS.visible = true;
+						plotHS.includeInLayout = true;
+						break;
+					
+					case MODE_V:
+						plotV.visible = true;
+						plotV.includeInLayout = true;
+						break;
+				}
+			}
+			
+			public function set source(bmd:BitmapData):void {
+				if(plotHS.visible) {
+					plotHS.source = bmd;
+				}
+				else {
+					plotV.source = bmd;
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<v:ValuePlot id="plotV" />
+	<v:HueSatPlot id="plotHS" visible="false" includeInLayout="false"/>
+	
+</mx:Module>

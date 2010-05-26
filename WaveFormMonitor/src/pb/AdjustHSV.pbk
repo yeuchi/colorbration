@@ -1,0 +1,112 @@
+// =========================================================
+// Module:      AdjustHSV
+//
+// Description: Change HSV values
+// Reference:   http://cs.haifa.ac.il/hagit/courses/ist/Lectures/Demos/ColorApplet2/t_convert.html#RGB to HSV & HSV to RGB
+//              University of Haifa
+//
+// Author(s):   CT Yeung (cty)
+//
+// History:
+// 27Nov09      1st implementation                      cty
+// =========================================================
+<languageVersion : 1.0;>
+
+kernel AdjustHSV
+<   namespace : "CT Yeung";
+    vendor : "";
+    version : 1;
+    description : "Change HSV.";
+>
+{
+    parameter float hue
+    <
+        minValue: -360.0;
+        maxValue: 360.0;
+        defaultValue: 0.0;
+    >;
+     
+    parameter float saturation
+    <
+        minValue: -1.0;
+        maxValue: 1.0;
+        defaultValue: 0.0;
+    >;
+    
+    parameter float value
+    <
+        minValue: -1.0;
+        maxValue: 1.0;
+        defaultValue: 0.0;
+    >;
+    
+    input image4 src1;
+    output pixel4 dst;
+
+    void
+    evaluatePixel() {
+        float4 inClr1;                              // image 1 pixel
+        inClr1 = sampleNearest(src1, outCoord());
+        
+        float min;
+        float max;
+        float delta;
+        float4 sorted;
+        float4 hsv;
+        float4 rgb;
+        float l;
+        
+        // rgb to hsv
+        min = inClr1.r;
+        if(min > inClr1.g)  min = inClr1.g;
+        if(min > inClr1.b)  min = inClr1.b;
+        
+        max = inClr1.r;
+        if(max < inClr1.g)  max = inClr1.g;
+        if(max < inClr1.b)  max = inClr1.b;
+        hsv[2] = max;
+        
+        delta = max - min;
+
+       if(max!=0.0)
+            hsv[1] = delta/max;
+       else {   // r = g = b = 0
+        hsv[1] = 0.0;
+        hsv[0] = -1.0;
+       }
+       
+        if(inClr1.r==max)       hsv[0] = (inClr1.g-inClr1.b)/delta;
+        else if (inClr1.g==max) hsv[0] = 2.0+(inClr1.b-inClr1.r)/delta;
+        else if (inClr1.b==max) hsv[0] = 4.0+(inClr1.r-inClr1.g)/delta;
+        
+        hsv[0] *= 60.0;
+        if(hsv[0]<0.0)
+            hsv[0] += 360.0;
+        
+        // add HSV values from input
+        hsv[0] += hue;
+        hsv[1] += saturation;
+        hsv[2] += value;
+        
+        // hsv to rgb
+        int i;
+        float f, p, q, t, hi, h;
+        if(hsv[1]==0.0) inClr1.r = inClr1.g = inClr1.b = hsv[2];
+        else {
+            h = hsv[0] / 60.0;
+            i = int(floor(h));
+            f = h - float(i);
+            p = hsv[2]*(1.0-hsv[1]);
+            q = hsv[2]*(1.0-f*hsv[1]);
+            t = hsv[2]*(1.0-(1.0-f)*hsv[1]);
+            
+            if(i==0)       {  inClr1.r = hsv[2]; inClr1.g = t; inClr1.b = p;  }
+            else if(i==1)  {  inClr1.r = q; inClr1.g = hsv[2]; inClr1.b = p;  }
+            else if(i==2)  {  inClr1.r = p; inClr1.g = hsv[2]; inClr1.b = t;  }
+            else if(i==3)  {  inClr1.r = p; inClr1.g = q; inClr1.b = hsv[2];  }
+            else if(i==4)  {  inClr1.r = t; inClr1.g = p; inClr1.b = hsv[2];  }
+            else if(i==5)  {  inClr1.r = hsv[2]; inClr1.g = p; inClr1.b = q;  }
+        }    
+        dst = inClr1;
+    }
+}
