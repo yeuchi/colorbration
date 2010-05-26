@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 width="150" height="220">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<mx:VBox>
+		<mx:HBox>
+			<mx:VBox paddingTop="5" paddingLeft="5">
+				<mx:Label text="Hue" />
+				<s:VSlider id="slideH" />
+			</mx:VBox>
+			<mx:VBox paddingTop="5" paddingLeft="5">
+				<mx:Label text="Sat"/>
+				<s:VSlider id="slideS" />
+			</mx:VBox>
+			
+			<mx:VBox paddingTop="5" paddingLeft="5">
+				<mx:Label text="Min"/>
+				<s:VSlider id="slideMin" />
+			</mx:VBox>
+			<mx:VBox paddingTop="5" paddingLeft="5">
+				<mx:Label text="Max"/>
+				<s:VSlider id="slideMax" />
+			</mx:VBox>
+		</mx:HBox>
+	</mx:VBox>
+</s:Group>
