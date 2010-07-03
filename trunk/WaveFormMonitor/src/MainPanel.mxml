@@ -14,17 +14,51 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import Events.ControlPanelEvent;
+			
+			import Views.Plot;
+			protected var bmd:BitmapData;
+			protected var frameRate:int = Plot.DEFAULT_SAMPLE_RATE;
 			
 			protected function onCreationComplete():void {
-				
+				control.setVPlot(display.height, Number(display.height*5)/255.0);
 			}
 			
 			public function get sampleRate():Number {
-				return control.sampleRate;
+				return frameRate;
 			}
 			
 			public function set source(bmd:BitmapData):void {
+				this.bmd = bmd;
 				display.source = bmd;
+			}
+			
+			protected function onChangedControl(e:ControlPanelEvent):void {
+				switch(e.type) {
+					case ControlPanelEvent.DC_CHANGED:
+						display.dcValue = e.value;
+						break;
+					
+					case ControlPanelEvent.AMP_CHANGED:
+						display.ampValue = e.value;
+						break;
+					
+					case ControlPanelEvent.MODE_CHANGED:
+						display.mode = e.mode;
+						break;
+					
+					case ControlPanelEvent.PIXEL_RATE_CHANGED:
+						display.pixelRate = e.value;
+						break;
+					
+					case ControlPanelEvent.FRAME_RATE_CHANGED:
+						this.frameRate = e.value;
+						break;
+					
+					case ControlPanelEvent.SPACE_CHANGED:
+						display.space = e.space;
+						break;
+				}
 			}
 		]]>
 	</fx:Script>
@@ -38,7 +72,13 @@
 			</mx:Box>
 			<mx:Box width="150" height="300" cornerRadius="5" borderColor="0" borderStyle="solid" 
 					verticalScrollPolicy="off" horizontalScrollPolicy="off">
-				<v:Controls id="control"/>
+				<v:Controls id="control" 
+							dcValueChanged="onChangedControl(event)" 
+							ampValueChanged="onChangedControl(event)"
+							modeChanged="onChangedControl(event)"
+						    pixelRateChanged="onChangedControl(event)"
+						    frameRateChanged="onChangedControl(event)"
+						    spaceChanged="onChangedControl(event)"/>
 			</mx:Box>
 		</mx:HBox>
 	</mx:VBox>

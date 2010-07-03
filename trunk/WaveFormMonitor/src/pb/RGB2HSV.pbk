@@ -1,0 +1,73 @@
+// =========================================================
+// Module:      RGB2HSV
+//
+// Description: conversion
+// Reference:   http://cs.haifa.ac.il/hagit/courses/ist/Lectures/Demos/ColorApplet2/t_convert.html#RGB to HSV & HSV to RGB
+//              University of Haifa
+//
+// Author(s):   CT Yeung (cty)
+//
+// History:
+// 19Jun09      1st implementation                      cty
+// =========================================================
+<languageVersion : 1.0;>
+
+kernel RGB2HSV
+<   namespace : "RGB2HSV";
+    vendor : "";
+    version : 1;
+    description : "convert to HSV.";
+>
+{    
+    input image4 src;
+    output pixel4 dst;
+
+    void
+    evaluatePixel() {
+        float4 inClr1;                              // image 1 pixel
+        inClr1 = sampleNearest(src, outCoord());
+        
+        float min;
+        float max;
+        float delta;
+        float4 sorted;
+        float4 hsv;
+        float4 rgb;
+        float l;
+        
+        if(inClr1.a>0.0) {
+            // rgb to hsv
+            min = inClr1.r;
+            if(min > inClr1.g)  min = inClr1.g;
+            if(min > inClr1.b)  min = inClr1.b;
+            
+            max = inClr1.r;
+            if(max < inClr1.g)  max = inClr1.g;
+            if(max < inClr1.b)  max = inClr1.b;
+            hsv[2] = max;
+            
+            delta = max - min;
+
+           if(max!=0.0)
+                hsv[1] = delta/max;
+           else {   // r = g = b = 0
+            hsv[1] = 0.0;
+            hsv[0] = -1.0;
+           }
+           
+            if(inClr1.r==max)       hsv[0] = (inClr1.g-inClr1.b)/delta;
+            else if (inClr1.g==max) hsv[0] = 2.0+(inClr1.b-inClr1.r)/delta;
+            else if (inClr1.b==max) hsv[0] = 4.0+(inClr1.r-inClr1.g)/delta;
+            
+            hsv[0] *= 60.0;
+            if(hsv[0]<0.0)
+                hsv[0] += 360.0;
+            
+            hsv[0] *= 255.0/360.0;
+         }   
+        dst.a = 1.0;
+        dst.r = hsv[0];
+        dst.g = hsv[1];
+        dst.b = hsv[2];
+    }
+}

@@ -10,45 +10,69 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
-			
-			public static const MODE_HS:String = "MODEHS";
-			public static const MODE_V:String  = "MODEV";
+			protected var _mode:String;
+			protected var _space:String;
+			protected var plot:Plot;
 			
 			protected function onCreationComplete():void {
-				mode = MODE_V;
+				space = HSVPlot.SPACE;
+				mode = Plot.MODE_CHROMA;
+			}
+			
+			public function set space(value:String):void {
+				_space = value;
+				plotHSV.visible = false;
+				plotHSV.includeInLayout = false;
+				plotYIQ.visible = false;
+				plotYIQ.includeInLayout = false;
+				
+				switch(value.toUpperCase()) {
+					case HSVPlot.SPACE:
+						plot = plotHSV;
+						plotHSV.visible = true;
+						plotHSV.includeInLayout = true;
+						break;
+					
+					case YIQPlot.SPACE:
+						plot = plotYIQ;
+						plotYIQ.visible = true;
+						plotYIQ.includeInLayout = true;
+						break;
+				}
 			}
 			
 			public function set mode(value:String):void {
-				plotHS.visible = false;
-				plotV.visible  = false;
-				plotHS.includeInLayout = false;
-				plotV.includeInLayout  = false;
-				
-				switch(value.toUpperCase()) {
-					case MODE_HS:
-						plotHS.visible = true;
-						plotHS.includeInLayout = true;
-						break;
-					
-					case MODE_V:
-						plotV.visible = true;
-						plotV.includeInLayout = true;
-						break;
-				}
+				plotHSV.mode = value;
+				plotYIQ.mode = value;
 			}
 			
 			public function set source(bmd:BitmapData):void {
-				if(plotHS.visible) {
-					plotHS.source = bmd;
-				}
-				else {
-					plotV.source = bmd;
-				}
+				plot.source = bmd;
+			}
+			
+			public function set dcValue(value:Number):void {
+				plot.dcValue = value;
+			}
+			
+			public function set ampValue(value:Number):void {
+				plot.ampValue = value;
+			}
+			
+			public function get monitorWidth():int {
+				return plot.width;
+			}
+			
+			public function get monitorHeight():int {
+				return plot.height;
+			}
+			
+			public function set pixelRate(value:int):void {
+				plot.pixelRate = (value)?value:1;
 			}
 		]]>
 	</fx:Script>
 	
-	<v:ValuePlot id="plotV" />
-	<v:HueSatPlot id="plotHS" visible="false" includeInLayout="false"/>
+	<v:HSVPlot id="plotHSV" visible="false" includeInLayout="false"/>
+	<v:YIQPlot id="plotYIQ"  visible="false" includeInLayout="false"/>
 	
 </mx:Module>

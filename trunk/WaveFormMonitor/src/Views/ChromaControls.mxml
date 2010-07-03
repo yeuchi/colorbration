@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 creationComplete="onCreationComplete()"
+		 width="150" height="50">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+	//		import Buttons.RadioKnob;
+			
+			protected function onCreationComplete():void {
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:VBox>
+		<mx:HBox paddingTop="5" paddingLeft="5">
+			<mx:Label text="Hue" width="30" />
+			<s:HSlider id="slideH"/>
+		</mx:HBox>
+		<mx:HBox paddingTop="5" paddingLeft="5">
+			<mx:Label text="Sat" width="30" />
+			<s:HSlider id="slideS" />
+		</mx:HBox>
+	</mx:VBox>
+</s:Group>

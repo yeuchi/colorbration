@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 creationComplete="onCreationComplete()"
+		 width="150" height="50">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Metadata>
+		[Event(name="dcValueChanged", type="Events.ControlPanelEvent")]
+		[Event(name="ampValueChanged", type="Events.ControlPanelEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+		//	import Buttons.RadioKnob;
+			import Events.ControlPanelEvent;
+			
+			protected function onCreationComplete():void {
+				
+			}
+			
+			protected function onChangeDC():void {
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.DC_CHANGED, true);
+				event.value = slideDC.value;
+				dispatchEvent(event);
+			}
+			
+			protected function onChangeAmp():void {
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.AMP_CHANGED,true);
+				event.value = slideX.value;
+				dispatchEvent(event);
+			}
+			
+			public function set dcMin(value:Number):void {
+				slideDC.minimum = value;
+				slideDC.value = (slideDC.maximum - slideDC.minimum) / 2.0 + slideDC.minimum;
+			}
+			
+			public function set dcMax(value:Number):void {
+				slideDC.maximum = value;
+				slideDC.value = (slideDC.maximum - slideDC.minimum) / 2.0 + slideDC.minimum;
+			}
+			
+			public function set ampMin(value:Number):void {
+				slideX.minimum = value;
+				slideX.value = (slideX.maximum - slideX.minimum) / 2.0 + slideX.minimum;
+			}
+			
+			public function set ampMax(value:Number):void {
+				slideX.maximum = value;
+				slideX.value = (slideX.maximum - slideX.minimum) / 2.0 + slideX.minimum;
+				slideX.stepSize = (slideX.maximum - slideX.minimum)/50.0;
+			}
+		]]>
+		
+	</fx:Script>
+	
+	<mx:VBox>
+		<mx:HBox paddingTop="5" paddingLeft="5">
+			<mx:Label text="DC" width="30" />
+			<s:HSlider id="slideDC" change="onChangeDC()"/>
+		</mx:HBox>
+		<mx:HBox paddingTop="5" paddingLeft="5">
+			<mx:Label text="X" width="30" />
+			<s:HSlider id="slideX" change="onChangeAmp()"/>
+		</mx:HBox>
+	</mx:VBox>
+</s:Group>

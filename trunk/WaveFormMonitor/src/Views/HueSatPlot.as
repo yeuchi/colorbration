@@ -18,10 +18,10 @@ package Views
 			invalidate();
 		}
 		
-		public function invalidate():void {
+		//public function invalidate():void {
 //			for(var y:int=0; y<bmdSrc.height; y++) {
 //				for(var x:int=0; x<bmdSrc.width; x++) {
 //			}
-		}
+		//}
 	}
 }
