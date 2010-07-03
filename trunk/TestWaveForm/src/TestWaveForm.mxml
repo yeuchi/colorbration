@@ -16,16 +16,30 @@
 			import spark.components.VideoPlayer;
 			
 			public static const DEFAULT_WID:int = 500;
-			public static const VIDEO_SOURCE:String = "http://www.ctyeung.com/FLV/MVI_0206.f4v";
 			protected var count:int = 0;
 			protected var bmd:BitmapData;
 			protected var hasVideo:Boolean;
+			[Bindable]protected var listVideo:Array;
 			
 			protected function onCreationComplete():void {
-				player.source = VIDEO_SOURCE;
-				player.addEventListener(VideoEvent.READY, onReadyVideo, false, 0, true);
+				listVideo = [{label:"wiggle", data:"http://www.ctyeung.com/FLV/MVI_0991.f4v"},
+							{label:"issabel", data:"http://www.ctyeung.com/FLV/mvi_20jun08.f4v"},
+							{label:"panda", data:"http://www.ctyeung.com/FLV/MVI_0206.f4v"},
+							{label:"tap", data:"http://www.ctyeung.com/FLV/06Aug08.f4v"},
+							{label:"flap", data:"http://www.ctyeung.com/FLV/15Sep08MVI.f4v"},
+							{label:"jump", data:"http://www.ctyeung.com/FLV/17Sept05b.f4v"},
+							{label:"jump jack", data:"http://www.ctyeung.com/FLV/22Sep08MVI.f4v"},
+							{label:"shake", data:"http://www.ctyeung.com/FLV/MVI_10jun08_original.f4v"},
+							{label:"fairy", data:"http://www.ctyeung.com/FLV/MVI_3407.f4v"}];
+				
+				initPlayer();
 				this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
-				bmd = new BitmapData(player.width, player.height);
+			}
+			
+			protected function initPlayer():void {
+				player.source = listVideo[0].data;
+				player.addEventListener(VideoEvent.READY, onReadyVideo, false, 0, true);
+				player.addEventListener(VideoEvent.COMPLETE, onPlayEnd, false, 0, true);
 			}
 			
 			protected function onEnterFrame(e:Event):void {
@@ -33,17 +47,29 @@
 				if(!hasVideo)
 					return;
 				
-				count = (count >= monitor.sampleRate)?0:count++;
+				count = (count >= monitor.sampleRate)?0:count + 1;
 				if(!count){
 					bmd.draw(player);
+					//bmd.fillRect(bmd.rect, 0xFFFF4444);
 					monitor.source = bmd;
 				}
 			}
 			
-			protected function onReadyVideo(e:Event):void {
+			protected function onReadyVideo(e:Event=null):void {
 				player.play();
 				hasVideo = true;
+				bmd = new BitmapData(640, 480);
 			}
+			
+			protected function onPlayEnd(e:Event):void {
+				onReadyVideo(null);
+			}
+			
+			protected function onChangeVideo():void {
+				player.close();
+				player.source = listVideo[cmbVideo.selectedIndex].data;
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -54,7 +80,10 @@
 					verticalScrollPolicy="off" horizontalScrollPolicy="off">
 				<mx:VideoDisplay id="player"/>
 			</mx:Box>
-			<v:MainPanel id="monitor"/>
+			<mx:VBox>
+				<mx:ComboBox id="cmbVideo" dataProvider="{listVideo}" change="onChangeVideo()"/>			
+				<v:MainPanel id="monitor"/>
+			</mx:VBox>
 		</mx:HBox>
 	</mx:VBox>
 </s:Application>
