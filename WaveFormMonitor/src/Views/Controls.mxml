@@ -10,26 +10,109 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	
+	<fx:Metadata>
+		[Event(name="dcValueChanged", type="Events.ControlPanelEvent")]
+		[Event(name="ampValueChanged", type="Events.ControlPanelEvent")]
+		[Event(name="modeChanged", type="Events.ControlPanelEvent")]
+		[Event(name="pixelRateChanged", type="Events.ControlPanelEvent")]
+		[Event(name="frameRateChanged", type="Events.ControlPanelEvent")]
+		[Event(name="spaceChanged", type="Events.ControlPanelEvent")]
+	</fx:Metadata>
+	
 	<fx:Script>
 		<![CDATA[
-			public static const DEFAULT_SAMPLE_RATE:int = 24;
-			public var sampleRate:int;
+		//	import Buttons.RadioKnob;
+			
+			import Events.ControlPanelEvent;
+			public static const DEFAULT_SAMPLE_RATE:int = 30;
 			
 			protected function onCreationComplete():void {
-				sampleRate = DEFAULT_SAMPLE_RATE;
+			}
+			
+			public function setVPlot(dcMax:Number, 
+									 ampMax:Number)
+									 :void {
+				vCtrl.dcMin = -dcMax;
+				vCtrl.dcMax = dcMax;
+				vCtrl.ampMin = 0;
+				vCtrl.ampMax = ampMax;
+			}
+			
+			protected function onChangeMode():void {
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.MODE_CHANGED);
+				event.mode = (accord.selectedIndex)?
+								Plot.MODE_VALUE:
+								Plot.MODE_CHROMA;
+				
+				dispatchEvent(event);
+			}
+			
+			protected function onChangeFrameRate():void {
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.PIXEL_RATE_CHANGED);
+				event.value = frameRate.value;
+				dispatchEvent(event);
+			}
+			
+			protected function onChangePixelRate():void {
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.PIXEL_RATE_CHANGED);
+				event.value = pixelRate.value;
+				dispatchEvent(event);
+			}
+			
+			protected function onChangeColorSpace(e:Event):void {
+				rdoHSV.selected = false;
+				rdoYIQ.selected = false;
+				var event:ControlPanelEvent = new ControlPanelEvent(ControlPanelEvent.SPACE_CHANGED);
+				
+				switch(e.target.id) {
+					case "rdoHSV":
+						rdoHSV.selected = true;
+						event.space = HSVPlot.SPACE;
+						break;
+					
+					case "rdoYIQ":
+						rdoYIQ.selected = true;
+						event.space = YIQPlot.SPACE;
+						break;
+				}
+				dispatchEvent(event);
 			}
 		]]>
 	</fx:Script>
 	
 	<mx:VBox width="100%" height="100%" 
-			 verticalAlign="middle" horizontalAlign="center">
-		<mx:Accordion id="accord" openDuration="1000" width="100%" height="95%">
-			<mx:Box label="Value">
-				<v:VControls id="vCtrl" />
+			 verticalAlign="top" horizontalAlign="center">
+		<mx:HBox>
+			<mx:Label text="sample: 1/"/>
+			<mx:NumericStepper id="frameRate" 
+							   minimum="5" maximum="200" 
+							   stepSize="5" value="{Plot.DEFAULT_SAMPLE_RATE}" 
+							   change="onChangeFrameRate()"/>
+		</mx:HBox>
+		<mx:HBox>
+			<mx:Label text="pixel rate: 1/"/>
+			<mx:NumericStepper id="pixelRate" 
+							   value="{Plot.DEFAULT_PIXEL_RATE}" 
+							   minimum="1" maximum="50" 
+							   change="onChangePixelRate()"/>
+		</mx:HBox>
+		<mx:HBox>
+			<mx:RadioButton id="rdoHSV" label="HSV" click="onChangeColorSpace(event)" selected="true"/>
+			<mx:RadioButton id="rdoYIQ" label="YIQ" click="onChangeColorSpace(event)"/>
+		</mx:HBox>
+
+		<mx:Spacer width="10"/>
+		<mx:Accordion id="accord" openDuration="1000" 
+					  width="100%" height="50%" 
+					  change="onChangeMode()" 
+					  creationPolicy="all" >
+			<mx:Box label="Chroma">
+				<v:ChromaControls id="hsCtrl" />
 			</mx:Box>
-			<mx:Box label="Hue Saturation">
-				<v:HSControls id="hsCtrl" />
+			<mx:Box label="Value">
+				<v:ValueControls id="vCtrl" />
 			</mx:Box>
 		</mx:Accordion>
+		
 	</mx:VBox>
 </mx:Module>
