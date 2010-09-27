@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This is an experiment with triangle gradient.
+Hopefully, Illuminati pixelbender filter works well enough.
+Else, I will have to write some of my own.
+
+There are 2 alternatives that come to mind, using 3x3 matrix pre-computed, or 
+write my own version for triangle gradient. 
+To be different from Illuminati, I will first compute a point on the line then
+point from line.
+-->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:v="*"
+			   width="510" height="600" 
+			   creationComplete="onCreationComplete()"
+			   xmlns:GradientMethods="GradientMethods.*" viewSourceURL="srcview/index.html">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import GradientMethods.IlluminatiTriangle;
+			import GradientMethods.Triangle;
+			import GradientMethods.WeightedTriangle;
+			
+			import mx.core.UIComponent;
+			protected var uic:Triangle;
+			protected var illuminati:IlluminatiTriangle;
+			protected var weighted:WeightedTriangle;
+			
+			protected function onCreationComplete():void {
+				illuminati = new IlluminatiTriangle();
+				illuminati.width = 500;
+				illuminati.height = 500;
+				weighted = new WeightedTriangle();
+				weighted.width = 500;
+				weighted.height = 500;
+				onClickRdo(1);
+			}
+			
+			protected function onChangeColor():void {
+				uic.ca = clrA.selectedColor;
+				uic.cb = clrB.selectedColor;
+				uic.cc = clrC.selectedColor;
+				onClickClear();
+			}
+			
+			protected function onClickClear():void {
+				uic.clear();
+				uic.drawTriangle();
+			}
+			
+			protected function onClickRdo(value:int):void {
+				box.removeAllChildren();
+				rdo0.selected = false;
+				rdo1.selected = false;
+				rdo2.selected = false;
+				
+				switch(value) {
+					case 0:
+						uic = illuminati;
+						rdo0.selected = true;
+						break;
+					
+					case 1:
+						rdo1.selected = true;
+						uic = weighted;
+						break;
+					
+					case 2:
+						rdo2.selected = true;
+						break;
+				}
+				
+				box.addChild(uic);
+			}
+		]]>
+	</fx:Script>
+	<mx:VBox verticalAlign="middle" horizontalAlign="center">
+		<mx:HBox>
+			<mx:Label text="A:"/>
+			<mx:ColorPicker id="clrA" selectedColor="0xFF0000" change="onChangeColor()" enabled="false"/>
+			<mx:Label text="B:"/>
+			<mx:ColorPicker id="clrB" selectedColor="0xFF00" change="onChangeColor()" enabled="false"/>
+			<mx:Label text="C:"/>
+			<mx:ColorPicker id="clrC" selectedColor="0xFF" change="onChangeColor()" enabled="false"/>
+		</mx:HBox>
+		<mx:Box id="box" borderColor="0x00" borderStyle="solid" 
+				width="500" height="500" 
+				horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
+		<mx:HBox>
+			<mx:RadioButton id="rdo0" label="Illuminati" click="onClickRdo(0)"/>
+			<mx:RadioButton id="rdo1" label="Weighted" click="onClickRdo(1)"/>
+			<mx:RadioButton id="rdo2" label="Matrix" click="onClickRdo(2)" enabled="false"/>
+		</mx:HBox>
+	</mx:VBox>
+</s:Application>
