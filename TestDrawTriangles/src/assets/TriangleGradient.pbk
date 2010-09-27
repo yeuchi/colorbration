@@ -1,0 +1,98 @@
+// ===========================================================
+// Module:      Triangle Graident
+//
+// Description: downloaded Illuminati's pixel bender filter for
+//              performing a gradient fill where the 3 points
+//              are specified colors and positions.
+//
+//              unfortunately, it does not work out of the box
+//              and the logic seems a bit off.  This will only work
+//              for isoscele triangle.  The ratio of color 
+//              mixture should be base on distance from point to "line",
+//              not point to point.
+//
+//              will comment out his code and append my own.
+//              
+// Reference:   Illuminati (Illuminate1989@gmail.com)
+// Author(s):   C.T. Yeung
+// ===========================================================
+<languageVersion : 1.0;>
+
+kernel NewFilter
+<   namespace : "3D pixel shaders";
+    vendor : "";
+    version : 1;
+    description : "Shader for multicolor vertex triangle object for flash; use as shader fill";
+>
+{
+    output pixel4 dst;
+     
+     parameter float disA <
+         minValue: 0.0;
+         maxValue: 65535.0;
+         defaultValue: 0.0;
+     >;
+     parameter float disB <
+         minValue: 0.0;
+         maxValue: 65535.0;
+         defaultValue: 0.0;
+     >;
+     parameter float disC <
+         minValue: 0.0;
+         maxValue: 65535.0;
+         defaultValue: 0.0;
+     >;
+     
+     parameter float4 clrA <
+        minValue:float4(0,0,0,0);
+        maxValue:float4(1,1,1,1);
+        defaultValue:float4(0,0,0,0);
+     >;
+    parameter float4 clrB <
+        minValue:float4(0,0,0,0);
+        maxValue:float4(1,1,1,1);
+        defaultValue:float4(0,0,0,0);
+    >;
+    parameter float4 clrC <
+        minValue:float4(0,0,0,0);
+        maxValue:float4(1,1,1,1);
+        defaultValue:float4(0,0,0,0);
+    >;
+    parameter float2 ptA <
+        minValue:float2(-65535,-65535);
+        maxValue:float2(65535, 65535);
+        defaultValue:float2(0,0);
+    >;
+    parameter float2 ptB <
+        minValue:float2(-65535,-65535);
+        maxValue:float2(65535, 65535);
+        defaultValue:float2(0,0);
+    >;
+    parameter float2 ptC <
+        minValue:float2(-65535,-65535);
+        maxValue:float2(65535, 65535);
+        defaultValue:float2(0,0);
+    >;
+    void
+    evaluatePixel()
+    {
+        float2 oc = outCoord();
+        float da = distance(oc, ptA);
+        float db = distance(oc, ptB);
+        float dc = distance(oc, ptC);
+
+        float r = da/disA*clrA[1] + db/disB*clrB[1] + dc/disC*clrC[1];
+        float g = da/disA*clrA[2] + db/disB*clrB[2] + dc/disC*clrC[2];
+        float b = da/disA*clrA[3] + db/disB*clrB[3] + dc/disC*clrC[3];
+        r = (r>1.0)?1.0:r;
+        g = (g>1.0)?1.0:g;
+        b = (b>1.0)?1.0:b;
+        r = (r<0.0)?0.0:r;
+        g = (g<0.0)?0.0:g;
+        b = (b<0.0)?0.0:b;
+        dst.r = r;
+        dst.g = g;
+        dst.b = b;
+        dst.a = 1.0;
+    }
+}
