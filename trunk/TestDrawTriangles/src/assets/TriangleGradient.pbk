@@ -77,13 +77,25 @@ kernel NewFilter
     evaluatePixel()
     {
         float2 oc = outCoord();
-        float da = distance(oc, ptA);
-        float db = distance(oc, ptB);
-        float dc = distance(oc, ptC);
+        
+        // point a
+        float ma = (ptB.y-ptC.y)/(ptB.x-ptC.x);
+        float ba = ptB.y-ma*ptB.x;
+        float da = abs(ma*oc.x-oc.y+ba)/sqrt(ma*ma+1.0);
+        
+        // point b
+        float mb = (ptA.y-ptC.y)/(ptA.x-ptC.x);
+        float bb = ptA.y-mb*ptA.x;
+        float db = abs(mb*oc.x-oc.y+bb)/sqrt(mb*mb+1.0);
+        
+        // point c
+        float mc = (ptB.y-ptA.y)/(ptB.x-ptA.x);
+        float bc = ptB.y-mc*ptB.x;
+        float dc = abs(mc*oc.x-oc.y+bc)/sqrt(mc*mc+1.0);
 
-        dst.r = (1.0-da/disA)*clrA[1] + (1.0-db/disB)*clrB[1] + (1.0-dc/disC)*clrC[1];
-        dst.g = (1.0-da/disA)*clrA[2] + (1.0-db/disB)*clrB[2] + (1.0-dc/disC)*clrC[2];
-        dst.b = (1.0-da/disA)*clrA[3] + (1.0-db/disB)*clrB[3] + (1.0-dc/disC)*clrC[3];
+        dst.r = da/disA*clrA[1] + db/disB*clrB[1] + dc/disC*clrC[1];
+        dst.g = da/disA*clrA[2] + db/disB*clrB[2] + dc/disC*clrC[2];
+        dst.b = da/disA*clrA[3] + db/disB*clrB[3] + dc/disC*clrC[3];
         dst.a = 1.0;
     }
 }
