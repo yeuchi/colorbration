@@ -18,7 +18,6 @@ package GradientMethods
 		public var ca:uint;
 		public var cb:uint;
 		public var cc:uint;
-		public var num:int = 0;
 		protected var cmds:Vector.<int>;
 		protected var data:Vector.<Number>;
 		protected var shader:Shader;
@@ -61,24 +60,24 @@ package GradientMethods
 			clear();
 		}
 		
-		protected function onMouseDown(e:Event):void {
-			switch(this.num) {
-				case 0:
-					pa.x = this.mouseX;
-					pa.y = this.mouseY;
-					break;
-					
-				case 1:
-					pb.x = this.mouseX;
-					pb.y = this.mouseY;
-					break;
-				
-				case 2:
-					pc.x = this.mouseX;
-					pc.y = this.mouseY;
-					break;
+		protected function onMouseDown(e:MouseEvent):void {
+			var p:Point = new Point(e.localX, e.localY);
+			var da:Number = Point.distance(p,pa);
+			var db:Number = Point.distance(p,pb);
+			var dc:Number = Point.distance(p,pc);
+			
+			if(da<db&&da<dc) {
+				pa.x = this.mouseX;
+				pa.y = this.mouseY;
 			}
-			num = (num<2)?num+1:0;
+			else if (db<da&&db<dc) {
+				pb.x = this.mouseX;
+				pb.y = this.mouseY;
+			}
+			else {
+				pc.x = this.mouseX;
+				pc.y = this.mouseY;
+			}
 			clear();
 			drawTriangle();
 		}

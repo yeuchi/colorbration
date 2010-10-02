@@ -82,11 +82,11 @@ point from line.
 	<mx:VBox verticalAlign="middle" horizontalAlign="center">
 		<mx:HBox>
 			<mx:Label text="A:"/>
-			<mx:ColorPicker id="clrA" selectedColor="0xFF0000" change="onChangeColor()" enabled="false"/>
+			<mx:ColorPicker id="clrA" selectedColor="0xFF0000" change="onChangeColor()" enabled="true"/>
 			<mx:Label text="B:"/>
-			<mx:ColorPicker id="clrB" selectedColor="0xFF00" change="onChangeColor()" enabled="false"/>
+			<mx:ColorPicker id="clrB" selectedColor="0xFF00" change="onChangeColor()" enabled="true"/>
 			<mx:Label text="C:"/>
-			<mx:ColorPicker id="clrC" selectedColor="0xFF" change="onChangeColor()" enabled="false"/>
+			<mx:ColorPicker id="clrC" selectedColor="0xFF" change="onChangeColor()" enabled="true"/>
 		</mx:HBox>
 		<mx:Box id="box" borderColor="0x00" borderStyle="solid" 
 				width="500" height="500" 

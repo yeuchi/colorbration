@@ -81,18 +81,9 @@ kernel NewFilter
         float db = distance(oc, ptB);
         float dc = distance(oc, ptC);
 
-        float r = da/disA*clrA[1] + db/disB*clrB[1] + dc/disC*clrC[1];
-        float g = da/disA*clrA[2] + db/disB*clrB[2] + dc/disC*clrC[2];
-        float b = da/disA*clrA[3] + db/disB*clrB[3] + dc/disC*clrC[3];
-        r = (r>1.0)?1.0:r;
-        g = (g>1.0)?1.0:g;
-        b = (b>1.0)?1.0:b;
-        r = (r<0.0)?0.0:r;
-        g = (g<0.0)?0.0:g;
-        b = (b<0.0)?0.0:b;
-        dst.r = r;
-        dst.g = g;
-        dst.b = b;
+        dst.r = (1.0-da/disA)*clrA[1] + (1.0-db/disB)*clrB[1] + (1.0-dc/disC)*clrC[1];
+        dst.g = (1.0-da/disA)*clrA[2] + (1.0-db/disB)*clrB[2] + (1.0-dc/disC)*clrC[2];
+        dst.b = (1.0-da/disA)*clrA[3] + (1.0-db/disB)*clrB[3] + (1.0-dc/disC)*clrC[3];
         dst.a = 1.0;
     }
 }
