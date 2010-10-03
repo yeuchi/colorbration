@@ -1,13 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-This is an experiment with triangle gradient.
-Hopefully, Illuminati pixelbender filter works well enough.
-Else, I will have to write some of my own.
+// ==================================================================
+// Module:		TestDrawTriangle.mxml
+//
+// Description:	This is a triangle gradient experiment project I am
+//				putting together to test a filter from pixelbender
+//				exchange.  Unfortunately, IlluminatiBG's triangle
+//				gradient filter does not seem to work well in my code.
+//				So, I will try out 2 other methods here for comparison.
+//				First one is a weighted method that is like IlluminatiBG's.
+//				Second is accomplished with a 3x3 matrix.
+//
+// Reference:	http://www.adobe.us/cfusion/exchange/index.cfm?event=extensionDetail&loc=en_us&extid=1937522
+//
+// Author(s):	C.T. Yeung		cty
+//
+// History:
+// 15Sep10		first started									cty
+//
+// Copyright (c) 2009 C.T.Yeung
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
 
-There are 2 alternatives that come to mind, using 3x3 matrix pre-computed, or 
-write my own version for triangle gradient. 
-To be different from Illuminati, I will first compute a point on the line then
-point from line.
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// ==================================================================
 -->
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
@@ -23,6 +54,7 @@ point from line.
 	<fx:Script>
 		<![CDATA[
 			import GradientMethods.IlluminatiTriangle;
+			import GradientMethods.MatrixTriangle;
 			import GradientMethods.Triangle;
 			import GradientMethods.WeightedTriangle;
 			
@@ -30,6 +62,7 @@ point from line.
 			protected var uic:Triangle;
 			protected var illuminati:IlluminatiTriangle;
 			protected var weighted:WeightedTriangle;
+			protected var matrix:MatrixTriangle;
 			
 			protected function onCreationComplete():void {
 				illuminati = new IlluminatiTriangle();
@@ -38,6 +71,9 @@ point from line.
 				weighted = new WeightedTriangle();
 				weighted.width = 500;
 				weighted.height = 500;
+				matrix = new MatrixTriangle();
+				matrix.width = 500;
+				matrix.height = 500;
 				onClickRdo(1);
 			}
 			
@@ -50,7 +86,8 @@ point from line.
 			
 			protected function onClickClear():void {
 				uic.clear();
-				uic.drawTriangle();
+				var t:Number = uic.drawTriangle();
+				elapsed.text = t.toString();
 			}
 			
 			protected function onClickRdo(value:int):void {
@@ -72,9 +109,10 @@ point from line.
 					
 					case 2:
 						rdo2.selected = true;
+						uic = matrix;
 						break;
 				}
-				
+				uic.label = elapsed;
 				box.addChild(uic);
 			}
 		]]>
@@ -92,9 +130,11 @@ point from line.
 				width="500" height="500" 
 				horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
 		<mx:HBox>
+			<mx:Label id="elapsed" text="Elapsed:"/>
+			<mx:Spacer width="10"/>
 			<mx:RadioButton id="rdo0" label="Illuminati" click="onClickRdo(0)"/>
 			<mx:RadioButton id="rdo1" label="Weighted" click="onClickRdo(1)"/>
-			<mx:RadioButton id="rdo2" label="Matrix" click="onClickRdo(2)" enabled="false"/>
+			<mx:RadioButton id="rdo2" label="Matrix" click="onClickRdo(2)"/>
 		</mx:HBox>
 	</mx:VBox>
 </s:Application>

@@ -1,7 +1,40 @@
+// ==================================================================
+// Module:		Triangle.as
+//
+// Description:	This is the base class for my triangle algorithm test
+//				experiment.
+//
+// Author(s):	C.T. Yeung		cty
+//
+// History:
+// 15Sep10		first started									cty
+//
+// Copyright (c) 2009 C.T.Yeung
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// ==================================================================
 package GradientMethods
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
 	import flash.display.GraphicsPathCommand;
 	import flash.display.GraphicsPathWinding;
 	import flash.display.Shader;
@@ -11,6 +44,7 @@ package GradientMethods
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	
+	import mx.controls.Label;
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
 	
@@ -46,6 +80,11 @@ package GradientMethods
 			this.graphics.drawRect(0,0,500,500);
 		}
 		
+		protected var timeField:Label;
+		public function set label(obj:Label):void {
+			timeField = obj;
+		}
+		
 		protected function getShader():Shader {
 			return null;
 		}
@@ -79,11 +118,12 @@ package GradientMethods
 				pc.y = this.mouseY;
 			}
 			clear();
-			drawTriangle();
+			var t:uint = drawTriangle();
+			timeField.text = "Elapsed: "+ t.toString();
 		}
 		
-		public function drawTriangle():void {
-			
+		public function drawTriangle():uint {
+			return 0;
 		}
 	}
 }

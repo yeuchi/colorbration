@@ -1,3 +1,40 @@
+// ==================================================================
+// Module:		WeightedTriangle.as
+//
+// Description:	This is my interpretation of what Illuminati's pixelbender 
+//				filter is attempting to achieve.  Or at least it is what
+//				I am trying to achieve using simple algebra and geometry.
+//				A much more efficient method would be to use 3x3 matrx.
+//
+// Reference:	http://www.adobe.us/cfusion/exchange/index.cfm?event=extensionDetail&loc=en_us&extid=1937522
+//
+// Author(s):	C.T. Yeung		cty
+//
+// History:
+// 15Sep10		first started									cty
+// 01Oct10		Working great									cty
+//
+// Copyright (c) 2009 C.T.Yeung
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// ==================================================================
 package GradientMethods
 {
 	import GradientMethods.Triangle;
@@ -12,6 +49,7 @@ package GradientMethods
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
+	import flash.utils.getTimer;
 	
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
@@ -24,14 +62,13 @@ package GradientMethods
 			super();
 		}
 		
-		
-		
 		override protected function getShader():Shader {
 			return new Shader(new weightedFilter());
 		}
 		
-		override public function drawTriangle():void {
+		override public function drawTriangle():uint {
 			// build path for draw
+			var st:uint = getTimer();
 			cmds = new Vector.<int>();
 			data = new Vector.<Number>();
 			cmds.push(GraphicsPathCommand.MOVE_TO);
@@ -83,6 +120,8 @@ package GradientMethods
 			// draw !
 			graphics.beginShaderFill(shader);
 			graphics.drawPath(cmds,data,GraphicsPathWinding.NON_ZERO);
+			var end:uint = getTimer();
+			return end - st;
 		}
 	}
 }
