@@ -41,8 +41,7 @@ package GradientMethods
 		public var out2:Number;
 		public var out3:Number;
 		
-		public function Matrix3x3()
-		{
+		public function Matrix3x3() {
 			empty();
 		}
 		
@@ -56,49 +55,27 @@ package GradientMethods
 							 0,0,0);
 		}
 		
-		public function isEmpty():Boolean
-		{
-			if ((dMtx.length != 9) ||
-			    (dMtx[0] == dMtx[1] == dMtx[2] == 
-			     dMtx[3] == dMtx[4] == dMtx[5] ==
-			     dMtx[6] == dMtx[7] == dMtx[8] == 0 ))
-				return true;
-			return false;
-		}
-		
-		// ----------------------------------------------------------
-		public function multiply(in1:Number, 
-								 in2:Number,
-								 in3:Number,
-								 mtx:Array=null)
-								 :Boolean
-		// ----------------------------------------------------------
-		{
-			if (isEmpty())
-				return false;
-				
-			out1 = in1 * dMtx[0] + in2 * dMtx[1] + in3 * dMtx[2];
-			out2 = in1 * dMtx[3] + in2 * dMtx[4] + in3 * dMtx[5];
-			out3 = in1 * dMtx[6] + in2 * dMtx[7] + in3 * dMtx[8];
-			return true;
-		}
-		
-		// ----------------------------------------------------------
-		public function invMultiply( in1:Number, 
-									 in2:Number,
-									 in3:Number)
-									 :Boolean
-		// ----------------------------------------------------------
-		{
-			if (isEmpty())
-				return false;
+		public function multiply(clrSrc:RGBColor)
+								 :RGBColor {
 			
-			inverse();
-			return multiply(in1, in2, in3);
+								 var clrDes:RGBColor = new RGBColor();
+			clrDes.r = clrSrc.r * dMtx[0] + clrSrc.g * dMtx[1] + clrSrc.b * dMtx[2];
+			clrDes.g = clrSrc.r * dMtx[3] + clrSrc.g * dMtx[4] + clrSrc.b * dMtx[5];
+			clrDes.b = clrSrc.r * dMtx[6] + clrSrc.g * dMtx[7] + clrSrc.b * dMtx[8];
+			return clrDes;
 		}
 		
-		public function inverse():Boolean
-		{
+		public function invMultiply(clrSrc:RGBColor)
+									:RGBColor {
+			
+			var clrDes:RGBColor = new RGBColor();
+			clrDes.r = clrSrc.r * iMtx[0] + clrSrc.g * iMtx[1] + clrSrc.b * iMtx[2];
+			clrDes.g = clrSrc.r * iMtx[3] + clrSrc.g * iMtx[4] + clrSrc.b * iMtx[5];
+			clrDes.b = clrSrc.r * iMtx[6] + clrSrc.g * iMtx[7] + clrSrc.b * iMtx[8];
+			return clrDes;
+		}
+		
+		public function inverse():Boolean {
 			var det:Number;
 			det = dMtx[0] * ( dMtx[4] * dMtx[8] - dMtx[5] * dMtx[7] ) 
 			      - dMtx[1] * ( dMtx[3] * dMtx[8] - dMtx[5] * dMtx[6] )
