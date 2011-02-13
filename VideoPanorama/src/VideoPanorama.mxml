@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   creationComplete="onCreationComplete()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:states>
+		<s:State name="default"/>
+		<s:State name="scan"/>
+		<s:State name="count"/>			
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.images.JPGEncoder;
+			import com.adobe.images.PNGEncoder;
+			import com.ctyeung.Targa.TGAEncoder;
+			import com.ctyeung.WindowsBitmap.WinBmpEncoder;
+			
+			import mx.controls.Alert;
+			import mx.events.VideoEvent;
+			import mx.graphics.codec.JPEGEncoder;
+			
+			protected static const DEFAULT_WID:int = 640;
+			protected static const DEFAULT_LEN:int = 480;
+			protected static const MODE_DEFAULT:String 	= "default";
+			protected static const MODE_COUNT:String 	= "count";
+			protected static const MODE_SCAN:String  	= "scan";
+			protected var file:File;
+			protected var bmd:BitmapData;
+			protected var bmdTmp:BitmapData;
+			protected var numFrames:uint;
+			protected var count:uint;
+			protected var rect:Rectangle;
+			
+			protected function onCreationComplete():void {
+				numFrames = 0;
+				count = 0;
+				this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+				player.addEventListener(VideoEvent.COMPLETE, onVideoComplete, false, 0, true);
+				currentState = MODE_DEFAULT;
+			}
+			
+			protected function onEnterFrame(e:Event):void {
+				if(!player.playing)
+					return;
+				
+				switch(currentState) {
+					case MODE_SCAN:
+						if(count<(bmd.width-10)) {
+							bmdTmp.draw(player);
+							rect = new Rectangle(count, 0, 10, bmd.height)
+							//bmdTmp.fillRect(rect, 0xFF00);
+							bmd.copyPixels(bmdTmp, rect, new Point(count*10,0));
+						}
+						else{
+							player.stop();
+							Alert.show("Kaboom");
+						}
+						
+						++ count;
+						break;
+					
+					case MODE_COUNT:
+						++ numFrames;
+						txtCount.text = "Frames:" + numFrames.toString();
+						txtRate.text = "Frame Rate:" + this.frameRate.toString();
+						break;
+				}
+			}
+			
+			protected function onClickCount():void {
+				numFrames = 0;
+				count = 0;
+				currentState = MODE_COUNT;
+				player.stop();
+				player.play();
+			}
+			
+			protected function onClickScan():void {
+				if(bmd) {
+					count = 0;
+					currentState = MODE_SCAN;
+					player.stop();
+					player.play();
+				}
+			}
+			
+			protected function empty():void {
+				while(uic.numChildren) {
+					var obj:Object = uic.getChildAt(0);
+					if(obj is Bitmap) {
+						(obj as Bitmap).bitmapData.dispose();
+						obj = null;
+					}
+				}
+				bmd = null;
+				
+				if(bmdTmp) {
+					bmdTmp.dispose();
+					bmdTmp = null;
+				}
+			}
+			
+			protected function onVideoComplete(e:Event):void {
+				switch(currentState) {
+					case MODE_SCAN:
+						break;
+					
+					case MODE_COUNT:
+						empty();
+						bmd = new BitmapData(numFrames*10, player.videoObject.videoHeight, true, 0xFFFFFFFF);
+						bmdTmp = new BitmapData(player.videoObject.videoWidth, player.videoObject.videoHeight, true, 0xFFFFFFFF);
+						uic.addChild(new Bitmap(bmd));
+						uic.width = bmd.width/2;
+						uic.height = bmd.height/2;
+						break;
+				}
+			}
+			
+			private function onBtnBrowse():void
+			{
+				var filter:FileFilter = new FileFilter("Video", "*.f4v;");
+				file = new File(); 
+				file = file.resolvePath("C:\\");
+				file.addEventListener(Event.SELECT, onFileOpen, false, 0, true);
+				file.browseForOpen("Open Image", [filter]);
+			}
+			
+			private function onFileOpen(e:Event):void 
+			{
+				txtOpen.text = file.url;
+				player.source = file.url;
+				var w:int = player.videoObject.videoWidth;
+				var h:int = player.videoObject.videoHeight;
+				this.width = (w>640)?w:DEFAULT_WID + 100;
+				this.height = (h>480)?h: DEFAULT_LEN + 200;
+			}
+			
+			private function onBtnSave():void
+			{
+				if (!bmd) return;
+				
+				var filter:FileFilter = new FileFilter("Images", "*.jpg;*.gif;*.png;*.swf;*.bmp;*.tga");
+				file = new File(); 
+				file = file.resolvePath(txtOpen.text);
+				file.addEventListener(Event.SELECT, onFileSave, false, 0, true);
+				file.browseForSave("Save Image");
+			}
+			
+			protected function onFileSave(e:Event):void
+			{
+				var bytes:ByteArray;
+				
+				if (!file.extension) {
+					var pos:int = txtOpen.text.lastIndexOf(".");
+					file.nativePath += txtOpen.text.substr(pos, txtOpen.text.length-pos);
+				}
+				switch (file.extension.toUpperCase()) {
+					case "BMP":
+						bytes = onEncodeBMP();
+						break;
+					
+					case "PNG":
+						bytes = PNGEncoder.encode(bmd);
+						break;
+					
+					case "TGA":
+						bytes = onEncodeTGA();
+						break;
+					
+					case "JPG":
+					case "JPEG":
+						bytes = onEncodeJPG();
+						break;
+					
+					default:
+						Alert.show("Image format not supported!");
+						return;
+				}
+				if (!bytes) {
+					Alert.show("Failed encoding");
+					return;
+				}
+				
+				var stream:FileStream = new FileStream();
+				stream.open(file, FileMode.WRITE);
+				stream.writeBytes(bytes, 0, bytes.length);
+				stream.close();
+			}
+			
+			protected function onEncodeJPG():ByteArray {
+				var jpg:JPEGEncoder = new JPEGEncoder();
+				return jpg.encode(bmd);
+			}
+			
+			protected function onEncodeBMP():ByteArray {
+				var winBmp:WinBmpEncoder = new WinBmpEncoder();
+				if(winBmp.encode(bmd)) 
+					return winBmp.bytes;
+				return null;
+			}
+			
+			protected function onEncodeTGA():ByteArray {
+				var tga:TGAEncoder = new TGAEncoder();
+				if(tga.encode(bmd, true))
+					return tga.bytes;
+				return null;
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup horizontalAlign="left">
+		
+		<mx:HBox>
+			<mx:Button id="btnLoad" label="Open" click="onBtnBrowse()" width="100"/>
+			<mx:TextInput id="txtOpen" width="300"/>
+		</mx:HBox>
+		<mx:HBox>
+			<mx:Button id="btnSave" label="Save" click="onBtnSave()" width="100"/>
+			<mx:TextInput id="txtSave" width="300"/>
+		</mx:HBox>
+		<mx:Box borderColor="0" borderStyle="solid">
+			<s:VideoDisplay id="player" autoPlay="false" width="{640/2}" />
+		</mx:Box>
+		<mx:Box borderColor="0" borderStyle="solid">
+			<mx:UIComponent id="uic"/>
+		</mx:Box>
+		<s:HGroup>
+			<s:Button id="btnCount" label="Count" click="onClickCount()"/>
+			<s:Label id="txtCount"/>
+			<s:Label id="txtRate"/>
+		</s:HGroup>
+		<s:HGroup>
+			<s:Button id="btnScan" label="Scan" click="onClickScan()"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:WindowedApplication>
