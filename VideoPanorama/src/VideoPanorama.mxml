@@ -17,6 +17,7 @@
 		<![CDATA[
 			import com.adobe.images.JPGEncoder;
 			import com.adobe.images.PNGEncoder;
+			import com.ctyeung.StreakPhoto;
 			import com.ctyeung.Targa.TGAEncoder;
 			import com.ctyeung.WindowsBitmap.WinBmpEncoder;
 			
@@ -30,11 +31,11 @@
 			protected static const MODE_COUNT:String 	= "count";
 			protected static const MODE_SCAN:String  	= "scan";
 			protected var file:File;
-			protected var bmd:BitmapData;
 			protected var bmdTmp:BitmapData;
 			protected var numFrames:uint;
 			protected var count:uint;
-			protected var rect:Rectangle;
+			protected var photo:StreakPhoto;
+			protected var streakWidth:int = 10;
 			
 			protected function onCreationComplete():void {
 				numFrames = 0;
@@ -42,6 +43,7 @@
 				this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
 				player.addEventListener(VideoEvent.COMPLETE, onVideoComplete, false, 0, true);
 				currentState = MODE_DEFAULT;
+				photo = new StreakPhoto();
 			}
 			
 			protected function onEnterFrame(e:Event):void {
@@ -50,11 +52,8 @@
 				
 				switch(currentState) {
 					case MODE_SCAN:
-						if(count<(bmd.width-10)) {
-							bmdTmp.draw(player);
-							rect = new Rectangle(count, 0, 10, bmd.height)
-							//bmdTmp.fillRect(rect, 0xFF00);
-							bmd.copyPixels(bmdTmp, rect, new Point(count*10,0));
+						if(count<(photo.scanLength-10)) {
+							photo.scan(player, count);
 						}
 						else{
 							player.stop();
@@ -81,7 +80,7 @@
 			}
 			
 			protected function onClickScan():void {
-				if(bmd) {
+				if(photo.bitmapData) {
 					count = 0;
 					currentState = MODE_SCAN;
 					player.stop();
@@ -97,12 +96,7 @@
 						obj = null;
 					}
 				}
-				bmd = null;
-				
-				if(bmdTmp) {
-					bmdTmp.dispose();
-					bmdTmp = null;
-				}
+				photo.dispose();
 			}
 			
 			protected function onVideoComplete(e:Event):void {
@@ -112,11 +106,14 @@
 					
 					case MODE_COUNT:
 						empty();
-						bmd = new BitmapData(numFrames*10, player.videoObject.videoHeight, true, 0xFFFFFFFF);
-						bmdTmp = new BitmapData(player.videoObject.videoWidth, player.videoObject.videoHeight, true, 0xFFFFFFFF);
-						uic.addChild(new Bitmap(bmd));
-						uic.width = bmd.width/2;
-						uic.height = bmd.height/2;
+						photo.init(	player.videoObject.videoWidth, 
+									player.videoObject.videoHeight,
+									numFrames,
+									streakWidth,
+									StreakPhoto.SCAN_HORIZONTAL);
+						uic.addChild(new Bitmap(photo.bitmapData));
+						uic.width = photo.scanLength/2;
+						uic.height = player.videoObject.videoHeight/2;
 						break;
 				}
 			}
@@ -136,13 +133,13 @@
 				player.source = file.url;
 				var w:int = player.videoObject.videoWidth;
 				var h:int = player.videoObject.videoHeight;
-				this.width = (w>640)?w:DEFAULT_WID + 100;
-				this.height = (h>480)?h: DEFAULT_LEN + 200;
+				this.width = (w>DEFAULT_WID)?w:DEFAULT_WID + 100;
+				this.height = (h>DEFAULT_LEN)?h: DEFAULT_LEN + 200;
 			}
 			
 			private function onBtnSave():void
 			{
-				if (!bmd) return;
+				if (!photo.bitmapData) return;
 				
 				var filter:FileFilter = new FileFilter("Images", "*.jpg;*.gif;*.png;*.swf;*.bmp;*.tga");
 				file = new File(); 
@@ -165,7 +162,7 @@
 						break;
 					
 					case "PNG":
-						bytes = PNGEncoder.encode(bmd);
+						bytes = PNGEncoder.encode(photo.bitmapData);
 						break;
 					
 					case "TGA":
@@ -194,19 +191,19 @@
 			
 			protected function onEncodeJPG():ByteArray {
 				var jpg:JPEGEncoder = new JPEGEncoder();
-				return jpg.encode(bmd);
+				return jpg.encode(photo.bitmapData);
 			}
 			
 			protected function onEncodeBMP():ByteArray {
 				var winBmp:WinBmpEncoder = new WinBmpEncoder();
-				if(winBmp.encode(bmd)) 
+				if(winBmp.encode(photo.bitmapData)) 
 					return winBmp.bytes;
 				return null;
 			}
 			
 			protected function onEncodeTGA():ByteArray {
 				var tga:TGAEncoder = new TGAEncoder();
-				if(tga.encode(bmd, true))
+				if(tga.encode(photo.bitmapData, true))
 					return tga.bytes;
 				return null;
 			}
