@@ -35,7 +35,7 @@
 			protected var numFrames:uint;
 			protected var count:uint;
 			protected var photo:StreakPhoto;
-			protected var streakWidth:int = 10;
+			protected var streakWidth:int = 20;
 			
 			protected function onCreationComplete():void {
 				numFrames = 0;
@@ -52,12 +52,12 @@
 				
 				switch(currentState) {
 					case MODE_SCAN:
-						if(count<(photo.scanLength-10)) {
+						if(count<numFrames) {
 							photo.scan(player, count);
 						}
 						else{
 							player.stop();
-							Alert.show("Kaboom");
+							Alert.show("Finish");
 						}
 						
 						++ count;
@@ -219,8 +219,8 @@
 			<mx:Button id="btnSave" label="Save" click="onBtnSave()" width="100"/>
 			<mx:TextInput id="txtSave" width="300"/>
 		</mx:HBox>
-		<mx:Box borderColor="0" borderStyle="solid">
-			<s:VideoDisplay id="player" autoPlay="false" width="{640/2}" />
+		<mx:Box id="playerBox" borderColor="0" borderStyle="solid">
+			<s:VideoDisplay id="player" autoPlay="false"  />
 		</mx:Box>
 		<mx:Box borderColor="0" borderStyle="solid">
 			<mx:UIComponent id="uic"/>
