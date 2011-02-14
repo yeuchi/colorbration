@@ -2,6 +2,7 @@ package com.ctyeung
 {
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -15,11 +16,11 @@ package com.ctyeung
 		protected var bmdSrc:BitmapData;
 		protected var direction:String;
 		protected var streakWidth:int;
+		protected var numFrames:int;
 		protected var rect:Rectangle;
 		protected var p:Point;
 		
-		public function StreakPhoto()
-		{
+		public function StreakPhoto() {
 			p = new Point();
 		}
 		
@@ -57,16 +58,22 @@ package com.ctyeung
 							 scanDirection:String)
 							 :Boolean {
 			this.streakWidth = streakWidth;
-			this.direction = scanDirection;
-			bmdSrc = new BitmapData(videoWidth, videoHeight, false);
+			this.direction 	 = scanDirection;
+			this.numFrames 	 = numFrames;
+			bmdSrc 			 = new BitmapData(videoWidth, videoHeight, false);
+			
 			switch(scanDirection) {
 				case SCAN_VERTICAL:
-					bmdDes = new BitmapData(videoWidth, numFrames*streakWidth, false);
+					bmdDes = new BitmapData(videoWidth, 
+											numFrames*streakWidth+videoHeight, 
+											false);
 					break;
 					
 				default:
 				case SCAN_HORIZONTAL:
-					bmdDes = new BitmapData(numFrames*streakWidth, videoHeight, false);
+					bmdDes = new BitmapData(numFrames*streakWidth+videoWidth, 
+											videoHeight, 
+											false);
 					break;
 			}
 			return true;
@@ -89,14 +96,26 @@ package com.ctyeung
 				case SCAN_VERTICAL:
 					p.x = 0; 
 					p.y = index * streakWidth;
-					rect = new Rectangle(0, index, bmdSrc.width, streakWidth);
+					rect = new Rectangle(0, bmdSrc.height/2, bmdSrc.width, streakWidth);
 					break;
 				
 				default:
 				case SCAN_HORIZONTAL:
-					p.x = index * streakWidth;
-					p.y = 0;
-					rect = new Rectangle(index, 0, streakWidth, bmdSrc.height);
+					if(index==0) {
+						p.x = 0;
+						p.y = 0;
+						rect = new Rectangle(0, 0, bmdSrc.width/2+streakWidth/2, bmdSrc.height);
+					}
+					else if(index==(numFrames-1)) {
+						p.x = bmdSrc.width/2+index*streakWidth-streakWidth/2;
+						p.y = 0;
+						rect = new Rectangle(bmdSrc.width/2-streakWidth/2, 0, bmdSrc.width/2+streakWidth/2, bmdSrc.height);
+					}
+					else {
+						p.x = bmdSrc.width/2+index*streakWidth-streakWidth/2;
+						p.y = 0;
+						rect = new Rectangle(bmdSrc.width/2-streakWidth/2, 0, streakWidth, bmdSrc.height);
+					}
 					break;
 			}
 		}
