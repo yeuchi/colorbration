@@ -1,0 +1,87 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>TGAEncoder.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">// ==================================================================
+</span><span class="ActionScriptComment">// Module:            TGAEncoder.as
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Description:        Encoder for Truevision TARGA
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Input/Output:    Bitmap data
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Author(s):        C.T. Yeung
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// History:
+</span><span class="ActionScriptComment">// 02May10            default RGB 24, 32 bpp no-compress encoding passed testing
+</span><span class="ActionScriptComment">//                    on Adobe CS4 Photoshop                             cty
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">// Copyright (c) 2010 C.T.Yeung
+</span>
+<span class="ActionScriptComment">// Permission is hereby granted, free of charge, to any person obtaining
+</span><span class="ActionScriptComment">// a copy of this software and associated documentation files (the
+</span><span class="ActionScriptComment">// "Software"), to deal in the Software without restriction, including
+</span><span class="ActionScriptComment">// without limitation the rights to use, copy, modify, merge, publish,
+</span><span class="ActionScriptComment">// distribute, sublicense, and/or sell copies of the Software, and to
+</span><span class="ActionScriptComment">// permit persons to whom the Software is furnished to do so, subject to
+</span><span class="ActionScriptComment">// the following conditions:
+</span>
+<span class="ActionScriptComment">// The above copyright notice and this permission notice shall be included
+</span><span class="ActionScriptComment">// in all copies or substantial portions of the Software.
+</span>
+<span class="ActionScriptComment">// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+</span><span class="ActionScriptComment">// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+</span><span class="ActionScriptComment">// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+</span><span class="ActionScriptComment">// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+</span><span class="ActionScriptComment">// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+</span><span class="ActionScriptComment">// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+</span><span class="ActionScriptComment">// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</span><span class="ActionScriptComment">// ==================================================================
+</span><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ctyeung</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Targa</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BitmapData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ByteArray</span>;
+
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">TGAEncoder</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">bytes</span>:<span class="ActionScriptDefault_Text">ByteArray</span>;
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">hdr</span>:<span class="ActionScriptDefault_Text">TGAHeader</span>;
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">pal</span>:<span class="ActionScriptDefault_Text">TGAPalette</span>;
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">img</span>:<span class="ActionScriptDefault_Text">TGAImageData</span>;
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">bmd</span>:<span class="ActionScriptDefault_Text">BitmapData</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">TGAEncoder</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">hdr</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">TGAHeader</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptComment">//pal = new TGAPalette(hdr);
+</span>            <span class="ActionScriptDefault_Text">img</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">TGAImageData</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hdr</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">pal</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">encode</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">bmd</span>:<span class="ActionScriptDefault_Text">BitmapData</span><span class="ActionScriptOperator">,</span>         <span class="ActionScriptComment">// [in] image
+</span>                                <span class="ActionScriptDefault_Text">hasAlpha</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">false</span><span class="ActionScriptBracket/Brace">)</span>    <span class="ActionScriptComment">// [in] 24, or 32 bpp
+</span>                                :<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptBracket/Brace">{</span>                <span class="ActionScriptComment">// [out] success or not
+</span>            <span class="ActionScriptDefault_Text">hdr</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bpp</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hasAlpha</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">?</span>
+                        <span class="ActionScriptDefault_Text">TGATypeEnum</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BPP_32</span>:
+                        <span class="ActionScriptDefault_Text">TGATypeEnum</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BPP_24</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hdr</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">encode</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bmd</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptComment">//if(pal.encode(bmd))
+</span>                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">img</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">encode</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bmd</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">hasAlpha</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">bytes</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">ByteArray</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">writeBytes</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hdr</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">,</span> 0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">hdr</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">writeBytes</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">img</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">,</span> 0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">img</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">writeUnsignedInt</span><span class="ActionScriptBracket/Brace">(</span>0<span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">writeUnsignedInt</span><span class="ActionScriptBracket/Brace">(</span>0<span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">bytes</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">writeMultiByte</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"TRUEVISION-XFILE."</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptString">"us-ascii"</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">true</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+        
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>
