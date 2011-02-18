@@ -1,0 +1,55 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>TGATypeEnum.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ctyeung</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Targa</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">TGATypeEnum</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">HEADER_LEN</span>:<span class="ActionScriptDefault_Text">int</span>                 <span class="ActionScriptOperator">=</span> 18;
+        <span class="ActionScriptComment">// screen origin
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">ORIG_LOW_LEFT</span>:<span class="ActionScriptDefault_Text">int</span>             <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">ORIG_LOW_RIGHT</span>:<span class="ActionScriptDefault_Text">int</span>             <span class="ActionScriptOperator">=</span> 1;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">ORIG_UP_LEFT</span>:<span class="ActionScriptDefault_Text">int</span>             <span class="ActionScriptOperator">=</span> 10;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">ORIG_UP_RIGHT</span>:<span class="ActionScriptDefault_Text">int</span>             <span class="ActionScriptOperator">=</span> 11;
+        
+        <span class="ActionScriptComment">// data storage interleave
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">INTERLEAVE_NONE</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">INTERLEAVE_2WAY</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 1;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">INTERLEAVE_4WAY</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 10;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">INTERLEAVE_RESERVED</span>:<span class="ActionScriptDefault_Text">int</span>        <span class="ActionScriptOperator">=</span> 11;
+
+        <span class="ActionScriptComment">// image types
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">IMG_TYPE_CLR_MAP_NO_CMP</span>:<span class="ActionScriptDefault_Text">int</span>  <span class="ActionScriptOperator">=</span> 1;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">IMG_TYPE_RGB_NO_CMP</span>:<span class="ActionScriptDefault_Text">int</span>         <span class="ActionScriptOperator">=</span> 2;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">IMG_TYPE_MONO_NO_CMP</span>:<span class="ActionScriptDefault_Text">int</span>     <span class="ActionScriptOperator">=</span> 3;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">IMG_TYPE_CLR_RMAP_RLE</span>:<span class="ActionScriptDefault_Text">int</span>     <span class="ActionScriptOperator">=</span> 9;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">IMG_TYPE_RGB_RLE</span>:<span class="ActionScriptDefault_Text">int</span>         <span class="ActionScriptOperator">=</span> 10;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">IMG_TYPE_MONO_RLE</span>:<span class="ActionScriptDefault_Text">int</span>         <span class="ActionScriptOperator">=</span> 11;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">IMG_TYPE_CLR_MAP_HUFF</span>:<span class="ActionScriptDefault_Text">int</span>     <span class="ActionScriptOperator">=</span> 32;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">IMG_TYPE_CLR_MAP_HUFFQUAD</span>:<span class="ActionScriptDefault_Text">int</span><span class="ActionScriptOperator">=</span> 33;
+    
+        <span class="ActionScriptComment">// color map entry size
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">CLR_MAP_SIZE_16</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 16;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">CLR_MAP_SIZE_24</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 24;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">CLR_MAP_SIZE_32</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 32;
+        
+        <span class="ActionScriptComment">// bits per pixel
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">BPP_1</span>:<span class="ActionScriptDefault_Text">int</span>                     <span class="ActionScriptOperator">=</span> 1;    <span class="ActionScriptComment">// binary
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">BPP_8</span>:<span class="ActionScriptDefault_Text">int</span>                    <span class="ActionScriptOperator">=</span> 8;    <span class="ActionScriptComment">// grayscale or palette
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">BPP_24</span>:<span class="ActionScriptDefault_Text">int</span>                    <span class="ActionScriptOperator">=</span> 24;    <span class="ActionScriptComment">// RGB
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">BPP_32</span>:<span class="ActionScriptDefault_Text">int</span>                    <span class="ActionScriptOperator">=</span> 32;    <span class="ActionScriptComment">// RGB+alpha
+</span>    
+        <span class="ActionScriptComment">// Alpha setting
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">ATTR_NONE_16bpp</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 0;    <span class="ActionScriptComment">// 16bpp opaque
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">ATTR_TRUE_16bpp</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 1;    <span class="ActionScriptComment">// 16bpp alpha
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">ATTR_NONE_24bpp</span>:<span class="ActionScriptDefault_Text">int</span>            <span class="ActionScriptOperator">=</span> 0;    <span class="ActionScriptComment">// 24bpp opaque
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">ATTR_DEPTH_32bpp</span>:<span class="ActionScriptDefault_Text">int</span>        <span class="ActionScriptOperator">=</span> 8;    <span class="ActionScriptComment">// 32bpp alpha
+</span>    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   minWidth="955" minHeight="600"
+			   creationComplete="onCreationComplete()" viewSourceURL="srcview/index.html">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:states>
+		<s:State name="default"/>
+		<s:State name="scan"/>
+		<s:State name="count"/>			
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.images.JPGEncoder;
+			import com.adobe.images.PNGEncoder;
+			import com.ctyeung.StreakPhoto;
+			import com.ctyeung.Targa.TGAEncoder;
+			import com.ctyeung.WindowsBitmap.WinBmpEncoder;
+			
+			import flash.net.FileReference;
+			
+			import mx.controls.Alert;
+			import mx.events.VideoEvent;
+			import mx.graphics.codec.JPEGEncoder;
+
+			private var fileReferenceList:FileReferenceList;
+			protected static const DEFAULT_WID:int = 640;
+			protected static const DEFAULT_LEN:int = 480;
+			protected static const MODE_DEFAULT:String 	= "default";
+			protected static const MODE_COUNT:String 	= "count";
+			protected static const MODE_SCAN:String  	= "scan";
+			protected var bmdTmp:BitmapData;
+			protected var numFrames:uint;
+			protected var count:uint;
+			protected var photo:StreakPhoto;
+			protected var fileRef:FileReference;
+			
+			protected function onCreationComplete():void {
+				fileRef = new FileReference();
+
+				var imageTypes:FileFilter = new FileFilter("Images (*.jpg, *.jpeg, *.gif, *.png)", "*.jpg; *.jpeg; *.gif; *.png");
+				fileReferenceList = new FileReferenceList();
+				fileReferenceList.addEventListener(Event.SELECT, selectHandler);
+				fileReferenceList.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+				fileReferenceList.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+				
+				numFrames = 0;
+				count = 0;
+				this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+				video.addEventListener(VideoEvent.COMPLETE, onVideoComplete, false, 0, true);
+				currentState = MODE_DEFAULT;
+				photo = new StreakPhoto();
+			}
+			
+			protected function ioErrorHandler(e:Event):void {
+				Alert.show("load Error"+e.toString());
+			}
+			
+			protected function progressHandler(e:ProgressEvent):void {
+				txtLoaded.text = (Number(e.bytesLoaded)/Number(e.bytesTotal)*100).toString()+"%";
+			}
+			
+			private function selectHandler(event:Event):void {
+				var fileReference:FileReference;
+				var fileReferenceList:FileReferenceList = FileReferenceList(event.target);
+				var fileList:Array = fileReferenceList.fileList;
+				
+				// get the first file that the user chose
+				fileReference = FileReference(fileList[0]);
+				
+				// upload the file to the server side script
+				fileReference.addEventListener(Event.COMPLETE, completeHandler);
+				fileReference.upload(new URLRequest("http://www.ctyeung.com/flex/upload/upload.php"));
+			}
+			
+			protected function completeHandler(event:Event):void {
+				var ref:FileReference = event.currentTarget as FileReference;
+				video.source = "http://www.ctyeung.com/flex/upload/"+ref.name;
+				var w:int = video.videoObject.videoWidth;
+				var h:int = video.videoObject.videoHeight;
+				this.width = (w>DEFAULT_WID)?w:DEFAULT_WID + 100;
+				this.height = (h>DEFAULT_LEN)?h: DEFAULT_LEN + 200;
+			}
+			
+			protected function onBtnBrowse():void {
+				fileReferenceList.browse();
+			}
+			protected function onEnterFrame(e:Event):void {
+				if(!video.playing)
+					return;
+				
+				switch(currentState) {
+					case MODE_SCAN:
+						if(count<numFrames) {
+							photo.scan(video, count);
+						}
+						else{
+							video.stop();
+							Alert.show("Finish");
+						}
+						
+						++ count;
+						break;
+					
+					case MODE_COUNT:
+						++ numFrames;
+						txtCount.text = "Frames:" + numFrames.toString();
+						break;
+				}
+			}
+			
+			protected function onClickCount():void {
+				numFrames = 0;
+				count = 0;
+				currentState = MODE_COUNT;
+				video.stop();
+				video.play();
+			}
+			
+			protected function onClickScan():void {
+				if(photo.bitmapData) {
+					photo.streakWidth = this.streakWidth.value;
+					photo.bitmapData.fillRect(photo.bitmapData.rect, 0xFFFFFF);
+					count = 0;
+					currentState = MODE_SCAN;
+					video.stop();
+					video.play();
+				}
+			}
+			
+			protected function empty():void {
+				while(uic.numChildren) {
+					var obj:Object = uic.getChildAt(0);
+					if(obj is Bitmap) {
+						(obj as Bitmap).bitmapData.dispose();
+						obj = null;
+					}
+				}
+				photo.dispose();
+			}
+			
+			protected function onVideoComplete(e:Event):void {
+				switch(currentState) {
+					case MODE_SCAN:
+						break;
+					
+					case MODE_COUNT:
+						empty();
+						photo.init(	video.videoObject.videoWidth, 
+							video.videoObject.videoHeight,
+							numFrames,
+							streakWidth.value,
+							StreakPhoto.SCAN_HORIZONTAL);
+						uic.addChild(new Bitmap(photo.bitmapData));
+						uic.width = photo.scanLength/2;
+						uic.height = video.videoObject.videoHeight/2;
+						break;
+				}
+			}
+			
+			private function onBtnSave():void
+			{
+				var bytes:ByteArray = saveFile();
+				fileRef.save(bytes, "panorama.png");
+			}
+			
+			protected function saveFile():ByteArray
+			{
+				if (!photo.bitmapData) {
+					Alert.show("Failed encoding");
+					return null;
+				}
+				return PNGEncoder.encode(photo.bitmapData);
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup horizontalAlign="left">
+		
+		<mx:HBox>
+			<mx:Button id="btnLoad" label="Open" click="onBtnBrowse()" width="100"/>
+			<mx:Button id="btnSave" label="Save" click="onBtnSave()" width="100"/>
+			<s:Label id="txtLoaded"/>
+			<mx:Spacer width="20"/>
+			<s:Button id="btnCount" label="Count" click="onClickCount()"/>
+			<mx:Spacer width="20"/>
+			<s:Label id="txtCount" text="num frames=??"/>
+			<s:Button id="btnScan" label="Scan" click="onClickScan()"/>
+			<mx:Spacer width="20"/>
+			<s:Label text="Streak width:"/>
+			<s:NumericStepper id="streakWidth" stepSize="2" value="6" minimum="2" maximum="30"/>
+		</mx:HBox>
+		<mx:Box id="playerBox" borderColor="0" borderStyle="solid">
+			<s:VideoDisplay id="video" autoPlay="false"  />
+		</mx:Box>
+		<mx:Box borderColor="0" borderStyle="solid">
+			<mx:UIComponent id="uic"/>
+		</mx:Box>
+		
+	</s:VGroup>
+</s:Application>
