@@ -8,7 +8,7 @@ package com.ctyeung
 	
 	import spark.components.VideoDisplay;
 
-	public class StreakPhoto
+	public class StreakCamera
 	{
 		public static const SCAN_VERTICAL:String 	= "vertical";
 		public static const SCAN_HORIZONTAL:String 	= "horizontal";
@@ -20,7 +20,7 @@ package com.ctyeung
 		protected var rect:Rectangle;
 		protected var p:Point;
 		
-		public function StreakPhoto() {
+		public function StreakCamera() {
 			p = new Point();
 		}
 		

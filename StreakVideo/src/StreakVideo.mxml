@@ -3,22 +3,22 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx" 
 			   minWidth="955" minHeight="600"
-			   creationComplete="onCreationComplete()" viewSourceURL="srcview/index.html">
+			   creationComplete="onCreationComplete()">
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	
 	<s:states>
-		<s:State name="default"/>
-		<s:State name="scan"/>
-		<s:State name="count"/>			
+		<s:State name="default" enterState="onEnterDefault()"/>
+		<s:State name="scan" enterState="onEnterScan()"/>
+		<s:State name="count" enterState="onEnterCount()"/>			
 	</s:states>
 	
 	<fx:Script>
 		<![CDATA[
 			import com.adobe.images.JPGEncoder;
 			import com.adobe.images.PNGEncoder;
-			import com.ctyeung.StreakPhoto;
+			import com.ctyeung.StreakCamera;
 			import com.ctyeung.Targa.TGAEncoder;
 			import com.ctyeung.WindowsBitmap.WinBmpEncoder;
 			
@@ -37,13 +37,30 @@
 			protected var bmdTmp:BitmapData;
 			protected var numFrames:uint;
 			protected var count:uint;
-			protected var photo:StreakPhoto;
+			protected var camera:StreakCamera;
 			protected var fileRef:FileReference;
+			
+			protected function onEnterScan():void {
+				btnScan.enabled = true;
+				btnCount.enabled = false;
+				streakWidth.enabled = true;
+			}
+			
+			protected function onEnterCount():void {
+				btnScan.enabled = false;
+				btnCount.enabled = true;
+				streakWidth.enabled = false;
+			}
+			
+			protected function onEnterDefault():void {
+				btnScan.enabled = false;
+				btnCount.enabled = false;
+				streakWidth.enabled = false;
+			}
 			
 			protected function onCreationComplete():void {
 				fileRef = new FileReference();
 
-				var imageTypes:FileFilter = new FileFilter("Images (*.jpg, *.jpeg, *.gif, *.png)", "*.jpg; *.jpeg; *.gif; *.png");
 				fileReferenceList = new FileReferenceList();
 				fileReferenceList.addEventListener(Event.SELECT, selectHandler);
 				fileReferenceList.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
@@ -54,7 +71,7 @@
 				this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
 				video.addEventListener(VideoEvent.COMPLETE, onVideoComplete, false, 0, true);
 				currentState = MODE_DEFAULT;
-				photo = new StreakPhoto();
+				camera = new StreakCamera();
 			}
 			
 			protected function ioErrorHandler(e:Event):void {
@@ -66,6 +83,9 @@
 			}
 			
 			private function selectHandler(event:Event):void {
+				empty();
+				this.count = 0;
+				this.numFrames = 0;
 				var fileReference:FileReference;
 				var fileReferenceList:FileReferenceList = FileReferenceList(event.target);
 				var fileList:Array = fileReferenceList.fileList;
@@ -79,6 +99,9 @@
 			}
 			
 			protected function completeHandler(event:Event):void {
+				btnSave.enabled = false;
+				video.autoPlay = false;
+				this.currentState = MODE_COUNT;
 				var ref:FileReference = event.currentTarget as FileReference;
 				video.source = "http://www.ctyeung.com/flex/upload/"+ref.name;
 				var w:int = video.videoObject.videoWidth;
@@ -88,7 +111,8 @@
 			}
 			
 			protected function onBtnBrowse():void {
-				fileReferenceList.browse();
+				var imageTypes:FileFilter = new FileFilter("Video", "*.f4v");
+				fileReferenceList.browse([imageTypes]);
 			}
 			protected function onEnterFrame(e:Event):void {
 				if(!video.playing)
@@ -97,13 +121,11 @@
 				switch(currentState) {
 					case MODE_SCAN:
 						if(count<numFrames) {
-							photo.scan(video, count);
+							camera.scan(video, count);
 						}
 						else{
 							video.stop();
-							Alert.show("Finish");
 						}
-						
 						++ count;
 						break;
 					
@@ -123,9 +145,9 @@
 			}
 			
 			protected function onClickScan():void {
-				if(photo.bitmapData) {
-					photo.streakWidth = this.streakWidth.value;
-					photo.bitmapData.fillRect(photo.bitmapData.rect, 0xFFFFFF);
+				if(camera.bitmapData) {
+					camera.streakWidth = this.streakWidth.value;
+					camera.bitmapData.fillRect(camera.bitmapData.rect, 0xFFFFFF);
 					count = 0;
 					currentState = MODE_SCAN;
 					video.stop();
@@ -136,28 +158,31 @@
 			protected function empty():void {
 				while(uic.numChildren) {
 					var obj:Object = uic.getChildAt(0);
+					uic.removeChildAt(0);
 					if(obj is Bitmap) {
 						(obj as Bitmap).bitmapData.dispose();
 						obj = null;
 					}
 				}
-				photo.dispose();
+				camera.dispose();
 			}
 			
 			protected function onVideoComplete(e:Event):void {
 				switch(currentState) {
 					case MODE_SCAN:
+						btnSave.enabled = true;
 						break;
 					
 					case MODE_COUNT:
+						currentState = MODE_SCAN;
 						empty();
-						photo.init(	video.videoObject.videoWidth, 
+						camera.init(	video.videoObject.videoWidth, 
 							video.videoObject.videoHeight,
 							numFrames,
 							streakWidth.value,
-							StreakPhoto.SCAN_HORIZONTAL);
-						uic.addChild(new Bitmap(photo.bitmapData));
-						uic.width = photo.scanLength/2;
+							StreakCamera.SCAN_HORIZONTAL);
+						uic.addChild(new Bitmap(camera.bitmapData));
+						uic.width = camera.scanLength/2;
 						uic.height = video.videoObject.videoHeight/2;
 						break;
 				}
@@ -171,11 +196,11 @@
 			
 			protected function saveFile():ByteArray
 			{
-				if (!photo.bitmapData) {
+				if (!camera.bitmapData) {
 					Alert.show("Failed encoding");
 					return null;
 				}
-				return PNGEncoder.encode(photo.bitmapData);
+				return PNGEncoder.encode(camera.bitmapData);
 			}
 		]]>
 	</fx:Script>
@@ -183,7 +208,7 @@
 		
 		<mx:HBox>
 			<mx:Button id="btnLoad" label="Open" click="onBtnBrowse()" width="100"/>
-			<mx:Button id="btnSave" label="Save" click="onBtnSave()" width="100"/>
+			<mx:Button id="btnSave" label="Save" click="onBtnSave()" enabled="false" width="100"/>
 			<s:Label id="txtLoaded"/>
 			<mx:Spacer width="20"/>
 			<s:Button id="btnCount" label="Count" click="onClickCount()"/>
@@ -191,11 +216,11 @@
 			<s:Label id="txtCount" text="num frames=??"/>
 			<s:Button id="btnScan" label="Scan" click="onClickScan()"/>
 			<mx:Spacer width="20"/>
-			<s:Label text="Streak width:"/>
+			<s:Label text="Slit width:"/>
 			<s:NumericStepper id="streakWidth" stepSize="2" value="6" minimum="2" maximum="30"/>
 		</mx:HBox>
 		<mx:Box id="playerBox" borderColor="0" borderStyle="solid">
-			<s:VideoDisplay id="video" autoPlay="false"  />
+			<s:VideoDisplay id="video" autoPlay="true" source="http://www.ctyeung.com/flex/upload/BlockBuster2.f4v" />
 		</mx:Box>
 		<mx:Box borderColor="0" borderStyle="solid">
 			<mx:UIComponent id="uic"/>
