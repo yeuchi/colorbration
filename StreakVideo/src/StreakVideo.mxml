@@ -109,7 +109,7 @@ History:
 // --- Buttons ------------------------------------------------------
 			
 			protected function onClickUpload():void {
-				var imageTypes:FileFilter = new FileFilter("Video", "*.f4v");
+				var imageTypes:FileFilter = new FileFilter("Video", "*.f4v;*.flv");
 				fileRef = new FileReference();
 				fileRef.addEventListener(Event.SELECT, onSelect, false, 0, true);
 				fileRef.addEventListener(IOErrorEvent.IO_ERROR, onError, false, 0, true);
@@ -268,7 +268,7 @@ History:
 				<mx:HBox verticalAlign="middle">
 					<mx:Button id="btnLoad" width="{BUTTON_WID}" label="Upload" click="onClickUpload()"/>
 					<mx:Spacer width="10"/>
-					<s:Label text="Flash: *.f4v" width="{BUTTON_WID}"/>
+					<s:Label text="Flash: f4v flv" width="{BUTTON_WID}"/>
 				</mx:HBox>
 				<mx:HBox verticalAlign="middle">
 					<mx:Button id="btnSave" width="{BUTTON_WID}" label="Save" click="onClickSave()" enabled="false"/>
