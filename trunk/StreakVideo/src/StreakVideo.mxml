@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+Module:			StreakVideo.mxml
+
+Description:	Main of the program
+				- This is a website that converts user's panning video into a panoramic photo.
+				- Because VideoDisplay class does not allow byteArray input, I have to upload 
+				file from user's PC to server, then stream it into VideoDisplay.
+				
+				- Saving png is direct from application to user's file directory.
+
+Author(s):		C.T. Yeung - concept and assembling this website.
+				Adobe example sour - for php and Flex upload.
+
+History:
+10Feb11			1st functional															cty
+20Feb11			add comments, upload progress dialog, refactored uploadReference		cty
+-->
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx" 
@@ -18,6 +35,7 @@
 		<![CDATA[
 			import com.adobe.images.JPGEncoder;
 			import com.adobe.images.PNGEncoder;
+			import com.ctyeung.ProgressDialog;
 			import com.ctyeung.StreakCamera;
 			import com.ctyeung.Targa.TGAEncoder;
 			import com.ctyeung.WindowsBitmap.WinBmpEncoder;
@@ -25,48 +43,26 @@
 			import flash.net.FileReference;
 			
 			import mx.controls.Alert;
+			import mx.core.IFlexDisplayObject;
 			import mx.events.VideoEvent;
 			import mx.graphics.codec.JPEGEncoder;
+			import mx.managers.PopUpManager;
 
-			private var fileReferenceList:FileReferenceList;
-			protected static const BUTTON_WID:int = 100;
-			protected static const PADDING:int = 10;
-			protected static const DEFAULT_WID:int = 640;
-			protected static const DEFAULT_LEN:int = 480;
+			protected static const BUTTON_WID:int 		= 100;
+			protected static const PADDING:int 			= 10;
+			protected static const DEFAULT_WID:int 		= 640;
+			protected static const DEFAULT_LEN:int 		= 480;
 			protected static const MODE_DEFAULT:String 	= "default";
 			protected static const MODE_COUNT:String 	= "count";
 			protected static const MODE_SCAN:String  	= "scan";
-			protected var bmdTmp:BitmapData;
+			
 			protected var numFrames:uint;
 			protected var count:uint;
 			protected var camera:StreakCamera;
 			protected var fileRef:FileReference;
-			
-			protected function onEnterScan():void {
-				btnScan.enabled = true;
-				btnCount.enabled = false;
-				streakWidth.enabled = true;
-			}
-			
-			protected function onEnterCount():void {
-				btnScan.enabled = false;
-				btnCount.enabled = true;
-				streakWidth.enabled = false;
-			}
-			
-			protected function onEnterDefault():void {
-				btnScan.enabled = false;
-				btnCount.enabled = false;
-				streakWidth.enabled = false;
-			}
+			protected var dlg:IFlexDisplayObject;
 			
 			protected function onCreationComplete():void {
-				fileRef = new FileReference();
-				fileReferenceList = new FileReferenceList();
-				fileReferenceList.addEventListener(Event.SELECT, selectHandler);
-				fileReferenceList.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
-				fileReferenceList.addEventListener(ProgressEvent.PROGRESS, progressHandler);
-				
 				numFrames = 0;
 				count = 0;
 				this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
@@ -75,46 +71,119 @@
 				camera = new StreakCamera();
 			}
 			
-			protected function ioErrorHandler(e:Event):void {
+			protected function disposeFileReference():void {
+				if(!fileRef)
+					return;
+				
+				fileRef.cancel();
+				
+				if(fileRef.hasEventListener(Event.SELECT))
+					fileRef.removeEventListener(Event.SELECT, onSelect);
+				
+				if(fileRef.hasEventListener(IOErrorEvent.IO_ERROR))
+					fileRef.removeEventListener(IOErrorEvent.IO_ERROR, onError);
+				
+				if(fileRef.hasEventListener(Event.COMPLETE))
+					fileRef.removeEventListener(Event.COMPLETE, onUploadComplete);
+				fileRef = null;
+			}
+			
+			protected function onCancel(e:Event):void {
+				disposeFileReference();
+				dlg.removeEventListener(Event.CANCEL, onCancel);
+				dlg = null;
+			}
+			
+			protected function empty():void {
+				while(uic.numChildren) {
+					var obj:Object = uic.getChildAt(0);
+					uic.removeChildAt(0);
+					if(obj is Bitmap) {
+						(obj as Bitmap).bitmapData.dispose();
+						obj = null;
+					}
+				}
+				camera.dispose();
+			}
+			
+// --- Buttons ------------------------------------------------------
+			
+			protected function onClickUpload():void {
+				var imageTypes:FileFilter = new FileFilter("Video", "*.f4v");
+				fileRef = new FileReference();
+				fileRef.addEventListener(Event.SELECT, onSelect, false, 0, true);
+				fileRef.addEventListener(IOErrorEvent.IO_ERROR, onError, false, 0, true);
+				fileRef.addEventListener(Event.COMPLETE, onUploadComplete);
+				fileRef.browse([imageTypes]);
+			}
+			protected function onClickCount():void {
+				numFrames = 0;
+				count = 0;
+				currentState = MODE_COUNT;
+				video.stop();
+				video.play();
+			}
+			
+			protected function onClickScan():void {
+				if(camera.bitmapData) {
+					camera.streakWidth = this.streakWidth.value;
+					camera.bitmapData.fillRect(camera.bitmapData.rect, 0xFFFFFF);
+					count = 0;
+					currentState = MODE_SCAN;
+					video.stop();
+					video.play();
+				}
+			}
+			
+			private function onClickSave():void
+			{
+				var bytes:ByteArray = saveFile();
+				fileRef.save(bytes, "panorama.png");
+			}
+
+// --- serialize/deserialize operations --------------------------------------------
+			
+			protected function saveFile():ByteArray
+			{
+				if (!camera.bitmapData) {
+					Alert.show("Failed encoding");
+					return null;
+				}
+				return PNGEncoder.encode(camera.bitmapData);
+			}
+			
+			protected function onError(e:Event):void {
 				Alert.show("load Error"+e.toString());
 			}
 			
-			protected function progressHandler(e:ProgressEvent):void {
-				txtLoaded.text = (Number(e.bytesLoaded)/Number(e.bytesTotal)*100).toString()+"%";
-			}
-			
-			private function selectHandler(event:Event):void {
+			private function onSelect(event:Event):void {
 				empty();
 				this.count = 0;
 				this.numFrames = 0;
-				var fileReference:FileReference;
-				var fileReferenceList:FileReferenceList = FileReferenceList(event.target);
-				var fileList:Array = fileReferenceList.fileList;
-				
-				// get the first file that the user chose
-				fileReference = FileReference(fileList[0]);
-				
-				// upload the file to the server side script
-				fileReference.addEventListener(Event.COMPLETE, completeHandler);
-				fileReference.upload(new URLRequest("http://www.ctyeung.com/flex/upload/upload.php"));
+				fileRef.upload(new URLRequest("http://www.ctyeung.com/flex/upload/upload.php"),"Filedata", true);
+				dlg = PopUpManager.createPopUp(this, ProgressDialog, true);
+				dlg.addEventListener(Event.CANCEL, onCancel, false, 0, true);
 			}
 			
-			protected function completeHandler(event:Event):void {
+			protected function onUploadComplete(event:Event):void {
+				disposeFileReference();
+				
+				PopUpManager.removePopUp(dlg);
 				btnSave.enabled = false;
 				video.autoPlay = false;
 				this.currentState = MODE_COUNT;
-				var ref:FileReference = event.currentTarget as FileReference;
-				video.source = "http://www.ctyeung.com/flex/upload/"+ref.name;
+				
+				fileRef = event.currentTarget as FileReference;
+				video.source = "http://www.ctyeung.com/flex/upload/"+fileRef.name;
+				
 				var w:int = video.videoObject.videoWidth;
 				var h:int = video.videoObject.videoHeight;
 				this.width = (w>DEFAULT_WID)?w:DEFAULT_WID + 100;
 				this.height = (h>DEFAULT_LEN)?h: DEFAULT_LEN + 200;
 			}
+
+// --- video operations ---------------------------------------------
 			
-			protected function onBtnBrowse():void {
-				var imageTypes:FileFilter = new FileFilter("Video", "*.f4v");
-				fileReferenceList.browse([imageTypes]);
-			}
 			protected function onEnterFrame(e:Event):void {
 				if(!video.playing)
 					return;
@@ -137,37 +206,6 @@
 				}
 			}
 			
-			protected function onClickCount():void {
-				numFrames = 0;
-				count = 0;
-				currentState = MODE_COUNT;
-				video.stop();
-				video.play();
-			}
-			
-			protected function onClickScan():void {
-				if(camera.bitmapData) {
-					camera.streakWidth = this.streakWidth.value;
-					camera.bitmapData.fillRect(camera.bitmapData.rect, 0xFFFFFF);
-					count = 0;
-					currentState = MODE_SCAN;
-					video.stop();
-					video.play();
-				}
-			}
-			
-			protected function empty():void {
-				while(uic.numChildren) {
-					var obj:Object = uic.getChildAt(0);
-					uic.removeChildAt(0);
-					if(obj is Bitmap) {
-						(obj as Bitmap).bitmapData.dispose();
-						obj = null;
-					}
-				}
-				camera.dispose();
-			}
-			
 			protected function onVideoComplete(e:Event):void {
 				switch(currentState) {
 					case MODE_SCAN:
@@ -188,20 +226,25 @@
 						break;
 				}
 			}
+
+// --- states -------------------------------------------------------
 			
-			private function onBtnSave():void
-			{
-				var bytes:ByteArray = saveFile();
-				fileRef.save(bytes, "panorama.png");
+			protected function onEnterScan():void {
+				btnScan.enabled = true;
+				btnCount.enabled = false;
+				streakWidth.enabled = true;
 			}
 			
-			protected function saveFile():ByteArray
-			{
-				if (!camera.bitmapData) {
-					Alert.show("Failed encoding");
-					return null;
-				}
-				return PNGEncoder.encode(camera.bitmapData);
+			protected function onEnterCount():void {
+				btnScan.enabled = false;
+				btnCount.enabled = true;
+				streakWidth.enabled = false;
+			}
+			
+			protected function onEnterDefault():void {
+				btnScan.enabled = false;
+				btnCount.enabled = false;
+				streakWidth.enabled = false;
 			}
 		]]>
 	</fx:Script>
@@ -223,12 +266,12 @@
 					paddingRight="{PADDING}" 
 					paddingTop="{PADDING}" >
 				<mx:HBox verticalAlign="middle">
-					<mx:Button id="btnLoad" width="{BUTTON_WID}" label="Upload" click="onBtnBrowse()"/>
+					<mx:Button id="btnLoad" width="{BUTTON_WID}" label="Upload" click="onClickUpload()"/>
 					<mx:Spacer width="10"/>
 					<s:Label text="Flash: *.f4v" width="{BUTTON_WID}"/>
 				</mx:HBox>
 				<mx:HBox verticalAlign="middle">
-					<mx:Button id="btnSave" width="{BUTTON_WID}" label="Save" click="onBtnSave()" enabled="false"/>
+					<mx:Button id="btnSave" width="{BUTTON_WID}" label="Save" click="onClickSave()" enabled="false"/>
 					<mx:Spacer width="10"/>
 					<s:Label text="Image: *.png" width="{BUTTON_WID}"/>
 				</mx:HBox>
