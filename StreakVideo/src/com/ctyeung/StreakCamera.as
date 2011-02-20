@@ -1,3 +1,14 @@
+// ==================================================================
+// Module:		StreakCamera.as
+// 
+// Description:	Slit-scanning camera to assemble panoramic photo.
+//
+// Author(s):	C.T. Yeung
+//
+// History:
+// 10Feb11		1st functional									cty
+// 20Feb11		add this comment, 1st publish app 				cty
+// ==================================================================
 package com.ctyeung
 {
 	import flash.display.BitmapData;
