@@ -140,6 +140,10 @@ History:
 				var bytes:ByteArray = saveFile();
 				fileRef.save(bytes, "panorama.png");
 			}
+			
+			private function onClickHelp():void {
+				navigateToURL(new URLRequest("http://www.ctyeung.com/flex/VideoPanorama/index.html"),"_blank");
+			}
 
 // --- serialize/deserialize operations --------------------------------------------
 			
@@ -303,6 +307,19 @@ History:
 					<s:Label text="Slit width" width="{BUTTON_WID}"/>
 				</mx:HBox>
 				<s:Button id="btnScan" width="{BUTTON_WID}" label="Render" click="onClickScan()"/>
+			</mx:Box>
+			<mx:Box borderColor="0x888888" 
+					borderStyle="solid" 
+					cornerRadius="5" 
+					paddingBottom="{PADDING}" 
+					paddingLeft="{PADDING}" 
+					paddingRight="{PADDING}" 
+					paddingTop="{PADDING}" >
+				<mx:HBox verticalAlign="middle">
+					<s:Button id="btnHelp" width="{BUTTON_WID}" label="Help" click="onClickHelp()" />
+					<mx:Spacer width="10"/>
+					<s:Label text="sample, direction" width="{BUTTON_WID}"/>
+				</mx:HBox>
 			</mx:Box>
 		</mx:VBox>
 	</mx:HBox>	
