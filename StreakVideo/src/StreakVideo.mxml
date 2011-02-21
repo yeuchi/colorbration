@@ -308,6 +308,7 @@ History:
 				</mx:HBox>
 				<s:Button id="btnScan" width="{BUTTON_WID}" label="Render" click="onClickScan()"/>
 			</mx:Box>
+			<mx:Spacer height="5"/>
 			<mx:Box borderColor="0x888888" 
 					borderStyle="solid" 
 					cornerRadius="5" 
