@@ -61,6 +61,7 @@ History:
 			protected var camera:StreakCamera;
 			protected var fileRef:FileReference;
 			protected var dlg:IFlexDisplayObject;
+			protected var demoFinished:Boolean = false;
 			
 			protected function onCreationComplete():void {
 				numFrames = 0;
@@ -110,6 +111,7 @@ History:
 			
 			protected function onClickUpload():void {
 				var imageTypes:FileFilter = new FileFilter("Video", "*.f4v;*.flv");
+				disposeFileReference();
 				fileRef = new FileReference();
 				fileRef.addEventListener(Event.SELECT, onSelect, false, 0, true);
 				fileRef.addEventListener(IOErrorEvent.IO_ERROR, onError, false, 0, true);
@@ -164,6 +166,7 @@ History:
 				empty();
 				this.count = 0;
 				this.numFrames = 0;
+				this.currentState = MODE_DEFAULT;
 				fileRef.upload(new URLRequest("http://www.ctyeung.com/flex/upload/upload.php"),"Filedata", true);
 				dlg = PopUpManager.createPopUp(this, ProgressDialog, true);
 				dlg.addEventListener(Event.CANCEL, onCancel, false, 0, true);
@@ -174,8 +177,6 @@ History:
 				
 				PopUpManager.removePopUp(dlg);
 				btnSave.enabled = false;
-				video.autoPlay = false;
-				this.currentState = MODE_COUNT;
 				
 				fileRef = event.currentTarget as FileReference;
 				video.source = "http://www.ctyeung.com/flex/upload/"+fileRef.name;
@@ -184,6 +185,7 @@ History:
 				var h:int = video.videoObject.videoHeight;
 				this.width = (w>DEFAULT_WID)?w:DEFAULT_WID + 100;
 				this.height = (h>DEFAULT_LEN)?h: DEFAULT_LEN + 200;
+				video.play();
 			}
 
 // --- video operations ---------------------------------------------
@@ -212,6 +214,14 @@ History:
 			
 			protected function onVideoComplete(e:Event):void {
 				switch(currentState) {
+					case MODE_DEFAULT:
+						if(demoFinished) {
+							this.currentState = MODE_COUNT;
+							video.autoPlay = false;
+						}
+						demoFinished = true;
+						break;
+					
 					case MODE_SCAN:
 						btnSave.enabled = true;
 						break;
