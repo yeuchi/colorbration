@@ -2,22 +2,23 @@
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
-					   creationComplete="onCreationComplete()">
+					   creationComplete="onCreationComplete()"
+					   width="900" height="580">
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	
 	<s:states>
-		<s:State name="default"/>
-		<s:State name="scan"/>
-		<s:State name="count"/>			
+		<s:State name="default" enterState="onEnterDefault()"/>
+		<s:State name="scan" enterState="onEnterScan()"/>
+		<s:State name="count" enterState="onEnterCount()"/>			
 	</s:states>
 	
 	<fx:Script>
 		<![CDATA[
 			import com.adobe.images.JPGEncoder;
 			import com.adobe.images.PNGEncoder;
-			import com.ctyeung.StreakPhoto;
+			import com.ctyeung.StreakCamera;
 			import com.ctyeung.Targa.TGAEncoder;
 			import com.ctyeung.WindowsBitmap.WinBmpEncoder;
 			
@@ -25,8 +26,10 @@
 			import mx.events.VideoEvent;
 			import mx.graphics.codec.JPEGEncoder;
 			
-			protected static const DEFAULT_WID:int = 640;
-			protected static const DEFAULT_LEN:int = 480;
+			protected static const BUTTON_WID:int 		= 100;
+			protected static const PADDING:int 			= 10;
+			protected static const DEFAULT_WID:int 		= 640;
+			protected static const DEFAULT_LEN:int 		= 480;
 			protected static const MODE_DEFAULT:String 	= "default";
 			protected static const MODE_COUNT:String 	= "count";
 			protected static const MODE_SCAN:String  	= "scan";
@@ -34,58 +37,16 @@
 			protected var bmdTmp:BitmapData;
 			protected var numFrames:uint;
 			protected var count:uint;
-			protected var photo:StreakPhoto;
-			protected var streakWidth:int = 20;
+			protected var camera:StreakCamera;
+			protected var demoFinished:Boolean = false;
 			
 			protected function onCreationComplete():void {
 				numFrames = 0;
 				count = 0;
 				this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
-				player.addEventListener(VideoEvent.COMPLETE, onVideoComplete, false, 0, true);
+				video.addEventListener(VideoEvent.COMPLETE, onVideoComplete, false, 0, true);
 				currentState = MODE_DEFAULT;
-				photo = new StreakPhoto();
-			}
-			
-			protected function onEnterFrame(e:Event):void {
-				if(!player.playing)
-					return;
-				
-				switch(currentState) {
-					case MODE_SCAN:
-						if(count<numFrames) {
-							photo.scan(player, count);
-						}
-						else{
-							player.stop();
-							Alert.show("Finish");
-						}
-						
-						++ count;
-						break;
-					
-					case MODE_COUNT:
-						++ numFrames;
-						txtCount.text = "Frames:" + numFrames.toString();
-						txtRate.text = "Frame Rate:" + this.frameRate.toString();
-						break;
-				}
-			}
-			
-			protected function onClickCount():void {
-				numFrames = 0;
-				count = 0;
-				currentState = MODE_COUNT;
-				player.stop();
-				player.play();
-			}
-			
-			protected function onClickScan():void {
-				if(photo.bitmapData) {
-					count = 0;
-					currentState = MODE_SCAN;
-					player.stop();
-					player.play();
-				}
+				camera = new StreakCamera();
 			}
 			
 			protected function empty():void {
@@ -96,54 +57,146 @@
 						obj = null;
 					}
 				}
-				photo.dispose();
+				camera.dispose();
 			}
 			
-			protected function onVideoComplete(e:Event):void {
+			// --- video operations ---------------------------------------------
+			
+			protected function onEnterFrame(e:Event):void {
+				if(!video.playing)
+					return;
+				
 				switch(currentState) {
 					case MODE_SCAN:
+						if(count<numFrames) {
+							camera.scan(video, count);
+						}
+						else{
+							video.stop();
+						}
+						++ count;
 						break;
 					
 					case MODE_COUNT:
-						empty();
-						photo.init(	player.videoObject.videoWidth, 
-									player.videoObject.videoHeight,
-									numFrames,
-									streakWidth,
-									StreakPhoto.SCAN_HORIZONTAL);
-						uic.addChild(new Bitmap(photo.bitmapData));
-						uic.width = photo.scanLength/2;
-						uic.height = player.videoObject.videoHeight/2;
+						++ numFrames;
+						txtCount.text = "Frames:" + numFrames.toString();
 						break;
 				}
 			}
 			
-			private function onBtnBrowse():void
+			protected function onVideoComplete(e:Event):void {
+				switch(currentState) {
+					case MODE_DEFAULT:
+						if(demoFinished) {
+							this.currentState = MODE_COUNT;
+							video.autoPlay = false;
+						}
+						demoFinished = true;
+						break;
+					
+					case MODE_SCAN:
+						btnSave.enabled = true;
+						break;
+					
+					case MODE_COUNT:
+						currentState = MODE_SCAN;
+						empty();
+						camera.init(	video.videoObject.videoWidth, 
+							video.videoObject.videoHeight,
+							numFrames,
+							streakWidth.value,
+							StreakCamera.SCAN_HORIZONTAL);
+						uic.addChild(new Bitmap(camera.bitmapData));
+						uic.width = camera.scanLength/2;
+						uic.height = video.videoObject.videoHeight/2;
+						break;
+				}
+			}
+			
+// --- states -------------------------------------------------------
+			
+			protected function onEnterScan():void {
+				btnScan.enabled = true;
+				btnCount.enabled = false;
+				streakWidth.enabled = true;
+			}
+			
+			protected function onEnterCount():void {
+				btnScan.enabled = false;
+				btnCount.enabled = true;
+				streakWidth.enabled = false;
+			}
+			
+			protected function onEnterDefault():void {
+				btnScan.enabled = false;
+				btnCount.enabled = false;
+				streakWidth.enabled = false;
+			}
+			
+// --- Button clicked -----------------------------------------------
+			
+			protected function onClickCount():void {
+				numFrames = 0;
+				count = 0;
+				currentState = MODE_COUNT;
+				video.stop();
+				video.play();
+			}
+			
+			protected function onClickScan():void {
+				if(camera.bitmapData) {
+					camera.streakWidth = this.streakWidth.value;
+					camera.bitmapData.fillRect(camera.bitmapData.rect, 0xFFFFFF);
+					count = 0;
+					currentState = MODE_SCAN;
+					video.stop();
+					video.play();
+				}
+			}	
+			
+			private function onClickHelp():void {
+				navigateToURL(new URLRequest("http://www.ctyeung.com/flex/VideoPanorama/index.html"),"_blank");
+			}
+			
+			private function onClickUpload():void
 			{
-				var filter:FileFilter = new FileFilter("Video", "*.f4v;");
+				var filter:FileFilter = new FileFilter("Flash Video", "*.flv;*.f4v");
 				file = new File(); 
 				file = file.resolvePath("C:\\");
 				file.addEventListener(Event.SELECT, onFileOpen, false, 0, true);
-				file.browseForOpen("Open Image", [filter]);
+				file.browseForOpen("Open Video", [filter]);
 			}
 			
 			private function onFileOpen(e:Event):void 
 			{
-				txtOpen.text = file.url;
-				player.source = file.url;
-				var w:int = player.videoObject.videoWidth;
-				var h:int = player.videoObject.videoHeight;
+				txtOpen = file.url;
+				video.source = file.url;
+				var w:int = video.videoObject.videoWidth;
+				var h:int = video.videoObject.videoHeight;
 				this.width = (w>DEFAULT_WID)?w:DEFAULT_WID + 100;
 				this.height = (h>DEFAULT_LEN)?h: DEFAULT_LEN + 200;
 			}
+			protected var txtOpen:String="video.f4v";
+			protected var txtSave:String="panorama.jpg";
 			
 			private function onBtnSave():void
 			{
-				if (!photo.bitmapData) return;
+				if (!camera.bitmapData) return;
 				
 				var filter:FileFilter = new FileFilter("Images", "*.jpg;*.gif;*.png;*.swf;*.bmp;*.tga");
 				file = new File(); 
-				file = file.resolvePath(txtOpen.text);
+				file = file.resolvePath(txtOpen);
+				file.addEventListener(Event.SELECT, onFileSave, false, 0, true);
+				file.browseForSave("Save Image");
+			}
+			
+			private function onClickSave():void
+			{
+				if (!camera.bitmapData) return;
+				
+				var filter:FileFilter = new FileFilter("Images", "*.jpg;*.gif;*.png;*.swf;*.bmp;*.tga");
+				file = new File(); 
+				file = file.resolvePath("c:\\");
 				file.addEventListener(Event.SELECT, onFileSave, false, 0, true);
 				file.browseForSave("Save Image");
 			}
@@ -153,8 +206,8 @@
 				var bytes:ByteArray;
 				
 				if (!file.extension) {
-					var pos:int = txtOpen.text.lastIndexOf(".");
-					file.nativePath += txtOpen.text.substr(pos, txtOpen.text.length-pos);
+					var pos:int = txtOpen.lastIndexOf(".");
+					file.nativePath += txtOpen.substr(pos, txtOpen.length-pos);
 				}
 				switch (file.extension.toUpperCase()) {
 					case "BMP":
@@ -162,7 +215,7 @@
 						break;
 					
 					case "PNG":
-						bytes = PNGEncoder.encode(photo.bitmapData);
+						bytes = PNGEncoder.encode(camera.bitmapData);
 						break;
 					
 					case "TGA":
@@ -191,47 +244,99 @@
 			
 			protected function onEncodeJPG():ByteArray {
 				var jpg:JPEGEncoder = new JPEGEncoder();
-				return jpg.encode(photo.bitmapData);
+				return jpg.encode(camera.bitmapData);
 			}
 			
 			protected function onEncodeBMP():ByteArray {
 				var winBmp:WinBmpEncoder = new WinBmpEncoder();
-				if(winBmp.encode(photo.bitmapData)) 
+				if(winBmp.encode(camera.bitmapData)) 
 					return winBmp.bytes;
 				return null;
 			}
 			
 			protected function onEncodeTGA():ByteArray {
 				var tga:TGAEncoder = new TGAEncoder();
-				if(tga.encode(photo.bitmapData, true))
+				if(tga.encode(camera.bitmapData, true))
 					return tga.bytes;
 				return null;
 			}
 		]]>
 	</fx:Script>
 	<s:VGroup horizontalAlign="left">
-		
-		<mx:HBox>
-			<mx:Button id="btnLoad" label="Open" click="onBtnBrowse()" width="100"/>
-			<mx:TextInput id="txtOpen" width="300"/>
-		</mx:HBox>
-		<mx:HBox>
-			<mx:Button id="btnSave" label="Save" click="onBtnSave()" width="100"/>
-			<mx:TextInput id="txtSave" width="300"/>
-		</mx:HBox>
-		<mx:Box id="playerBox" borderColor="0" borderStyle="solid">
-			<s:VideoDisplay id="player" autoPlay="false"  />
-		</mx:Box>
+		<mx:HBox paddingBottom="{PADDING}" 
+				 paddingLeft="{PADDING}" 
+				 paddingRight="{PADDING}" 
+				 paddingTop="{PADDING}" >
+			<mx:Box id="playerBox" borderColor="0" borderStyle="solid">
+				<s:VideoDisplay id="video" autoPlay="true" source="http://www.ctyeung.com/flex/upload/BlockBuster2.f4v" />
+			</mx:Box>
+			<mx:VBox>
+				<s:Label id="txtLoaded" text="Video2Panorama"/>
+				<mx:VBox borderColor="0x888888" 
+						 borderStyle="solid" 
+						 cornerRadius="5" 
+						 paddingBottom="{PADDING}" 
+						 paddingLeft="{PADDING}" 
+						 paddingRight="{PADDING}" 
+						 paddingTop="{PADDING}" >
+					<mx:HBox verticalAlign="middle">
+						<mx:Button id="btnLoad" width="{BUTTON_WID}" label="Upload" click="onClickUpload()"/>
+						<mx:Spacer width="10"/>
+						<s:Label text="Flash: f4v flv" width="{BUTTON_WID}"/>
+					</mx:HBox>
+					<mx:HBox verticalAlign="middle">
+						<mx:Button id="btnSave" width="{BUTTON_WID}" label="Save" click="onClickSave()" enabled="false"/>
+						<mx:Spacer width="10"/>
+						<s:Label text="Image: *.png" width="{BUTTON_WID}"/>
+					</mx:HBox>
+				</mx:VBox>
+				<mx:Spacer height="5"/>
+				<mx:HBox borderColor="0x888888" 
+						 borderStyle="solid" 
+						 cornerRadius="5" 
+						 paddingBottom="{PADDING}" 
+						 paddingLeft="{PADDING}" 
+						 paddingRight="{PADDING}" 
+						 paddingTop="{PADDING}" >
+					<s:Button id="btnCount" width="{BUTTON_WID}" label="Count" click="onClickCount()"/>
+					<mx:Spacer width="10"/>
+					<s:Label id="txtCount" text="num frames=??" width="{BUTTON_WID}" />
+				</mx:HBox>
+				<mx:Spacer height="5"/>
+				<mx:Box borderColor="0x888888" 
+						borderStyle="solid" 
+						cornerRadius="5" 
+						paddingBottom="{PADDING}" 
+						paddingLeft="{PADDING}" 
+						paddingRight="{PADDING}" 
+						paddingTop="{PADDING}" >
+					
+					<mx:HBox verticalAlign="middle">
+						<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="2" value="6" minimum="2" maximum="30"/>
+						<mx:Spacer width="10"/>
+						<s:Label text="Slit width" width="{BUTTON_WID}"/>
+					</mx:HBox>
+					<s:Button id="btnScan" width="{BUTTON_WID}" label="Render" click="onClickScan()"/>
+				</mx:Box>
+				<mx:Spacer height="5"/>
+				<mx:Box borderColor="0x888888" 
+						borderStyle="solid" 
+						cornerRadius="5" 
+						paddingBottom="{PADDING}" 
+						paddingLeft="{PADDING}" 
+						paddingRight="{PADDING}" 
+						paddingTop="{PADDING}" >
+					<mx:HBox verticalAlign="middle">
+						<s:Button id="btnHelp" width="{BUTTON_WID}" label="Help" click="onClickHelp()" />
+						<mx:Spacer width="10"/>
+						<s:Label text="sample, direction" width="{BUTTON_WID}"/>
+					</mx:HBox>
+				</mx:Box>
+			</mx:VBox>
+		</mx:HBox>	
 		<mx:Box borderColor="0" borderStyle="solid">
 			<mx:UIComponent id="uic"/>
 		</mx:Box>
-		<s:HGroup>
-			<s:Button id="btnCount" label="Count" click="onClickCount()"/>
-			<s:Label id="txtCount"/>
-			<s:Label id="txtRate"/>
-		</s:HGroup>
-		<s:HGroup>
-			<s:Button id="btnScan" label="Scan" click="onClickScan()"/>
-		</s:HGroup>
+		
 	</s:VGroup>
 </s:WindowedApplication>

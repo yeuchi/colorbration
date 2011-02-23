@@ -1,3 +1,14 @@
+// ==================================================================
+// Module:		StreakCamera.as
+// 
+// Description:	Slit-scanning camera to assemble panoramic photo.
+//
+// Author(s):	C.T. Yeung
+//
+// History:
+// 10Feb11		1st functional									cty
+// 20Feb11		add this comment, 1st publish app 				cty
+// ==================================================================
 package com.ctyeung
 {
 	import flash.display.BitmapData;
@@ -8,19 +19,19 @@ package com.ctyeung
 	
 	import spark.components.VideoDisplay;
 
-	public class StreakPhoto
+	public class StreakCamera
 	{
 		public static const SCAN_VERTICAL:String 	= "vertical";
 		public static const SCAN_HORIZONTAL:String 	= "horizontal";
+		public var streakWidth:int;
 		protected var bmdDes:BitmapData;
 		protected var bmdSrc:BitmapData;
 		protected var direction:String;
-		protected var streakWidth:int;
 		protected var numFrames:int;
 		protected var rect:Rectangle;
 		protected var p:Point;
 		
-		public function StreakPhoto() {
+		public function StreakCamera() {
 			p = new Point();
 		}
 		
@@ -85,6 +96,7 @@ package com.ctyeung
 			if(!bmdSrc)
 				return false;
 			
+			// actually want to do this with keyframes instead... someday.
 			bmdSrc.draw(video);
 			setPosition(index);
 			bmdDes.copyPixels(bmdSrc, rect, p);
@@ -94,6 +106,22 @@ package com.ctyeung
 		protected function setPosition(index:int):void {
 			switch(direction) {
 				case SCAN_VERTICAL:
+					if(index==0) {
+						p.x = 0;
+						p.y = 0;
+						rect = new Rectangle(0, 0, bmdSrc.width, bmdSrc.height/2+streakWidth/2);
+					}
+					else if(index==(numFrames-1)) {
+						p.x = 0;
+						p.y = bmdSrc.height/2+index*streakWidth-streakWidth/2;
+						rect = new Rectangle(0, bmdSrc.height/2-streakWidth/2, bmdSrc.width, bmdSrc.height/2+streakWidth/2);
+					}
+					else {
+						p.x = 0;
+						p.y = bmdSrc.height/2+index*streakWidth-streakWidth/2;
+						rect = new Rectangle(0, bmdSrc.height/2-streakWidth/2, bmdSrc.width, streakWidth);
+					}
+					
 					p.x = 0; 
 					p.y = index * streakWidth;
 					rect = new Rectangle(0, bmdSrc.height/2, bmdSrc.width, streakWidth);
