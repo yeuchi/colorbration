@@ -55,6 +55,7 @@
 						(obj as Bitmap).bitmapData.dispose();
 						obj = null;
 					}
+					uic.removeChildAt(0);
 				}
 				camera.dispose();
 			}
