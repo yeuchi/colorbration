@@ -312,7 +312,7 @@ History:
 					paddingTop="{PADDING}" >
 				
 				<mx:HBox verticalAlign="middle">
-					<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="2" value="6" minimum="2" maximum="30"/>
+					<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="1" value="6" minimum="2" maximum="30"/>
 					<mx:Spacer width="10"/>
 					<s:Label text="Slit width" width="{BUTTON_WID}"/>
 				</mx:HBox>
