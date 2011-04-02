@@ -159,7 +159,7 @@
 			
 			private function onClickUpload():void
 			{
-				var filter:FileFilter = new FileFilter("Flash Video", "*.flv;*.f4v");
+				var filter:FileFilter = new FileFilter("Flash Video", "*.flv;*.f4v;*.mp4");
 				file = new File(); 
 				file = file.resolvePath("C:\\");
 				file.addEventListener(Event.SELECT, onFileOpen, false, 0, true);
@@ -304,7 +304,7 @@
 						paddingTop="{PADDING}" >
 					
 					<mx:HBox verticalAlign="middle">
-						<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="2" value="6" minimum="2" maximum="30"/>
+						<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="1" value="6" minimum="2" maximum="30"/>
 						<mx:Spacer width="10"/>
 						<s:Label text="Slit width" width="{BUTTON_WID}"/>
 					</mx:HBox>

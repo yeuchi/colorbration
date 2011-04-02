@@ -76,13 +76,13 @@ package com.ctyeung
 			switch(scanDirection) {
 				case SCAN_VERTICAL:
 					bmdDes = new BitmapData(videoWidth, 
-											numFrames*streakWidth+videoHeight, 
+											numFrames*(streakWidth-1)+videoHeight, 
 											false);
 					break;
 					
 				default:
 				case SCAN_HORIZONTAL:
-					bmdDes = new BitmapData(numFrames*streakWidth+videoWidth, 
+					bmdDes = new BitmapData(numFrames*(streakWidth-1)+videoWidth, 
 											videoHeight, 
 											false);
 					break;
@@ -113,13 +113,13 @@ package com.ctyeung
 					}
 					else if(index==(numFrames-1)) {
 						p.x = 0;
-						p.y = bmdSrc.height/2+index*streakWidth-streakWidth/2;
-						rect = new Rectangle(0, bmdSrc.height/2-streakWidth/2, bmdSrc.width, bmdSrc.height/2+streakWidth/2);
+						p.y = bmdSrc.height/2+index*streakWidth;
+						rect = new Rectangle(0, bmdSrc.height/2, bmdSrc.width, bmdSrc.height/2);
 					}
 					else {
 						p.x = 0;
-						p.y = bmdSrc.height/2+index*streakWidth-streakWidth/2;
-						rect = new Rectangle(0, bmdSrc.height/2-streakWidth/2, bmdSrc.width, streakWidth);
+						p.y = bmdSrc.height/2+index*streakWidth;
+						rect = new Rectangle(0, bmdSrc.height/2, bmdSrc.width, streakWidth);
 					}
 					
 					p.x = 0; 
@@ -132,17 +132,17 @@ package com.ctyeung
 					if(index==0) {
 						p.x = 0;
 						p.y = 0;
-						rect = new Rectangle(0, 0, bmdSrc.width/2+streakWidth/2, bmdSrc.height);
+						rect = new Rectangle(0, 0, bmdSrc.width/2+streakWidth, bmdSrc.height);
 					}
 					else if(index==(numFrames-1)) {
-						p.x = bmdSrc.width/2+index*streakWidth-streakWidth/2;
+						p.x = bmdSrc.width/2+index*streakWidth;
 						p.y = 0;
-						rect = new Rectangle(bmdSrc.width/2-streakWidth/2, 0, bmdSrc.width/2+streakWidth/2, bmdSrc.height);
+						rect = new Rectangle(bmdSrc.width/2, 0, bmdSrc.width/2, bmdSrc.height);
 					}
 					else {
-						p.x = bmdSrc.width/2+index*streakWidth-streakWidth/2;
+						p.x = bmdSrc.width/2+index*streakWidth;
 						p.y = 0;
-						rect = new Rectangle(bmdSrc.width/2-streakWidth/2, 0, streakWidth, bmdSrc.height);
+						rect = new Rectangle(bmdSrc.width/2, 0, streakWidth, bmdSrc.height);
 					}
 					break;
 			}
