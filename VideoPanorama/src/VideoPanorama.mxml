@@ -48,17 +48,16 @@
 				camera = new StreakCamera();
 			}
 			
-			protected function empty():void {
-				while(uic.numChildren) {
-					var obj:Object = uic.getChildAt(0);
-					if(obj is Bitmap) {
-						(obj as Bitmap).bitmapData.dispose();
-						obj = null;
-					}
-					uic.removeChildAt(0);
-				}
+			protected function dispose():void {
+				clear();
 				camera.dispose();
 			}
+			
+			protected function clear():void {
+				while(uic.numChildren) 
+					uic.removeChildAt(0);
+			}
+			
 			
 			// --- video operations ---------------------------------------------
 			
@@ -97,7 +96,7 @@
 					
 					case MODE_COUNT:
 						currentState = MODE_SCAN;
-						empty();
+						dispose();
 						camera.init(	video.videoObject.videoWidth, 
 							video.videoObject.videoHeight,
 							numFrames,
@@ -107,6 +106,19 @@
 						uic.width = camera.scanLength/2;
 						uic.height = video.videoObject.videoHeight/2;
 						break;
+				}
+			}
+			
+			protected function onChangeStreakWidth():void {
+				if(camera) {
+					clear();
+					camera.resize(	video.videoObject.videoWidth, 
+									video.videoObject.videoHeight,
+									streakWidth.value);
+					
+					uic.addChild(new Bitmap(camera.bitmapData));
+					uic.width = camera.scanLength/2;
+					uic.height = video.videoObject.videoHeight/2;
 				}
 			}
 			
@@ -169,7 +181,7 @@
 			private function onFileOpen(e:Event):void 
 			{
 				if(camera.bitmapData)
-					this.empty();
+					this.dispose();
 				
 				this.currentState = MODE_DEFAULT;
 				txtOpen = file.url;
@@ -304,7 +316,7 @@
 						paddingTop="{PADDING}" >
 					
 					<mx:HBox verticalAlign="middle">
-						<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="1" value="6" minimum="2" maximum="30"/>
+						<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="1" value="6" minimum="2" maximum="30" change="onChangeStreakWidth()"/>
 						<mx:Spacer width="10"/>
 						<s:Label text="Slit width" width="{BUTTON_WID}"/>
 					</mx:HBox>
