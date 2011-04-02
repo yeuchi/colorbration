@@ -62,6 +62,20 @@ package com.ctyeung
 			}
 		}
 		
+		public function resize(videoWidth:int,
+							   videoHeight:int,
+							   streakWid:int)
+			:Boolean {
+			if(bmdDes)
+				bmdDes.dispose();
+			
+			this.streakWidth = streakWid;
+			bmdDes = new BitmapData(numFrames*(streakWidth-1)+videoWidth, 
+				videoHeight, 
+				false);
+			return (bmdDes)?true:false;
+		}
+		
 		public function init(videoWidth:int,
 							 videoHeight:int,
 							 numFrames:int,

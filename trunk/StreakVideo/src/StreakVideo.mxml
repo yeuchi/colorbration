@@ -95,16 +95,14 @@ History:
 				dlg = null;
 			}
 			
-			protected function empty():void {
-				while(uic.numChildren) {
-					var obj:Object = uic.getChildAt(0);
-					uic.removeChildAt(0);
-					if(obj is Bitmap) {
-						(obj as Bitmap).bitmapData.dispose();
-						obj = null;
-					}
-				}
+			protected function dispose():void {
+				clear();
 				camera.dispose();
+			}
+			
+			protected function clear():void {
+				while(uic.numChildren) 
+					uic.removeChildAt(0);
 			}
 			
 // --- Buttons ------------------------------------------------------
@@ -163,7 +161,7 @@ History:
 			}
 			
 			private function onSelect(event:Event):void {
-				empty();
+				dispose();
 				this.count = 0;
 				this.numFrames = 0;
 				this.currentState = MODE_DEFAULT;
@@ -228,7 +226,7 @@ History:
 					
 					case MODE_COUNT:
 						currentState = MODE_SCAN;
-						empty();
+						clear();
 						camera.init(	video.videoObject.videoWidth, 
 							video.videoObject.videoHeight,
 							numFrames,
@@ -238,6 +236,19 @@ History:
 						uic.width = camera.scanLength/2;
 						uic.height = video.videoObject.videoHeight/2;
 						break;
+				}
+			}
+			
+			protected function onChangeStreakWidth():void {
+				if(camera) {
+					clear();
+					camera.resize(	video.videoObject.videoWidth, 
+						video.videoObject.videoHeight,
+						streakWidth.value);
+					
+					uic.addChild(new Bitmap(camera.bitmapData));
+					uic.width = camera.scanLength/2;
+					uic.height = video.videoObject.videoHeight/2;
 				}
 			}
 
@@ -312,7 +323,7 @@ History:
 					paddingTop="{PADDING}" >
 				
 				<mx:HBox verticalAlign="middle">
-					<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="1" value="6" minimum="2" maximum="30"/>
+					<s:NumericStepper id="streakWidth" width="{BUTTON_WID}" stepSize="1" value="6" minimum="2" maximum="30" change="onChangeStreakWidth()"/>
 					<mx:Spacer width="10"/>
 					<s:Label text="Slit width" width="{BUTTON_WID}"/>
 				</mx:HBox>
