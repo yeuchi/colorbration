@@ -1,0 +1,184 @@
+<!DOCTYPPE html>
+<html lang="en">
+
+<!-- Module: 		Triangle Gradient
+
+     Description:	basic matrix triangle gradient method
+     
+     ** NOTE:		There is a bug with Firefox, it is rendering only the boundary.
+     				(which is a cool feature I should add later).
+
+	 Reference:
+      3x3 matrix:	The Reproduction of Colour - fifth edition, by Dr. R.W.G. Hunt (pg. 765)
+      canvas fill:	http://dev.opera.com/articles/view/html-5-canvas-the-basics/#paths
+        
+     Author:		C.T. Yeung
+  -->
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Triangle Gradient</title>
+
+	<LINK REL=StyleSheet HREF="default.css" TYPE="text/css"> 
+  	<script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="Matrix.js"></script>
+  	<script>
+	$(document).ready(function() {
+		var canvas = document.getElementById('myCanvas');
+		var context = canvas.getContext('2d');			
+		var pSrcX = new Array();							// array of triangle points, positions
+		var pSrcY = new Array();
+		var mtx;											// 3x3 matrix, color transform
+		
+		$("#btnClear").click(function () {
+			context.clearRect(0,0,canvas.width, canvas.height);
+			context = canvas.getContext('2d');
+			pSrcX = new Array();
+			pSrcY = new Array();
+		});
+		
+		$("#boundOn").click(function () {
+			draw();
+		});
+		
+		$("#myCanvas").click(function (e) {	
+			addAnchor(e, $(this).position());
+			
+			draw();
+			setRadioButtons();
+		});
+			
+		function setRadioButtons()
+		{
+			$("#radio0").attr('checked', "false");
+			$("#radio1").attr('checked', "false");
+			$("#radio2").attr('checked', "false");
+			
+			switch(pSrcX.length) {
+			case 2:
+				$("#radio0").attr('checked', "true");
+				break;
+			
+			case 1:
+				$("#radio1").attr('checked', "true");
+				break;
+			
+			case 0:
+				$("#radio2").attr('checked', "true");
+				break;
+			}
+		}
+		
+		function draw() {
+			setBlendMode();
+			if(3==pSrcX.length)
+				fillColor();
+				
+			drawTriangle();
+		}
+		
+		function setBlendMode()
+		{
+			context.clearRect(0,0,canvas.width, canvas.height);	
+			context.globalCompositeOperation =	("checked"==$("#boundOn").attr('checked')&&pSrcX.length==3)?
+												'destination-in':
+												'source-over';
+		}
+		
+		function fillColor() {
+			mtx = [0,0,0,0,0,0,0,0,0];	
+			inverse(mtx, 							// [out] matrix to return
+					pSrcX, pSrcY, 					// [in] array of triangle reference positions
+					$("#colorpickerField0").val(), 	// [in] triangle reference color 0
+					$("#colorpickerField1").val(), 	// [in] triangle reference color 1
+					$("#colorpickerField2").val());	// [in] triangle reference color 2
+	
+			var dataDes = context.getImageData(0,0,canvas.width, canvas.height);
+			for (var y=0; y<dataDes.height; y++) {	
+				var i = y*dataDes.width*4;	
+				for(var x=0; x<dataDes.width; x++) {
+					
+					dataDes.data[i++] = mtx[0] * x + mtx[1] * y + mtx[2];
+					dataDes.data[i++] = mtx[3] * x + mtx[4] * y + mtx[5];
+					dataDes.data[i++] = mtx[6] * x + mtx[7] * y + mtx[8];
+					dataDes.data[i++] = 128;
+				}
+			}
+			context.putImageData(dataDes, 0, 0);
+		}
+		
+		// draw triangle boundary
+		function drawTriangle() {
+			context.fillStyle = 'black';
+			context.strokeStyle = 'black';
+			context.lineWidth = 5;
+			context.beginPath();
+			context.moveTo(pSrcX[0], pSrcY[0]);
+				
+			for(var i=1; i<pSrcX.length; i++) 
+				context.lineTo(pSrcX[i], pSrcY[i]);
+			
+			if(3==pSrcX.length) 
+				context.lineTo(pSrcX[0], pSrcY[0]);
+			
+			context.stroke();
+			
+			if("checked"==$("#boundOn").attr('checked'))
+				context.fill();
+				
+			context.closePath();
+		}
+		
+		function addAnchor(e, pos) {
+			x = e.pageX-pos.left;
+			y = e.pageY-pos.top;
+			
+			if(pSrcX.length>=3) {
+				pSrcX = new Array();
+				pSrcY = new Array();
+			}
+			
+			pSrcX.push(x);
+			pSrcY.push(y);
+			return true;
+		}
+  	});
+	</script>
+</head>
+
+<body style="position:relative">
+
+<canvas id="myCanvas" width="400" height="400">
+    HTML5 canvas failed to load.
+</canvas>
+
+<div id="comments">
+<p> Hello 3D world! <br>
+This is a basic triangle gradient using 3x3 matrix.<br>
+(1) select radio button and color values (hex).<br>
+(2) click 3 points anywhere on canvas to define a triangle.<br>
+(3) check "Triangle bound" for blend mode (destination-in). <br>
+</p>
+</div>
+                
+<div id="controls0">
+<input type="radio" id="radio0" name="group1" checked="false">
+<input type="text" maxlength="6" size="6" id="colorpickerField0" value="00ff00" />
+</div>
+
+<div id="controls1">
+<input type="radio" id="radio1" name="group1" checked="false">
+<input type="text" maxlength="6" size="6" id="colorpickerField1" value="ff0000" />
+</div>
+<div id="controls2">
+<input type="radio" id="radio2" name="group1" checked="true">
+<input type="text" maxlength="6" size="6" id="colorpickerField2" value="0000ff" />
+</div>
+
+<div id="controls3">
+	<input type="submit" id="btnClear" value="Clear"/>
+    <input type="checkbox" id="boundOn" checked="true" value="Bound"/>Triangle Bound
+</div>
+
+</body>
+</html>
