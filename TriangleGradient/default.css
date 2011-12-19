@@ -1,0 +1,44 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+canvas {
+	border: 1px dashed red;
+	/*background-color: #DDD;
+	border-radius: 30px;
+	opacity: 1;*/
+}
+	
+#comments {	
+	top:-400; 
+	left:420; 
+    position:relative;
+}
+
+#controls0 {
+	top:-400; 
+	left:420; 
+    position:relative; 
+}
+
+#controls1 {
+	top:-350; 
+	left:420; 
+    position:relative;
+}
+
+#controls2 {	
+	top:-300; 
+	left:420; 
+    position:relative;
+}
+
+#controls3 {
+	top:-250; 
+	left:420; 
+    position:relative;
+}
+	
+
+
+
