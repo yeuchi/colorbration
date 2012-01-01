@@ -3,10 +3,10 @@
 
 <!-- Module: 		Triangle Gradient
 
-     Description:	basic matrix triangle gradient method
+     Description:	matrix triangle gradient method
      
      ** NOTE:		There is a bug with Firefox, it is rendering only the boundary.
-     				(which is a cool feature I should add later).
+     				So, I am not using blend-mode.
 
 	 Reference:
       3x3 matrix:	The Reproduction of Colour - fifth edition, by Dr. R.W.G. Hunt (pg. 765)
@@ -29,6 +29,7 @@
 		var pSrcX = new Array();							// array of triangle points, positions
 		var pSrcY = new Array();
 		var mtx;											// 3x3 matrix, color transform
+		var bBound = "checked";
 		
 		$("#btnClear").click(function () {
 			context.clearRect(0,0,canvas.width, canvas.height);
@@ -38,6 +39,7 @@
 		});
 		
 		$("#boundOn").click(function () {
+			bBound = $(this).attr("checked");
 			draw();
 		});
 		
@@ -70,19 +72,13 @@
 		}
 		
 		function draw() {
-			setBlendMode();
+			context.clearRect(0,0,canvas.width, canvas.height);	
+			drawTriangle(true);
+			
 			if(3==pSrcX.length)
 				fillColor();
 				
-			drawTriangle();
-		}
-		
-		function setBlendMode()
-		{
-			context.clearRect(0,0,canvas.width, canvas.height);	
-			context.globalCompositeOperation =	("checked"==$("#boundOn").attr('checked')&&pSrcX.length==3)?
-												'destination-in':
-												'source-over';
+			drawTriangle(false);
 		}
 		
 		function fillColor() {
@@ -93,25 +89,32 @@
 					$("#colorpickerField1").val(), 	// [in] triangle reference color 1
 					$("#colorpickerField2").val());	// [in] triangle reference color 2
 	
+			context = canvas.getContext('2d');
 			var dataDes = context.getImageData(0,0,canvas.width, canvas.height);
 			for (var y=0; y<dataDes.height; y++) {	
 				var i = y*dataDes.width*4;	
 				for(var x=0; x<dataDes.width; x++) {
-					
-					dataDes.data[i++] = mtx[0] * x + mtx[1] * y + mtx[2];
-					dataDes.data[i++] = mtx[3] * x + mtx[4] * y + mtx[5];
-					dataDes.data[i++] = mtx[6] * x + mtx[7] * y + mtx[8];
-					dataDes.data[i++] = 128;
+					var a = dataDes.data[i+3];				
+					if(a!=0||'checked'!=bBound) {
+						dataDes.data[i++] = mtx[0] * x + mtx[1] * y + mtx[2];
+						dataDes.data[i++] = mtx[3] * x + mtx[4] * y + mtx[5];
+						dataDes.data[i++] = mtx[6] * x + mtx[7] * y + mtx[8];
+						dataDes.data[i++] = 255;
+					}
+					else
+						i+=4;
 				}
 			}
 			context.putImageData(dataDes, 0, 0);
 		}
 		
 		// draw triangle boundary
-		function drawTriangle() {
-			context.fillStyle = 'black';
+		function drawTriangle(bFill) {
+			if(bFill)
+				context.fillStyle = 'black';
+				
 			context.strokeStyle = 'black';
-			context.lineWidth = 5;
+			context.lineWidth = 1;
 			context.beginPath();
 			context.moveTo(pSrcX[0], pSrcY[0]);
 				
@@ -123,7 +126,7 @@
 			
 			context.stroke();
 			
-			if("checked"==$("#boundOn").attr('checked'))
+			if(bFill)
 				context.fill();
 				
 			context.closePath();
@@ -154,10 +157,9 @@
 
 <div id="comments">
 <p> Hello 3D world! <br>
-This is a basic triangle gradient using 3x3 matrix.<br>
-(1) select radio button and color values (hex).<br>
-(2) click 3 points anywhere on canvas to define a triangle.<br>
-(3) check "Triangle bound" for blend mode (destination-in). <br>
+This is a triangle gradient using 3x3 matrix.<br>
+(1) click 3 points anywhere on canvas to define a triangle.<br>
+(2) check "Triangle bound" for rendering within triangle angle. <br>
 </p>
 </div>
                 
