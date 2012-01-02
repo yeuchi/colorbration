@@ -1,44 +1,32 @@
-@charset "utf-8";
-/* CSS Document */
-
-
 canvas {
-	border: 1px dashed red;
-	/*background-color: #DDD;
-	border-radius: 30px;
-	opacity: 1;*/
+    border: 1px dashed red;
+    top: 10px;
 }
-	
-#comments {	
-	top:-400; 
-	left:420; 
-    position:relative;
+#divCanvas {
+    position: absolute;
 }
-
+#comments {
+    position: absolute;
+    top:  -10px;
+    left: 430px;
+}
 #controls0 {
-	top:-400; 
-	left:420; 
-    position:relative; 
+    position: absolute;
+    top: 150px;
+    left:  430px;
 }
-
 #controls1 {
-	top:-350; 
-	left:420; 
-    position:relative;
+    position: absolute;
+    top: 200px;
+    left: 430px;
 }
-
-#controls2 {	
-	top:-300; 
-	left:420; 
-    position:relative;
+#controls2 {
+    position: absolute;
+    top: 250px;
+    left: 430px;
 }
-
 #controls3 {
-	top:-250; 
-	left:420; 
-    position:relative;
+    position: absolute;
+    top: 330px;
+    left: 430px;
 }
-	
-
-
-
