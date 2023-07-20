@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Colorbration</string>
+
+    <!-- Common -->
+    <string name="error">Error</string>
+    <string name="error_unknown">Error: Unknown</string>
+    <string name="error_no_data">Error: No data</string>
+    <string name="text_result">Result</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+</resources>
