@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/*
+ * TODO calculate the integral of standard observer and spectral data => XYZ
+ */
 @AndroidEntryPoint
 class TristimulusActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

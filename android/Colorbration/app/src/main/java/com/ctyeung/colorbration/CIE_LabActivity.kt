@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/*
+ * TODO Calculate CIE L*a*b* value and render 3D volume
+ */
 @AndroidEntryPoint
 class CIE_LabActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

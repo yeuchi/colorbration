@@ -12,6 +12,10 @@ import androidx.compose.ui.Modifier
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/*
+ * TODO HP sRGB color
+ *  Render RGB cube and this color's relative point
+ */
 @AndroidEntryPoint
 class HP_sRGBActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,7 +1,6 @@
 package com.ctyeung.colorbration
 
 import android.annotation.SuppressLint
-import android.graphics.Point
 import android.graphics.PointF
 import android.os.Bundle
 import android.view.MotionEvent
@@ -15,18 +14,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
@@ -35,6 +28,9 @@ import com.ctyeung.colorbration.viewmodels.SpectralEvent
 import com.ctyeung.colorbration.viewmodels.SpectralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+/*
+ * TODO User touch to render spectral curve
+ */
 @AndroidEntryPoint
 class SpectralActivity : ComponentActivity() {
     val viewModel : SpectralViewModel by viewModels()
@@ -42,7 +38,9 @@ class SpectralActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ComposeScreen(emptyList())
+            ColorbrationTheme {
+                ComposeScreen(emptyList())
+            }
         }
     }
 
@@ -81,6 +79,7 @@ class SpectralActivity : ComponentActivity() {
                         is SpectralEvent.InProgress -> ComposeSpinner()
                         is SpectralEvent.Success -> ComposeScreen(event.points)
                         is SpectralEvent.Error -> ComposeError(error = event.msg)
+                        else -> {}
                     }
                 }
             }
@@ -97,25 +96,24 @@ class SpectralActivity : ComponentActivity() {
 
     @Composable
     private fun Render(points:List<PointF>) {
-//        Column(
-//            // in this column we are specifying modifier
-//            // and aligning it center of the screen on below lines.
-//            modifier = Modifier.fillMaxSize(),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-//        ) {
-//            composeCanvas(points)
-//        }
+        Column(
+            // in this column we are specifying modifier
+            // and aligning it center of the screen on below lines.
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            ComposeCanvas(points)
+        }
     }
 
     @Composable
-    private fun composeCanvas(points:List<PointF>) {
+    private fun ComposeCanvas(points:List<PointF>) {
         Canvas(
             modifier = Modifier
                 .size(100.dp)
                 .padding(16.dp)
         ) {
-
             val trianglePath = Path().let {
                 it.moveTo(this.size.width * .20f, this.size.height * .77f)
                 it.lineTo(this.size.width * .20f, this.size.height * 0.95f)
