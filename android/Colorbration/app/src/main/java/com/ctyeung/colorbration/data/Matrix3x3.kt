@@ -1,6 +1,6 @@
 package com.ctyeung.colorbration.data
 
-class Matrix3x3 {
+open class Matrix3x3 {
 
     var dMtx = ArrayList<Double>()
     var iMtx = ArrayList<Double>()
@@ -8,20 +8,19 @@ class Matrix3x3 {
     var out2 = 0.0
     var out3 = 0.0
 
-    fun empty() {
+    open fun empty() {
         dMtx.clear()
         iMtx.clear()
     }
 
-    fun isEmpty(): Boolean {
+    open fun isEmpty(): Boolean {
         return (dMtx.isEmpty() && iMtx.isEmpty())
     }
 
     fun multiply(
         in1: Double,
         in2: Double,
-        in3: Double,
-        mtx: ArrayList<Double>
+        in3: Double
     )
             : Boolean {
         if (isEmpty())
