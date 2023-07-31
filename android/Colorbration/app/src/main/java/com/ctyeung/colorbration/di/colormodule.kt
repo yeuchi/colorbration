@@ -17,13 +17,18 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object colormodule {
     @Provides
-    fun provideChromaticityViewModel(@ApplicationContext context: Context): ChromaticityViewModel = ChromaticityViewModel(context)
+    fun provideChromaticityViewModel(@ApplicationContext context: Context): ChromaticityViewModel =
+        ChromaticityViewModel(context)
 
     @Provides
-    fun provideSpectralViewModel(@ApplicationContext context: Context): SpectralViewModel = SpectralViewModel(context)
+    fun provideSpectralViewModel(@ApplicationContext context: Context): SpectralViewModel =
+        SpectralViewModel(context)
 
     @Provides
-    fun provideMainViewModel(@ApplicationContext context: Context): MainViewModel = MainViewModel(context)
+    fun provideMainViewModel(
+        @ApplicationContext context: Context,
+        observerRepository: ObserverRepository
+    ): MainViewModel = MainViewModel(context, observerRepository)
 
     @Provides
     fun provideObserverRepository(@ApplicationContext context: Context): ObserverRepository =
