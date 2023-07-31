@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,11 +18,13 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.DefaultTintBlendMode
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
@@ -39,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startActivity(Intent(this@MainActivity, SpectralActivity::class.java))
+        //startActivity(Intent(this@MainActivity, SpectralActivity::class.java))
         setContent {
             ColorbrationTheme {
                 ComposeScreen(emptyList())
@@ -70,16 +73,17 @@ class MainActivity : ComponentActivity() {
     private fun ComposeScreen(points: List<PointF>) {
         Scaffold(
             bottomBar = { BottomNavigation(BottomNavItem.Spectral.screen_route, this) },
-            content = { Render(points) }
-        )
+        ) {
+            Render(points, it)
+        }
     }
 
     @Composable
-    private fun Render(points:List<PointF>) {
+    private fun Render(points:List<PointF>, paddingValues: PaddingValues) {
         Column(
             // in this column we are specifying modifier
             // and aligning it center of the screen on below lines.
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -89,25 +93,44 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun ComposeCanvas(points:List<PointF>) {
-        Canvas(
-            modifier = Modifier
-                .size(100.dp)
-                .padding(16.dp)
-        ) {
-            val trianglePath = Path().let {
-                it.moveTo(this.size.width * .20f, this.size.height * .77f)
-                it.lineTo(this.size.width * .20f, this.size.height * 0.95f)
-                it.lineTo(this.size.width * .37f, this.size.height * 0.86f)
-                it.close()
-                it
-            }
 
-            val colors = listOf(Color(0xFF02b8f9), Color(0xFF0277fe))
-            drawPath(
-                path = trianglePath,
-                Brush.verticalGradient(colors = colors),
-                style = Stroke(width = 15f, cap = StrokeCap.Round)
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val paddingX = (size.width / 20.0).toFloat()
+            val paddingY = 10f //(size.height / 20.0).toFloat()
+
+            // y-axis
+            val unit25 =
+            drawLine(
+                start = Offset(x = paddingX, y = 0f),
+                end = Offset(x = paddingX, y = size.height),
+                color = Color.Blue,
+                strokeWidth = 5F
+            )
+
+            // x-axis
+            drawLine(
+                start = Offset(x = paddingX, y = size.height - paddingY),
+                end = Offset(x = size.width, y = size.height - paddingY),
+                color = Color.Red,
+                strokeWidth = 5F
             )
         }
+
+//            val trianglePath = Path().let {
+//                it.moveTo(this.size.width * .20f, this.size.height * .77f)
+//                it.lineTo(this.size.width * .20f, this.size.height * 0.95f)
+//                it.lineTo(this.size.width * .37f, this.size.height * 0.86f)
+//                it.close()
+//                it
+//            }
+//
+//            val colors = listOf(Color(0xFF02b8f9), Color(0xFF0277fe))
+//            drawPath(
+//                path = trianglePath,
+//                Brush.verticalGradient(colors = colors),
+//                style = Stroke(width = 15f, cap = StrokeCap.Round)
+//            )
+//
+//        }
     }
 }
