@@ -16,8 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.lifecycle.Observer
@@ -52,7 +56,7 @@ class MainActivity : ComponentActivity() {
     fun onViewModelEvent(event: ObserverEvent) {
         setContent {
             ColorbrationTheme {
-                when(event) {
+                when (event) {
                     is ObserverEvent.InProgress -> ComposeSpinner()
                     is ObserverEvent.Success -> ComposeScreen(event.data)
                     is ObserverEvent.Error -> ComposeError(error = event.msg)
@@ -73,11 +77,13 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun Render(data:List<SpectralData>, paddingValues: PaddingValues) {
+    private fun Render(data: List<SpectralData>, paddingValues: PaddingValues) {
         Column(
             // in this column we are specifying modifier
             // and aligning it center of the screen on below lines.
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -86,7 +92,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun ComposeCanvas(data:List<SpectralData>) {
+    private fun ComposeCanvas(data: List<SpectralData>) {
 
         Canvas(modifier = Modifier.fillMaxSize()) {
             val paddingX = (size.width / 20.0).toFloat()
@@ -98,7 +104,7 @@ class MainActivity : ComponentActivity() {
             }
 
             // y-axis
-            val unit25Y = (size.height - 2 * paddingX ) / 4.0
+            val unit25Y = (size.height - 2 * paddingX) / 4.0
             drawLine(
                 start = Offset(x = paddingX, y = 0f),
                 end = Offset(x = paddingX, y = size.height - paddingY),
@@ -106,17 +112,17 @@ class MainActivity : ComponentActivity() {
                 strokeWidth = 5F
             )
 
-            for (y in 0 ..   5) {
+            for (y in 0..5) {
                 val str = "${y * 25}%"
                 val xpos = 0f
-                val ypos = (unit25Y * (5-y)).toFloat()
+                val ypos = (unit25Y * (5 - y)).toFloat()
                 drawIntoCanvas {
                     it.nativeCanvas.drawText(str, xpos, ypos, paint)
                 }
             }
 
             // x-axis
-            val unit100X = (size.width - 2 * paddingX ) / 3.0
+            val unit100X = (size.width - 2 * paddingX) / 3.0
             drawLine(
                 start = Offset(x = paddingX, y = size.height - paddingY),
                 end = Offset(x = size.width, y = size.height - paddingY),
@@ -132,23 +138,38 @@ class MainActivity : ComponentActivity() {
                     it.nativeCanvas.drawText(str, xpos, ypos, paint)
                 }
             }
-        }
 
-//            val trianglePath = Path().let {
-//                it.moveTo(this.size.width * .20f, this.size.height * .77f)
-//                it.lineTo(this.size.width * .20f, this.size.height * 0.95f)
-//                it.lineTo(this.size.width * .37f, this.size.height * 0.86f)
-//                it.close()
-//                it
-//            }
-//
-//            val colors = listOf(Color(0xFF02b8f9), Color(0xFF0277fe))
-//            drawPath(
-//                path = trianglePath,
-//                Brush.verticalGradient(colors = colors),
-//                style = Stroke(width = 15f, cap = StrokeCap.Round)
-//            )
-//
-//        }
+            val one_percent = (size.height - 2 * paddingY) / 200.0
+            val ten_nm = (size.width - 2 * paddingX) / 30.0
+
+            fun createPath(spectralData: SpectralData, colors:List<Color>) {
+                val observerPath = androidx.compose.ui.graphics.Path().let {
+
+                    // initial position
+                    it.moveTo(paddingX, size.height - paddingY)
+
+                    // draw curve topology
+                    for (i in 0 until spectralData.percent.size) {
+                        val percent = (2.0 - spectralData.percent[i]) * 100.0
+                        val ypos = percent * one_percent + paddingY
+                        val xpos = ten_nm * i + paddingX
+                        it.lineTo(xpos.toFloat(), ypos.toFloat())
+                    }
+
+                    // end position
+                    it.lineTo(size.width - paddingX, size.height - paddingY)
+                    it.close()
+                    it
+                }
+                drawPath(
+                    path = observerPath,
+                    Brush.verticalGradient(colors = colors),
+                    style = Stroke(width = 15f, cap = StrokeCap.Round)
+                )
+            }
+            createPath(data[2], listOf(Color.Blue, Color.Blue))
+            createPath(data[1], listOf(Color.Green, Color.Green))
+            createPath(data[0], listOf(Color.Red, Color.Red))
+        }
     }
 }
