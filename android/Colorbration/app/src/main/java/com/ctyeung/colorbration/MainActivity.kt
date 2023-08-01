@@ -19,7 +19,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -113,8 +112,8 @@ class MainActivity : ComponentActivity() {
             )
 
             for (y in 0..5) {
-                val str = "${y * 25}%"
-                val xpos = 0f
+                val str = "${y * 0.5}"
+                val xpos = 5f
                 val ypos = (unit25Y * (5 - y)).toFloat()
                 drawIntoCanvas {
                     it.nativeCanvas.drawText(str, xpos, ypos, paint)
