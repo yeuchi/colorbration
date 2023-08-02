@@ -5,6 +5,9 @@ import android.graphics.PointF
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ctyeung.colorbration.data.MyPoint
+import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.SpectralReflectance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -13,8 +16,8 @@ import javax.inject.Inject
 class SpectralViewModel @Inject constructor(
     @ApplicationContext context: Context
 ): ViewModel() {
-
-    var touchPoints = ArrayList<PointF>()
+    // move to repository
+    var curve = SpectralReflectance()
 
     private val _event = MutableLiveData<SpectralEvent>()
     val event: LiveData<SpectralEvent> = _event
@@ -24,19 +27,18 @@ class SpectralViewModel @Inject constructor(
     }
 
     fun clear() {
-        touchPoints.clear()
+        curve.clear()
     }
 
-    fun add(p:PointF) = touchPoints.add(p)
+    fun add(p: MyPoint) = curve.add(p)
 
     fun invalidate() {
-        val points = touchPoints.toList()
-        _event.value = SpectralEvent.Success(points)
+        _event.value = SpectralEvent.Success(curve)
     }
 }
 
 sealed class SpectralEvent() {
     object InProgress : SpectralEvent()
-    class Success(val points:List<PointF>):SpectralEvent()
+    class Success(val curve:SpectralReflectance):SpectralEvent()
     class Error(val msg:String):SpectralEvent()
 }

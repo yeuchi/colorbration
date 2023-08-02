@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import com.ctyeung.colorbration.data.SpectralData
@@ -37,16 +35,12 @@ import com.ctyeung.colorbration.viewmodels.MainViewModel
 import com.ctyeung.colorbration.viewmodels.ObserverEvent
 import dagger.hilt.android.AndroidEntryPoint
 
-/*
- * TODO Render standard observer / configuration
- */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     protected val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //startActivity(Intent(this@MainActivity, SpectralActivity::class.java))
         setContent {
             ColorbrationTheme {
                 ComposeScreen(emptyList())
@@ -76,7 +70,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun ComposeScreen(data: List<SpectralData>) {
         Scaffold(
-            bottomBar = { BottomNavigation(BottomNavItem.Spectral.screen_route, this) },
+            bottomBar = { BottomNavigation(BottomNavItem.Observers.screen_route, this) },
         ) {
             Render(data, it)
         }
@@ -147,6 +141,9 @@ class MainActivity : ComponentActivity() {
             val ten_nm = (size.width - 2 * paddingX) / 30.0
 
             fun createPath(spectralData: SpectralData, color: Color) {
+                /*
+                 * TODO step through more points for smoother lines - use cubic spline interpolation
+                 */
                 val observerPath = androidx.compose.ui.graphics.Path().let {
 
                     // initial position

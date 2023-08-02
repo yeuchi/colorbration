@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +24,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
+import com.ctyeung.colorbration.data.MyPoint
+import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.SpectralReflectance
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import com.ctyeung.colorbration.viewmodels.SpectralEvent
 import com.ctyeung.colorbration.viewmodels.SpectralViewModel
@@ -33,13 +37,13 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class SpectralActivity : ComponentActivity() {
-    val viewModel : SpectralViewModel by viewModels()
+    protected val viewModel: SpectralViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ColorbrationTheme {
-                ComposeScreen(emptyList())
+                ComposeScreen()
             }
         }
     }
@@ -50,7 +54,7 @@ class SpectralActivity : ComponentActivity() {
     }
 
     @OptIn(ExperimentalComposeUiApi::class)
-    fun onViewModelEvent(event:SpectralEvent) {
+    fun onViewModelEvent(event: SpectralEvent) {
         setContent {
             ColorbrationTheme {
                 // A surface container using the 'background' color from the theme
@@ -60,24 +64,27 @@ class SpectralActivity : ComponentActivity() {
                             /* collect down */
                             viewModel.apply {
                                 clear()
-                                add(PointF(it.rawX, it.rawY))
+                                add(MyPoint(it.rawX.toDouble(), it.rawY.toDouble()))
                             }
                         }
+
                         MotionEvent.ACTION_MOVE -> {
                             /* collect location */
-                            viewModel.add(PointF(it.rawX, it.rawY))
+                            viewModel.add(MyPoint(it.rawX.toDouble(), it.rawY.toDouble()))
                         }
+
                         MotionEvent.ACTION_UP -> {
                             /* end collect -> invoke render update (invalidate) */
                             viewModel.invalidate()
                         }
-                        else ->  false
+
+                        else -> false
                     }
                     true
                 }) {
-                    when(event) {
+                    when (event) {
                         is SpectralEvent.InProgress -> ComposeSpinner()
-                        is SpectralEvent.Success -> ComposeScreen(event.points)
+                        is SpectralEvent.Success -> ComposeScreen(event.curve)
                         is SpectralEvent.Error -> ComposeError(error = event.msg)
                         else -> {}
                     }
@@ -85,30 +92,36 @@ class SpectralActivity : ComponentActivity() {
             }
         }
     }
+
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
-    private fun ComposeScreen(points: List<PointF>) {
+    private fun ComposeScreen(curve: SpectralReflectance? = null) {
         Scaffold(
             bottomBar = { BottomNavigation(BottomNavItem.Spectral.screen_route, this) },
-            content = { Render(points) }
-        )
-    }
-
-    @Composable
-    private fun Render(points:List<PointF>) {
-        Column(
-            // in this column we are specifying modifier
-            // and aligning it center of the screen on below lines.
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
-            ComposeCanvas(points)
+            Render(curve, it)
         }
     }
 
     @Composable
-    private fun ComposeCanvas(points:List<PointF>) {
+    private fun Render(curve: SpectralReflectance?, paddingValues: PaddingValues) {
+        Column(
+            // in this column we are specifying modifier
+            // and aligning it center of the screen on below lines.
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            curve?.apply {
+                ComposeCanvas(this)
+            }
+        }
+    }
+
+    @Composable
+    private fun ComposeCanvas(curve: SpectralReflectance) {
         Canvas(
             modifier = Modifier
                 .size(100.dp)

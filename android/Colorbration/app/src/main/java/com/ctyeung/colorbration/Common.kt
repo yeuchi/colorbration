@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun BottomNavigation(currentSelection: String, activity: Activity) {
     val items = listOf(
+        BottomNavItem.Observers,
         BottomNavItem.Spectral,
         BottomNavItem.Tristimulus,
         BottomNavItem.Chromaticity,
@@ -64,6 +65,11 @@ fun BottomNavigation(currentSelection: String, activity: Activity) {
                     if (currentSelection != item.screen_route) {
                         //navController.navigate(item.screen_route)
                         when (item.screen_route) {
+                            BottomNavItem.Observers.screen_route -> {
+                                activity.startActivity(
+                                    Intent(activity, MainActivity::class.java)
+                                )
+                            }
                             BottomNavItem.Spectral.screen_route -> {
                                 activity.startActivity(
                                     Intent(activity, SpectralActivity::class.java)
