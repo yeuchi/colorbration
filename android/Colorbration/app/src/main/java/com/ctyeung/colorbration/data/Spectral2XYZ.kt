@@ -3,7 +3,6 @@ package com.ctyeung.colorbration.data
 import android.graphics.Point
 
 class Spectral2XYZ {
-    var observer = StandardObserver()
     var _sample: SpectralData? = null
     var _source: SpectralData? = null
 
@@ -42,23 +41,25 @@ class Spectral2XYZ {
                     Xs = 0.0
                     Ys = 0.0
                     Zs = 0.0
-                    for (i in 0 until observer.count) {
-                        /*
+                    StandardObserver.let {
+                        for (i in 0 until it.count) {
+                            /*
                          * TODO add option to choose 10degree
                          */
-                        val wavelength = observer.wavelength[i].toDouble()
-                        var observerX = observer.standardObserver2Degree1931X[i];
-                        var observerY = observer.standardObserver2Degree1931Y[i];
-                        var observerZ = observer.standardObserver2Degree1931Z[i];
-                        Xs += observerX * sam.getY(wavelength) / 100.0 * src.getY(
-                            wavelength
-                        ) / 100.0
-                        Ys += observerY * sam.getY(wavelength) / 100.0 * src.getY(
-                            wavelength
-                        ) / 100.0
-                        Zs += observerZ * sam.getY(wavelength) / 100.0 * src.getY(
-                            wavelength
-                        ) / 100.0
+                            val wavelength = it.wavelength[i].toDouble()
+                            var observerX = it.standardObserver2Degree1931X[i];
+                            var observerY = it.standardObserver2Degree1931Y[i];
+                            var observerZ = it.standardObserver2Degree1931Z[i];
+                            Xs += observerX * sam.getY(wavelength) / 100.0 * src.getY(
+                                wavelength
+                            ) / 100.0
+                            Ys += observerY * sam.getY(wavelength) / 100.0 * src.getY(
+                                wavelength
+                            ) / 100.0
+                            Zs += observerZ * sam.getY(wavelength) / 100.0 * src.getY(
+                                wavelength
+                            ) / 100.0
+                        }
                     }
                     Kw = 100.0 / Yw
 
@@ -79,23 +80,25 @@ class Spectral2XYZ {
                     Xs = 0.0
                     Ys = 0.0
                     Zs = 0.0
-                    for (i in 0 until observer.count) {
-                        val wavelength = observer.wavelength[i].toDouble()
-                        /*
+                    StandardObserver.let {
+                        for (i in 0 until it.count) {
+                            val wavelength = it.wavelength[i].toDouble()
+                            /*
                          * TODO add option to choose 10degree
                          */
-                        var observerX = observer.standardObserver2Degree1931X[i];
-                        var observerY = observer.standardObserver2Degree1931Y[i];
-                        var observerZ = observer.standardObserver2Degree1931Z[i];
-                        Xs += observerX * src.getY(
-                            wavelength
-                        ) / 100.0
-                        Ys += observerY * src.getY(
-                            wavelength
-                        ) / 100.0
-                        Zs += observerZ * src.getY(
-                            wavelength
-                        ) / 100.0
+                            var observerX = it.standardObserver2Degree1931X[i];
+                            var observerY = it.standardObserver2Degree1931Y[i];
+                            var observerZ = it.standardObserver2Degree1931Z[i];
+                            Xs += observerX * src.getY(
+                                wavelength
+                            ) / 100.0
+                            Ys += observerY * src.getY(
+                                wavelength
+                            ) / 100.0
+                            Zs += observerZ * src.getY(
+                                wavelength
+                            ) / 100.0
+                        }
                     }
                     Xs *= Kw
                     Ys *= Kw

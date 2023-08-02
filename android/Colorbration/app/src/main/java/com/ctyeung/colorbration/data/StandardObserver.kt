@@ -1,11 +1,9 @@
 package com.ctyeung.colorbration.data
 
-class StandardObserver : SpectralData() {
+object StandardObserver : SpectralData() {
 
-    companion object {
-        const val FUNC_2D_1931:String = "2degree1931"
-        const val FUNC_10D_1964:String = "10degree1964"
-    }
+    const val FUNC_2D_1931: String = "2degree1931"
+    const val FUNC_10D_1964: String = "10degree1964"
 
     val count = 31
 

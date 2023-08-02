@@ -6,23 +6,30 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.material.RadioButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import com.ctyeung.colorbration.data.SpectralData
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
@@ -35,7 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    val viewModel: MainViewModel by viewModels()
+    protected val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,27 +84,25 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun Render(data: List<SpectralData>, paddingValues: PaddingValues) {
-        Column(
+        Box(
             // in this column we are specifying modifier
             // and aligning it center of the screen on below lines.
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
             ComposeCanvas(data)
+            ComposeRadio()
         }
     }
 
     @Composable
     private fun ComposeCanvas(data: List<SpectralData>) {
-
         Canvas(modifier = Modifier.fillMaxSize()) {
             val paddingX = (size.width / 20.0).toFloat()
             val paddingY = (size.height / 20.0).toFloat()
             val paint = Paint().asFrameworkPaint().apply {
-                color = 0xff525ce6.toInt()
+                color = 0xff000000.toInt()
                 textAlign = android.graphics.Paint.Align.LEFT
                 textSize = 40f
             }
@@ -107,7 +112,7 @@ class MainActivity : ComponentActivity() {
             drawLine(
                 start = Offset(x = paddingX, y = 0f),
                 end = Offset(x = paddingX, y = size.height - paddingY),
-                color = Color.Blue,
+                color = Color.Black,
                 strokeWidth = 5F
             )
 
@@ -125,7 +130,7 @@ class MainActivity : ComponentActivity() {
             drawLine(
                 start = Offset(x = paddingX, y = size.height - paddingY),
                 end = Offset(x = size.width, y = size.height - paddingY),
-                color = Color.Red,
+                color = Color.Black,
                 strokeWidth = 5F
             )
             for (x in 0 until 4) {
@@ -141,7 +146,7 @@ class MainActivity : ComponentActivity() {
             val one_percent = (size.height - 2 * paddingY) / 200.0
             val ten_nm = (size.width - 2 * paddingX) / 30.0
 
-            fun createPath(spectralData: SpectralData, colors:List<Color>) {
+            fun createPath(spectralData: SpectralData, color: Color) {
                 val observerPath = androidx.compose.ui.graphics.Path().let {
 
                     // initial position
@@ -162,13 +167,84 @@ class MainActivity : ComponentActivity() {
                 }
                 drawPath(
                     path = observerPath,
-                    Brush.verticalGradient(colors = colors),
-                    style = Stroke(width = 15f, cap = StrokeCap.Round)
+                    color = color,
+                    style = androidx.compose.ui.graphics.drawscope.Fill,
+                    alpha = .5f
                 )
             }
-            createPath(data[2], listOf(Color.Blue, Color.Blue))
-            createPath(data[1], listOf(Color.Green, Color.Green))
-            createPath(data[0], listOf(Color.Red, Color.Red))
+            createPath(data[2], Color.Blue)
+            createPath(data[1], Color.Green)
+            createPath(data[0], Color.Red)
+        }
+    }
+
+    @Composable
+    private fun ComposeRadio() {
+        /*
+         * https://www.geeksforgeeks.org/radiobuttons-in-android-using-jetpack-compose/
+         */
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Top,
+        ) {
+            val radioOptions =
+                MainViewModel.let { listOf(it.OBSERVER_2_DEGREES, it.OBSERVER_10_DEGREES) }
+            radioOptions.forEach { text ->
+                Row(
+                    Modifier
+                        // using modifier to add max
+                        // width to our radio button.
+                        .align(Alignment.End)
+                        .width(200.dp)
+                        // below method is use to add
+                        // selectable to our radio button.
+                        .selectable(
+                            // this method is called when
+                            // radio button is selected.
+                            selected = (text == viewModel.selectedObserver),
+                            // below method is called on
+                            // clicking of radio button.
+                            onClick = {
+                                MainViewModel.apply {
+                                    when (text) {
+                                        OBSERVER_2_DEGREES -> viewModel.select2degrees()
+                                        OBSERVER_10_DEGREES -> viewModel.select10degrees()
+                                    }
+                                }
+                            }
+                        )
+                        // below line is use to add
+                        // padding to radio button.
+                        .padding(horizontal = 10.dp),
+                    ) {
+                    // val context = ContextAmbient.current
+
+                    // below line is use to
+                    // generate radio button
+                    RadioButton(
+                        // inside this method we are
+                        // adding selected with a option.
+                        selected = (text == viewModel.selectedObserver),
+                        onClick = {
+                            MainViewModel.apply {
+                                when (text) {
+                                    OBSERVER_2_DEGREES -> viewModel.select2degrees()
+                                    OBSERVER_10_DEGREES -> viewModel.select10degrees()
+                                }
+                            }
+                            // after clicking a radio button
+                            // we are displaying a toast message.
+                            //Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+                        }
+                    )
+                    // below line is use to add
+                    // text to our radio buttons.
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(15.dp)
+                    )
+                }
+            }
         }
     }
 }

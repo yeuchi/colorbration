@@ -7,11 +7,10 @@ import javax.inject.Inject
 class ObserverRepository @Inject constructor(
     @ApplicationContext val context: Context
 ) {
-    private val standardObserver = StandardObserver()
 
     val standardObserver10Degree: List<SpectralData>
         get() {
-            val list = standardObserver.let {
+            val list = StandardObserver.let {
                 listOf(
                     SpectralData(it.standardObserver10Degree1964X),
                     SpectralData(it.standardObserver10Degree1964Y),
@@ -23,7 +22,7 @@ class ObserverRepository @Inject constructor(
 
     val standardObserver2Degree: List<SpectralData>
         get() {
-            val list = standardObserver.let {
+            val list = StandardObserver.let {
                 listOf(
                     SpectralData(it.standardObserver2Degree1931X),
                     SpectralData(it.standardObserver2Degree1931Y),
