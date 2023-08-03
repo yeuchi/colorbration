@@ -38,7 +38,7 @@ open class SpectralData : Interpolate {
         percent.clear()
 
         for (i in 0 until wavelength.size) {
-            percent.add(50.0);
+            percent.add(.50);
         }
     }
 

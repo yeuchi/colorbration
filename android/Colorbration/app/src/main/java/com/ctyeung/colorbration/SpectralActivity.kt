@@ -19,8 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
@@ -122,25 +124,87 @@ class SpectralActivity : ComponentActivity() {
 
     @Composable
     private fun ComposeCanvas(curve: SpectralReflectance) {
-        Canvas(
-            modifier = Modifier
-                .size(100.dp)
-                .padding(16.dp)
-        ) {
-            val trianglePath = Path().let {
-                it.moveTo(this.size.width * .20f, this.size.height * .77f)
-                it.lineTo(this.size.width * .20f, this.size.height * 0.95f)
-                it.lineTo(this.size.width * .37f, this.size.height * 0.86f)
-                it.close()
-                it
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val paddingX = (size.width / 20.0).toFloat()
+            val paddingY = (size.height / 20.0).toFloat()
+            val paint = Paint().asFrameworkPaint().apply {
+                color = 0xff000000.toInt()
+                textAlign = android.graphics.Paint.Align.LEFT
+                textSize = 40f
             }
 
-            val colors = listOf(Color(0xFF02b8f9), Color(0xFF0277fe))
-            drawPath(
-                path = trianglePath,
-                Brush.verticalGradient(colors = colors),
-                style = Stroke(width = 15f, cap = StrokeCap.Round)
+            // y-axis
+            val unit25Y = (size.height - 2 * paddingX) / 4.0
+            drawLine(
+                start = Offset(x = paddingX, y = 0f),
+                end = Offset(x = paddingX, y = size.height - paddingY),
+                color = Color.Black,
+                strokeWidth = 5F
             )
+
+            for (y in 0..5) {
+                val str = "${y * 25}%"
+                val xpos = 5f
+                val ypos = (unit25Y * (5 - y)).toFloat()
+                drawIntoCanvas {
+                    it.nativeCanvas.drawText(str, xpos, ypos, paint)
+                }
+            }
+
+            // x-axis
+            val unit100X = (size.width - 2 * paddingX) / 3.0
+            drawLine(
+                start = Offset(x = paddingX, y = size.height - paddingY),
+                end = Offset(x = size.width, y = size.height - paddingY),
+                color = Color.Black,
+                strokeWidth = 5F
+            )
+            for (x in 0 until 4) {
+                val xx = x + 4
+                val str = "${xx * 100}nm"
+                val xpos = (unit100X * x + paddingX).toFloat()
+                val ypos = (size.height).toFloat()
+                drawIntoCanvas {
+                    it.nativeCanvas.drawText(str, xpos, ypos, paint)
+                }
+            }
+
+            val one_percent = (size.height - 2 * paddingY) / 200.0
+            val ten_nm = (size.width - 2 * paddingX) / 30.0
+
+            fun createPath(spectralData: SpectralData, color: Color) {
+                /*
+                 * TODO step through more points for smoother lines - use cubic spline interpolation
+                 */
+                val observerPath = androidx.compose.ui.graphics.Path().let {
+
+                    // initial position
+                    it.moveTo(paddingX, size.height - paddingY)
+
+                    // draw curve topology
+                    for (i in 0 until spectralData.percent.size) {
+                        val percent = (1.0 - spectralData.percent[i]) * 100.0
+                        val ypos = percent * one_percent + paddingY
+                        val xpos = ten_nm * i + paddingX
+                        it.lineTo(xpos.toFloat(), ypos.toFloat())
+                    }
+
+                    // end position
+                    it.lineTo(size.width - paddingX, size.height - paddingY)
+                    it.close()
+                    it
+                }
+                drawPath(
+                    path = observerPath,
+                    color = color,
+                    style = androidx.compose.ui.graphics.drawscope.Fill,
+                    alpha = .5f
+                )
+            }
+            /*
+             * TODO Replace with calculated sRGB color
+             */
+            createPath(curve, Color.LightGray)
         }
     }
 }

@@ -23,7 +23,7 @@ class SpectralViewModel @Inject constructor(
     val event: LiveData<SpectralEvent> = _event
 
     init {
-
+        _event.value = SpectralEvent.Success(curve)
     }
 
     fun clear() {
