@@ -2,6 +2,7 @@ package com.ctyeung.colorbration.di
 
 import android.content.Context
 import com.ctyeung.colorbration.data.ObserverRepository
+import com.ctyeung.colorbration.data.PrefStoreRepository
 import com.ctyeung.colorbration.data.SourceRepository
 import com.ctyeung.colorbration.viewmodels.ChromaticityViewModel
 import com.ctyeung.colorbration.viewmodels.MainViewModel
@@ -11,7 +12,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -37,4 +37,8 @@ object colormodule {
     @Provides
     fun provideSourceRepository(@ApplicationContext context: Context): SourceRepository =
         SourceRepository(context)
+
+    @Provides
+    fun providePreferenceStoreRepository(@ApplicationContext context: Context): PrefStoreRepository =
+        PrefStoreRepository(context)
 }
