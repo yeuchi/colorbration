@@ -35,7 +35,8 @@ import androidx.compose.ui.unit.sp
 fun BottomNavigation(currentSelection: String, activity: Activity) {
     val items = listOf(
         BottomNavItem.Observers,
-        BottomNavItem.Spectral,
+        BottomNavItem.Illuminant,
+        BottomNavItem.Reflectance,
         BottomNavItem.Tristimulus,
         BottomNavItem.Chromaticity,
         BottomNavItem.CIE_Lab,
@@ -70,9 +71,16 @@ fun BottomNavigation(currentSelection: String, activity: Activity) {
                                     Intent(activity, MainActivity::class.java)
                                 )
                             }
-                            BottomNavItem.Spectral.screen_route -> {
+
+                            BottomNavItem.Illuminant.screen_route -> {
                                 activity.startActivity(
-                                    Intent(activity, SpectralActivity::class.java)
+                                    Intent(activity, IlluminantActivity::class.java)
+                                )
+                            }
+
+                            BottomNavItem.Reflectance.screen_route -> {
+                                activity.startActivity(
+                                    Intent(activity, ReflectanceActivity::class.java)
                                 )
                             }
 

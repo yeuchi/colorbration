@@ -66,7 +66,7 @@ class ChromaticityActivity : ComponentActivity() {
     @Composable
     private fun ComposeScreen(points: List<PointF>) {
         Scaffold(
-            bottomBar = { BottomNavigation(BottomNavItem.Spectral.screen_route, this) },
+            bottomBar = { BottomNavigation(BottomNavItem.Chromaticity.screen_route, this) },
             content = { Render(points) }
         )
     }

@@ -1,7 +1,6 @@
 package com.ctyeung.colorbration
 
 import android.annotation.SuppressLint
-import android.graphics.PointF
 import android.os.Bundle
 import android.view.MotionEvent
 import androidx.activity.ComponentActivity
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,10 +19,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import com.ctyeung.colorbration.data.MyPoint
 import com.ctyeung.colorbration.data.SpectralData
@@ -34,11 +30,17 @@ import com.ctyeung.colorbration.viewmodels.SpectralEvent
 import com.ctyeung.colorbration.viewmodels.SpectralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+
+/*
+ * TODO DRY (don't repeat yourself)
+ *  Refactor common code between Main, Reflective and Illuminant Activites
+ */
+
 /*
  * TODO User touch to render spectral curve
  */
 @AndroidEntryPoint
-class SpectralActivity : ComponentActivity() {
+class ReflectanceActivity : ComponentActivity() {
     protected val viewModel: SpectralViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,7 +101,7 @@ class SpectralActivity : ComponentActivity() {
     @Composable
     private fun ComposeScreen(curve: SpectralReflectance? = null) {
         Scaffold(
-            bottomBar = { BottomNavigation(BottomNavItem.Spectral.screen_route, this) },
+            bottomBar = { BottomNavigation(BottomNavItem.Reflectance.screen_route, this) },
         ) {
             Render(curve, it)
         }

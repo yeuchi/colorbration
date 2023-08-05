@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
@@ -32,17 +34,17 @@ import androidx.lifecycle.Observer
 import com.ctyeung.colorbration.data.SpectralData
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import com.ctyeung.colorbration.viewmodels.MainViewModel
-import com.ctyeung.colorbration.viewmodels.ObserverEvent
+import com.ctyeung.colorbration.viewmodels.SourceEvent
+import com.ctyeung.colorbration.viewmodels.SourceViewModel
 import dagger.hilt.android.AndroidEntryPoint
-
 
 /*
  * TODO DRY (don't repeat yourself)
  *  Refactor common code between Main, Reflective and Illuminant Activites
  */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
-    protected val viewModel: MainViewModel by viewModels()
+class IlluminantActivity : ComponentActivity() {
+    protected val viewModel: SourceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,13 +60,13 @@ class MainActivity : ComponentActivity() {
         viewModel.event.observe(this, Observer(::onViewModelEvent))
     }
 
-    fun onViewModelEvent(event: ObserverEvent) {
+    private fun onViewModelEvent(event: SourceEvent) {
         setContent {
             ColorbrationTheme {
                 when (event) {
-                    is ObserverEvent.InProgress -> ComposeSpinner()
-                    is ObserverEvent.Success -> ComposeScreen(event.data)
-                    is ObserverEvent.Error -> ComposeError(error = event.msg)
+                    is SourceEvent.InProgress -> ComposeSpinner()
+                    is SourceEvent.Success -> ComposeScreen(event.data)
+                    is SourceEvent.Error -> ComposeError(error = event.msg)
                     else -> {}
                 }
             }
@@ -75,7 +77,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun ComposeScreen(data: List<SpectralData>) {
         Scaffold(
-            bottomBar = { BottomNavigation(BottomNavItem.Observers.screen_route, this) },
+            bottomBar = { BottomNavigation(BottomNavItem.Illuminant.screen_route, this) },
         ) {
             Render(data, it)
         }
@@ -116,7 +118,7 @@ class MainActivity : ComponentActivity() {
             )
 
             for (y in 0..5) {
-                val str = "${y * 0.5}"
+                val str = "${y * 25}%"
                 val xpos = 5f
                 val ypos = (unit25Y * (5 - y)).toFloat()
                 drawIntoCanvas {
@@ -149,14 +151,14 @@ class MainActivity : ComponentActivity() {
                 /*
                  * TODO step through more points for smoother lines - use cubic spline interpolation
                  */
-                val observerPath = androidx.compose.ui.graphics.Path().let {
+                val observerPath = Path().let {
 
                     // initial position
                     it.moveTo(paddingX, size.height - paddingY)
 
                     // draw curve topology
                     for (i in 0 until spectralData.percent.size) {
-                        val percent = (2.0 - spectralData.percent[i]) * 100.0
+                        val percent = spectralData.percent[i]
                         val ypos = percent * one_percent + paddingY
                         val xpos = ten_nm * i + paddingX
                         it.lineTo(xpos.toFloat(), ypos.toFloat())
@@ -170,12 +172,10 @@ class MainActivity : ComponentActivity() {
                 drawPath(
                     path = observerPath,
                     color = color,
-                    style = androidx.compose.ui.graphics.drawscope.Fill,
+                    style = Fill,
                     alpha = .5f
                 )
             }
-            createPath(data[2], Color.Blue)
-            createPath(data[1], Color.Green)
             createPath(data[0], Color.Red)
         }
     }
@@ -190,7 +190,15 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Top,
         ) {
             val radioOptions =
-                MainViewModel.let { listOf(it.OBSERVER_2_DEGREES, it.OBSERVER_10_DEGREES) }
+                SourceViewModel.let {
+                    listOf(
+                        it.ILLUMINANT_A,
+                        it.ILLUMINANT_B,
+                        it.ILLUMINANT_C,
+                        it.ILLUMINANT_D50,
+                        it.ILLUMINANT_D65,
+                    )
+                }
             radioOptions.forEach { text ->
                 Row(
                     Modifier
@@ -203,14 +211,17 @@ class MainActivity : ComponentActivity() {
                         .selectable(
                             // this method is called when
                             // radio button is selected.
-                            selected = (text == viewModel.selectedObserver),
+                            selected = (text == viewModel.selectedIlluminant),
                             // below method is called on
                             // clicking of radio button.
                             onClick = {
-                                MainViewModel.apply {
+                                SourceViewModel.apply {
                                     when (text) {
-                                        OBSERVER_2_DEGREES -> viewModel.select2degrees()
-                                        OBSERVER_10_DEGREES -> viewModel.select10degrees()
+                                        ILLUMINANT_A -> viewModel.selectIlluminantA()
+                                        ILLUMINANT_B -> viewModel.selectIlluminantB()
+                                        ILLUMINANT_C -> viewModel.selectIlluminantC()
+                                        ILLUMINANT_D50 -> viewModel.selectIlluminantD50()
+                                        ILLUMINANT_D65 -> viewModel.selectIlluminantD65()
                                     }
                                 }
                             }
@@ -218,7 +229,7 @@ class MainActivity : ComponentActivity() {
                         // below line is use to add
                         // padding to radio button.
                         .padding(horizontal = 10.dp),
-                    ) {
+                ) {
                     // val context = ContextAmbient.current
 
                     // below line is use to
@@ -226,12 +237,15 @@ class MainActivity : ComponentActivity() {
                     RadioButton(
                         // inside this method we are
                         // adding selected with a option.
-                        selected = (text == viewModel.selectedObserver),
+                        selected = (text == viewModel.selectedIlluminant),
                         onClick = {
                             MainViewModel.apply {
                                 when (text) {
-                                    OBSERVER_2_DEGREES -> viewModel.select2degrees()
-                                    OBSERVER_10_DEGREES -> viewModel.select10degrees()
+                                    SourceViewModel.ILLUMINANT_A -> viewModel.selectIlluminantA()
+                                    SourceViewModel.ILLUMINANT_B -> viewModel.selectIlluminantB()
+                                    SourceViewModel.ILLUMINANT_C -> viewModel.selectIlluminantC()
+                                    SourceViewModel.ILLUMINANT_D50 -> viewModel.selectIlluminantD50()
+                                    SourceViewModel.ILLUMINANT_D65 -> viewModel.selectIlluminantD65()
                                 }
                             }
                             // after clicking a radio button
