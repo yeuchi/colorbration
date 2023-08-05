@@ -1,4 +1,4 @@
-package com.ctyeung.colorbration.data
+package com.ctyeung.colorbration.data.ref
 
 object LightSources {
     /*

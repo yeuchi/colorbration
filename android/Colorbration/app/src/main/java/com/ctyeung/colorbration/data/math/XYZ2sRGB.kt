@@ -1,4 +1,4 @@
-package com.ctyeung.colorbration.data
+package com.ctyeung.colorbration.data.math
 
 // Reference:	http://en.wikipedia.org/wiki/SRGB#The_forward_transformation_.28CIE_xyY_or_CIE_XYZ_to_sRGB.29
 class XYZ2sRGB : Matrix3x3() {

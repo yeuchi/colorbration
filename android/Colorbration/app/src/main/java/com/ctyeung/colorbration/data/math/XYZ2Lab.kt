@@ -1,4 +1,4 @@
-package com.ctyeung.colorbration.data
+package com.ctyeung.colorbration.data.math
 
 class XYZ2Lab {
 

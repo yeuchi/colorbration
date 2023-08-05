@@ -1,12 +1,10 @@
 package com.ctyeung.colorbration.viewmodels
 
 import android.content.Context
-import android.graphics.PointF
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.ctyeung.colorbration.data.MyPoint
-import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.math.MyPoint
 import com.ctyeung.colorbration.data.SpectralReflectance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

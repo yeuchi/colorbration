@@ -1,6 +1,7 @@
-package com.ctyeung.colorbration.data
+package com.ctyeung.colorbration.data.math
 
-import android.graphics.Point
+import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.ref.StandardObserver
 
 class Spectral2XYZ {
     var _sample: SpectralData? = null
@@ -42,23 +43,17 @@ class Spectral2XYZ {
                     Ys = 0.0
                     Zs = 0.0
                     StandardObserver.let {
-                        for (i in 0 until it.count) {
+                        for (i in 0 until StandardObserver.count) {
                             /*
                          * TODO add option to choose 10degree
                          */
                             val wavelength = it.wavelength[i].toDouble()
-                            var observerX = it.standardObserver2Degree1931X[i];
-                            var observerY = it.standardObserver2Degree1931Y[i];
-                            var observerZ = it.standardObserver2Degree1931Z[i];
-                            Xs += observerX * sam.getY(wavelength) / 100.0 * src.getY(
-                                wavelength
-                            ) / 100.0
-                            Ys += observerY * sam.getY(wavelength) / 100.0 * src.getY(
-                                wavelength
-                            ) / 100.0
-                            Zs += observerZ * sam.getY(wavelength) / 100.0 * src.getY(
-                                wavelength
-                            ) / 100.0
+                            var observerX = StandardObserver.standardObserver2Degree1931X[i];
+                            var observerY = StandardObserver.standardObserver2Degree1931Y[i];
+                            var observerZ = StandardObserver.standardObserver2Degree1931Z[i];
+                            Xs += observerX * sam.percent[i] / 100.0 * src.percent[i] / 100.0
+                            Ys += observerY * sam.percent[i]/ 100.0 * src.percent[i] / 100.0
+                            Zs += observerZ * sam.percent[i] / 100.0 * src.percent[i] / 100.0
                         }
                     }
                     Kw = 100.0 / Yw
@@ -81,23 +76,16 @@ class Spectral2XYZ {
                     Ys = 0.0
                     Zs = 0.0
                     StandardObserver.let {
-                        for (i in 0 until it.count) {
-                            val wavelength = it.wavelength[i].toDouble()
+                        for (i in 0 until StandardObserver.count) {
                             /*
                          * TODO add option to choose 10degree
                          */
-                            var observerX = it.standardObserver2Degree1931X[i];
-                            var observerY = it.standardObserver2Degree1931Y[i];
-                            var observerZ = it.standardObserver2Degree1931Z[i];
-                            Xs += observerX * src.getY(
-                                wavelength
-                            ) / 100.0
-                            Ys += observerY * src.getY(
-                                wavelength
-                            ) / 100.0
-                            Zs += observerZ * src.getY(
-                                wavelength
-                            ) / 100.0
+                            var observerX = StandardObserver.standardObserver2Degree1931X[i];
+                            var observerY = StandardObserver.standardObserver2Degree1931Y[i];
+                            var observerZ = StandardObserver.standardObserver2Degree1931Z[i];
+                            Xs += observerX * src.percent[i] / 100.0
+                            Ys += observerY * src.percent[i] / 100.0
+                            Zs += observerZ * src.percent[i] / 100.0
                         }
                     }
                     Xs *= Kw

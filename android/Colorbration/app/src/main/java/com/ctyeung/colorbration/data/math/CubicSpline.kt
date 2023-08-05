@@ -1,4 +1,4 @@
-package com.ctyeung.colorbration.data
+package com.ctyeung.colorbration.data.math
 
 // ============================================================================
 // Module:		CubicSpline.js
@@ -25,7 +25,7 @@ package com.ctyeung.colorbration.data
 // 20Nov11		ported it to javascript, working in HTML5 canvas.			cty
 // 12Nov17      upgrade to ECMAScript6                                      cty
 // ============================================================================
-class CubicSpline {
+open class CubicSpline {
     /*
      * TODO implement standard cubic spline
      */
@@ -42,7 +42,7 @@ class CubicSpline {
     private var arrayU: DoubleArray? = null
     private var arrayZ: DoubleArray? = null
 
-    fun clear() {
+    open fun clear() {
         arraySrcX.clear()
         arraySrcY.clear()
 

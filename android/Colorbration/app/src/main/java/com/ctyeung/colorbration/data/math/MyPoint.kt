@@ -1,4 +1,4 @@
-package com.ctyeung.colorbration.data
+package com.ctyeung.colorbration.data.math
 
 import android.graphics.Point
 

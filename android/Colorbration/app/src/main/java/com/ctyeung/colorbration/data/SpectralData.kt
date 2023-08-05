@@ -1,11 +1,18 @@
 package com.ctyeung.colorbration.data
 
 import android.graphics.PointF
+import com.ctyeung.colorbration.data.math.CubicSpline
 
-open class SpectralData : Interpolate {
+/*
+ * TODO Don't inherit, use cubic spline as composition to interpolate
+ */
+open class SpectralData : CubicSpline {
     var NAME: String = "Default 50% N";
     var name: String = NAME;
     var wavelength = ArrayList<Int>()
+    /*
+     * TODO percent is inappropriate for Standard Observer
+     */
     var percent = ArrayList<Double>()
 
     constructor(data: List<Double>? = null) {
@@ -50,4 +57,6 @@ open class SpectralData : Interpolate {
         }
         return data;
     }
+
+
 }

@@ -1,4 +1,6 @@
-package com.ctyeung.colorbration.data
+package com.ctyeung.colorbration.data.ref
+
+import com.ctyeung.colorbration.data.SpectralData
 
 object StandardObserver : SpectralData() {
 

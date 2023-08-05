@@ -1,7 +1,7 @@
 package com.ctyeung.colorbration.data
 
 import android.content.Context
-import androidx.compose.ui.graphics.colorspace.Illuminant
+import com.ctyeung.colorbration.data.ref.LightSources
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
