@@ -7,11 +7,11 @@ import javax.inject.Inject
 class AttenuatorRepository  @Inject constructor(
     @ApplicationContext val context: Context
 ) {
-    val Default: SpectralReflectance
+    val default: SpectralReflectance
         get() {
             val list = ArrayList<Double>()
             for(i in 0..30) {
-                list.add(50.0)
+                list.add(.50)
             }
             return SpectralReflectance(list)
         }

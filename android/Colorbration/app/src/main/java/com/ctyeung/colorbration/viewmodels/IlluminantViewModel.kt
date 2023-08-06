@@ -43,27 +43,27 @@ class SourceViewModel @Inject constructor(
 
     fun selectIlluminantA() {
         _selectedIlluminant = ILLUMINANT_A
-        _event.value = SourceEvent.Success(sourceRepository.IlluminantA)
+        _event.value = SourceEvent.Success(sourceRepository.illuminantA)
     }
 
     fun selectIlluminantB() {
         _selectedIlluminant = ILLUMINANT_B
-        _event.value = SourceEvent.Success(sourceRepository.IlluminantB)
+        _event.value = SourceEvent.Success(sourceRepository.illuminantB)
     }
 
     fun selectIlluminantC() {
         _selectedIlluminant = ILLUMINANT_C
-        _event.value = SourceEvent.Success(sourceRepository.IlluminantC)
+        _event.value = SourceEvent.Success(sourceRepository.illuminantC)
     }
 
     fun selectIlluminantD50() {
         _selectedIlluminant = ILLUMINANT_D50
-        _event.value = SourceEvent.Success(sourceRepository.IlluminantD50)
+        _event.value = SourceEvent.Success(sourceRepository.illuminantD50)
     }
 
     fun selectIlluminantD65() {
         _selectedIlluminant = ILLUMINANT_D65
-        _event.value = SourceEvent.Success(sourceRepository.IlluminantD65)
+        _event.value = SourceEvent.Success(sourceRepository.illuminantD65)
     }
 }
 

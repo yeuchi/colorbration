@@ -26,7 +26,7 @@ class ReflectanceViewModel @Inject constructor(
     }
 
     fun getDefault() {
-        _event.value = SpectralEvent.Success(attenuatorRepository.Default)
+        _event.value = SpectralEvent.Success(attenuatorRepository.default)
 
     }
 

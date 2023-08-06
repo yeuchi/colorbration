@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
-import com.ctyeung.colorbration.data.BaseSpectralData
 import com.ctyeung.colorbration.data.SpectralReflectance
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import com.ctyeung.colorbration.viewmodels.MainViewModel

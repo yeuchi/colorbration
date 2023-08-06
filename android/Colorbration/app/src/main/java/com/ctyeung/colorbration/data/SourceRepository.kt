@@ -8,42 +8,42 @@ import javax.inject.Inject
 class SourceRepository @Inject constructor(
     @ApplicationContext val context: Context
 ) {
-    val IlluminantA: SpectralReflectance
+    val illuminantA: SpectralReflectance
         get() {
             val reflectance = LightSources.let {
-                    SpectralReflectance(it.illuminantA)
+                SpectralReflectance(it.illuminantA)
             }
             return reflectance
         }
 
-    val IlluminantB: SpectralReflectance
+    val illuminantB: SpectralReflectance
         get() {
             val reflectance = LightSources.let {
-                    SpectralReflectance(it.illuminantB)
+                SpectralReflectance(it.illuminantB)
             }
             return reflectance
         }
 
-    val IlluminantC: SpectralReflectance
+    val illuminantC: SpectralReflectance
         get() {
             val reflectance = LightSources.let {
-                    SpectralReflectance(it.illuminantC)
+                SpectralReflectance(it.illuminantC)
             }
             return reflectance
         }
 
-    val IlluminantD50: SpectralReflectance
+    val illuminantD50: SpectralReflectance
         get() {
             val reflectance = LightSources.let {
-                    SpectralReflectance(it.illuminantD50)
+                SpectralReflectance(it.illuminantD50)
             }
             return reflectance
         }
 
-    val IlluminantD65: SpectralReflectance
+    val illuminantD65: SpectralReflectance
         get() {
             val reflectance = LightSources.let {
-                    SpectralReflectance(it.illuminantD65)
+                SpectralReflectance(it.illuminantD65)
             }
             return reflectance
         }
