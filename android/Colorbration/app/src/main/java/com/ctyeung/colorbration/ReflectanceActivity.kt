@@ -23,11 +23,11 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.lifecycle.Observer
 import com.ctyeung.colorbration.data.math.MyPoint
-import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.BaseSpectralData
 import com.ctyeung.colorbration.data.SpectralReflectance
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
+import com.ctyeung.colorbration.viewmodels.ReflectanceViewModel
 import com.ctyeung.colorbration.viewmodels.SpectralEvent
-import com.ctyeung.colorbration.viewmodels.SpectralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -41,7 +41,7 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class ReflectanceActivity : ComponentActivity() {
-    protected val viewModel: SpectralViewModel by viewModels()
+    protected val viewModel: ReflectanceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +79,6 @@ class ReflectanceActivity : ComponentActivity() {
 
                         MotionEvent.ACTION_UP -> {
                             /* end collect -> invoke render update (invalidate) */
-                            viewModel.invalidate()
                         }
 
                         else -> false
@@ -174,7 +173,7 @@ class ReflectanceActivity : ComponentActivity() {
             val one_percent = (size.height - 2 * paddingY) / 200.0
             val ten_nm = (size.width - 2 * paddingX) / 30.0
 
-            fun createPath(spectralData: SpectralData, color: Color) {
+            fun createPath(spectralReflectance: SpectralReflectance, color: Color) {
                 /*
                  * TODO step through more points for smoother lines - use cubic spline interpolation
                  */
@@ -184,8 +183,8 @@ class ReflectanceActivity : ComponentActivity() {
                     it.moveTo(paddingX, size.height - paddingY)
 
                     // draw curve topology
-                    for (i in 0 until spectralData.percent.size) {
-                        val percent = (1.0 - spectralData.percent[i]) * 100.0
+                    for (i in 0 until spectralReflectance.percent.size) {
+                        val percent = (1.0 - spectralReflectance.percent[i]) * 100.0
                         val ypos = percent * one_percent + paddingY
                         val xpos = ten_nm * i + paddingX
                         it.lineTo(xpos.toFloat(), ypos.toFloat())

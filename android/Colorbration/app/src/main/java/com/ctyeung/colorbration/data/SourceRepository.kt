@@ -8,54 +8,43 @@ import javax.inject.Inject
 class SourceRepository @Inject constructor(
     @ApplicationContext val context: Context
 ) {
-    val IlluminantA: List<SpectralData>
+    val IlluminantA: SpectralReflectance
         get() {
-            val list = LightSources.let {
-                listOf(
-                    SpectralData(it.illuminantA),
-                )
+            val reflectance = LightSources.let {
+                    SpectralReflectance(it.illuminantA)
             }
-            return list
+            return reflectance
         }
 
-    val IlluminantB: List<SpectralData>
+    val IlluminantB: SpectralReflectance
         get() {
-            val list = LightSources.let {
-                listOf(
-                    SpectralData(it.illuminantB),
-                )
+            val reflectance = LightSources.let {
+                    SpectralReflectance(it.illuminantB)
             }
-            return list
+            return reflectance
         }
 
-    val IlluminantC: List<SpectralData>
+    val IlluminantC: SpectralReflectance
         get() {
-            val list = LightSources.let {
-                listOf(
-                    SpectralData(it.illuminantC),
-                )
+            val reflectance = LightSources.let {
+                    SpectralReflectance(it.illuminantC)
             }
-            return list
+            return reflectance
         }
 
-    val IlluminantD50: List<SpectralData>
+    val IlluminantD50: SpectralReflectance
         get() {
-            val list = LightSources.let {
-                listOf(
-                    SpectralData(it.illuminantD50),
-                )
+            val reflectance = LightSources.let {
+                    SpectralReflectance(it.illuminantD50)
             }
-            return list
+            return reflectance
         }
 
-
-    val IlluminantD65: List<SpectralData>
+    val IlluminantD65: SpectralReflectance
         get() {
-            val list = LightSources.let {
-                listOf(
-                    SpectralData(it.illuminantD65),
-                )
+            val reflectance = LightSources.let {
+                    SpectralReflectance(it.illuminantD65)
             }
-            return list
+            return reflectance
         }
 }

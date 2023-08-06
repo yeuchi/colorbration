@@ -5,7 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ctyeung.colorbration.data.SourceRepository
-import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.BaseSpectralData
+import com.ctyeung.colorbration.data.SpectralReflectance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -68,6 +69,6 @@ class SourceViewModel @Inject constructor(
 
 sealed class SourceEvent() {
     object InProgress : SourceEvent()
-    class Success(val data: List<SpectralData>) : SourceEvent()
+    class Success(val data: SpectralReflectance) : SourceEvent()
     class Error(val msg: String) : SourceEvent()
 }

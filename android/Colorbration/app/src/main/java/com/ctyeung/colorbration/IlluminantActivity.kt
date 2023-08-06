@@ -31,7 +31,8 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
-import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.BaseSpectralData
+import com.ctyeung.colorbration.data.SpectralReflectance
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import com.ctyeung.colorbration.viewmodels.MainViewModel
 import com.ctyeung.colorbration.viewmodels.SourceEvent
@@ -50,7 +51,7 @@ class IlluminantActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ColorbrationTheme {
-                ComposeScreen(emptyList())
+                ComposeScreen(null)
             }
         }
     }
@@ -75,16 +76,18 @@ class IlluminantActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
-    private fun ComposeScreen(data: List<SpectralData>) {
+    private fun ComposeScreen(data: SpectralReflectance?) {
         Scaffold(
             bottomBar = { BottomNavigation(BottomNavItem.Illuminant.screen_route, this) },
         ) {
-            Render(data, it)
+            data?.apply {
+                Render(this, it)
+            }
         }
     }
 
     @Composable
-    private fun Render(data: List<SpectralData>, paddingValues: PaddingValues) {
+    private fun Render(data: SpectralReflectance, paddingValues: PaddingValues) {
         Box(
             // in this column we are specifying modifier
             // and aligning it center of the screen on below lines.
@@ -98,7 +101,7 @@ class IlluminantActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun ComposeCanvas(data: List<SpectralData>) {
+    private fun ComposeCanvas(data: SpectralReflectance) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val paddingX = (size.width / 20.0).toFloat()
             val paddingY = (size.height / 20.0).toFloat()
@@ -147,7 +150,7 @@ class IlluminantActivity : ComponentActivity() {
             val one_percent = (size.height - 2 * paddingY) / 200.0
             val ten_nm = (size.width - 2 * paddingX) / 30.0
 
-            fun createPath(spectralData: SpectralData, color: Color) {
+            fun createPath(spectralReflectance: SpectralReflectance, color: Color) {
                 /*
                  * TODO step through more points for smoother lines - use cubic spline interpolation
                  */
@@ -157,8 +160,8 @@ class IlluminantActivity : ComponentActivity() {
                     it.moveTo(paddingX, size.height - paddingY)
 
                     // draw curve topology
-                    for (i in 0 until spectralData.percent.size) {
-                        val percent = spectralData.percent[i]
+                    for (i in 0 until spectralReflectance.percent.size) {
+                        val percent = spectralReflectance.percent[i]
                         val ypos = percent * one_percent + paddingY
                         val xpos = ten_nm * i + paddingX
                         it.lineTo(xpos.toFloat(), ypos.toFloat())
@@ -176,7 +179,7 @@ class IlluminantActivity : ComponentActivity() {
                     alpha = .5f
                 )
             }
-            createPath(data[0], Color.Red)
+            createPath(data, Color.Red)
         }
     }
 

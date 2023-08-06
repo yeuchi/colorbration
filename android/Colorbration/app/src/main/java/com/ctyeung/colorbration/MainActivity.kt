@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
-import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.BaseSpectralData
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import com.ctyeung.colorbration.viewmodels.MainViewModel
 import com.ctyeung.colorbration.viewmodels.ObserverEvent
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
-    private fun ComposeScreen(data: List<SpectralData>) {
+    private fun ComposeScreen(data: List<SpectralObserver>) {
         Scaffold(
             bottomBar = { BottomNavigation(BottomNavItem.Observers.screen_route, this) },
         ) {
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun Render(data: List<SpectralData>, paddingValues: PaddingValues) {
+    private fun Render(data: List<SpectralObserver>, paddingValues: PaddingValues) {
         Box(
             // in this column we are specifying modifier
             // and aligning it center of the screen on below lines.
@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun ComposeCanvas(data: List<SpectralData>) {
+    private fun ComposeCanvas(data: List<SpectralObserver>) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val paddingX = (size.width / 20.0).toFloat()
             val paddingY = (size.height / 20.0).toFloat()
@@ -145,7 +145,7 @@ class MainActivity : ComponentActivity() {
             val one_percent = (size.height - 2 * paddingY) / 200.0
             val ten_nm = (size.width - 2 * paddingX) / 30.0
 
-            fun createPath(spectralData: SpectralData, color: Color) {
+            fun createPath(spectralObserver: SpectralObserver, color: Color) {
                 /*
                  * TODO step through more points for smoother lines - use cubic spline interpolation
                  */
@@ -155,8 +155,8 @@ class MainActivity : ComponentActivity() {
                     it.moveTo(paddingX, size.height - paddingY)
 
                     // draw curve topology
-                    for (i in 0 until spectralData.percent.size) {
-                        val percent = (2.0 - spectralData.percent[i]) * 100.0
+                    for (i in 0 until spectralObserver.tristimulus.size) {
+                        val percent = (2.0 - spectralObserver.tristimulus[i]) * 100.0
                         val ypos = percent * one_percent + paddingY
                         val xpos = ten_nm * i + paddingX
                         it.lineTo(xpos.toFloat(), ypos.toFloat())

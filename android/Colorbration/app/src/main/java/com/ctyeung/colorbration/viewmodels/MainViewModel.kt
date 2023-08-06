@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ctyeung.colorbration.SpectralObserver
 import com.ctyeung.colorbration.data.ObserverRepository
-import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.BaseSpectralData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -44,6 +45,6 @@ class MainViewModel @Inject constructor(
 
 sealed class ObserverEvent() {
     object InProgress : ObserverEvent()
-    class Success(val data: List<SpectralData>) : ObserverEvent()
+    class Success(val data: List<SpectralObserver>) : ObserverEvent()
     class Error(val msg: String) : ObserverEvent()
 }

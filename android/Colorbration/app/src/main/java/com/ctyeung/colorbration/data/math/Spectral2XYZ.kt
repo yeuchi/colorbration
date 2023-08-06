@@ -1,11 +1,11 @@
 package com.ctyeung.colorbration.data.math
 
-import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.SpectralReflectance
 import com.ctyeung.colorbration.data.ref.StandardObserver
 
 class Spectral2XYZ {
-    var _sample: SpectralData? = null
-    var _source: SpectralData? = null
+    var _sample: SpectralReflectance? = null
+    var _source: SpectralReflectance? = null
 
     var Kw: Double = 0.0                                // factor to bring Y to 100%
     var Xw: Double = 0.0
@@ -32,7 +32,7 @@ class Spectral2XYZ {
     // Produce Tristimulus values:
     // take the integral of sample and standard observer curves.
     // ----------------------------------------------------------
-    var sample: SpectralData?
+    var sample: SpectralReflectance?
         get() = _sample
         set(value) {
             _sample = value
@@ -65,7 +65,7 @@ class Spectral2XYZ {
             }
         }
 
-    var source: SpectralData?
+    var source: SpectralReflectance?
         get() = _source
         set(value) {
             _source = value
@@ -78,7 +78,8 @@ class Spectral2XYZ {
                     StandardObserver.let {
                         for (i in 0 until StandardObserver.count) {
                             /*
-                         * TODO add option to choose 10degree
+                         * TODO add option to choose 10degree (pref storage)
+                         *  Can't remember how the observer values are scaled (2.0 range?)
                          */
                             var observerX = StandardObserver.standardObserver2Degree1931X[i];
                             var observerY = StandardObserver.standardObserver2Degree1931Y[i];

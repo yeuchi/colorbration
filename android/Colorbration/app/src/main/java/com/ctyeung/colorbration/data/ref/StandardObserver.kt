@@ -1,8 +1,8 @@
 package com.ctyeung.colorbration.data.ref
 
-import com.ctyeung.colorbration.data.SpectralData
+import com.ctyeung.colorbration.data.BaseSpectralData
 
-object StandardObserver : SpectralData() {
+object StandardObserver : BaseSpectralData() {
 
     const val FUNC_2D_1931: String = "2degree1931"
     const val FUNC_10D_1964: String = "10degree1964"
