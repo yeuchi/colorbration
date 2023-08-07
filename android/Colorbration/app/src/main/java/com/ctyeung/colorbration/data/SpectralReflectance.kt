@@ -3,15 +3,24 @@ package com.ctyeung.colorbration.data
 import com.ctyeung.colorbration.data.math.MyPoint
 
 class SpectralReflectance : BaseSpectralData {
+    val percent: List<Double>
+        get() {
+            map?.apply {
+                return values.toList()
+            }
+            return emptyList<Double>()
+        }
 
-    var percent = ArrayList<Double>()
+    private var map: HashMap<Int, Double>? = null
 
     constructor(data: List<Double>) {
 
         data.let {
-            for (i in 0 until wavelength.size) {
-                // potential crash if data.size is too short
-                percent.add(data[i]);
+            map = HashMap<Int, Double>()
+            map?.let { m ->
+                for (i in 0 until wavelength.size) {
+                    m.set(i, data[i])
+                }
             }
         }
     }
@@ -21,10 +30,10 @@ class SpectralReflectance : BaseSpectralData {
      */
 
     fun add(point: MyPoint) {
-
+        map?.apply {
+            this[point.x.toInt()] = point.y
+        }
     }
 
-    fun clear() {
-
-    }
+    fun clear() = map?.clear()
 }
