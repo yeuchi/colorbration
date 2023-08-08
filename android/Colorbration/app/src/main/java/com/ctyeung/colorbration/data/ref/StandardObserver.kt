@@ -9,6 +9,11 @@ object StandardObserver : BaseSpectralData() {
 
     val count = 31
 
+    val wavelength:ArrayList<Int>
+        get() {
+            return _wavelength
+        }
+
     /*
      * TODO move to data file for db ?
      */

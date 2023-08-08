@@ -8,7 +8,7 @@ import android.graphics.PointF
 abstract class BaseSpectralData {
     var NAME: String = "Default 50% N";
     var name: String = NAME;
-    var wavelength = arrayListOf(
+    protected var _wavelength = arrayListOf(
     400, 410, 420, 430, 440,
     450, 460, 470, 480, 490,
     500, 510, 520, 530, 540,

@@ -11,6 +11,14 @@ class SpectralReflectance : BaseSpectralData {
             return emptyList<Double>()
         }
 
+    val knots:List<Pair<Int, Double>>
+        get() {
+            map?.apply {
+                return this.toList().sortedBy { it.first }
+            }
+            return emptyList()
+        }
+
     private var map: HashMap<Int, Double>? = null
 
     constructor(data: List<Double>) {
@@ -18,8 +26,8 @@ class SpectralReflectance : BaseSpectralData {
         data.let {
             map = HashMap<Int, Double>()
             map?.let { m ->
-                for (i in 0 until wavelength.size) {
-                    m.set(i, data[i])
+                for (i in 0 until _wavelength.size) {
+                    m.set(_wavelength[i], data[i])
                 }
             }
         }

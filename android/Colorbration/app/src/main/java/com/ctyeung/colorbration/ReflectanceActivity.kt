@@ -42,6 +42,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ReflectanceActivity : ComponentActivity() {
     protected val viewModel: ReflectanceViewModel by viewModels()
+    protected var paddingX: Float = 0f
+    protected var paddingY: Float = 0f
+    protected var width: Float = 0f
+    protected var height: Float = 0f
+    protected var unit100X: Double = 0.0
+    protected var unit25Y: Double = 0.0
+
+    protected var iconPaddingY: Float = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +65,43 @@ class ReflectanceActivity : ComponentActivity() {
         viewModel.event.observe(this, Observer(::onViewModelEvent))
     }
 
+    private fun convertCoord(x: Float, y: Float): MyPoint? {
+        when {
+            x < paddingX -> {
+                // do nothing
+            }
+
+            x > (width - paddingX) -> {
+                // do nothing
+            }
+
+            else -> {
+                val wavelength = 400 + (x - paddingX) / unit100X * 100
+                return MyPoint(wavelength, convertCoordY(y))
+            }
+        }
+        return null
+    }
+
+    private fun convertCoordY(y: Float): Double {
+        when {
+            y < paddingY -> {
+                return 1.0
+            }
+
+            y > (height - paddingY) -> {
+                return 0.0
+            }
+
+            else -> {
+                /*
+                 * TODO - this needs to be fixed
+                 */
+                return 1.0 - (y - paddingY) / unit25Y * .25
+            }
+        }
+    }
+
     @OptIn(ExperimentalComposeUiApi::class)
     fun onViewModelEvent(event: SpectralEvent) {
         setContent {
@@ -65,16 +110,19 @@ class ReflectanceActivity : ComponentActivity() {
                 Column(modifier = Modifier.pointerInteropFilter {
                     when (it.action) {
                         MotionEvent.ACTION_DOWN -> {
-                            /* collect down */
                             viewModel.apply {
-                                clear()
-                                add(MyPoint(it.rawX.toDouble(), it.rawY.toDouble()))
+                                convertCoord(it.rawX, it.rawY)?.let {
+                                    add(it)
+                                }
                             }
                         }
 
                         MotionEvent.ACTION_MOVE -> {
-                            /* collect location */
-                            viewModel.add(MyPoint(it.rawX.toDouble(), it.rawY.toDouble()))
+                            viewModel.apply {
+                                convertCoord(it.rawX, it.rawY)?.let {
+                                    add(it)
+                                }
+                            }
                         }
 
                         MotionEvent.ACTION_UP -> {
@@ -126,8 +174,10 @@ class ReflectanceActivity : ComponentActivity() {
     @Composable
     private fun ComposeCanvas(curve: SpectralReflectance) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val paddingX = (size.width / 20.0).toFloat()
-            val paddingY = (size.height / 20.0).toFloat()
+            width = size.width
+            height = size.height
+            paddingX = (size.width / 20.0).toFloat()
+            paddingY = (size.height / 20.0).toFloat()
             val paint = Paint().asFrameworkPaint().apply {
                 color = 0xff000000.toInt()
                 textAlign = android.graphics.Paint.Align.LEFT
@@ -135,7 +185,7 @@ class ReflectanceActivity : ComponentActivity() {
             }
 
             // y-axis
-            val unit25Y = (size.height - 2 * paddingX) / 4.0
+            unit25Y = (size.height - 2 * paddingX) / 4.0
             drawLine(
                 start = Offset(x = paddingX, y = 0f),
                 end = Offset(x = paddingX, y = size.height - paddingY),
@@ -153,7 +203,7 @@ class ReflectanceActivity : ComponentActivity() {
             }
 
             // x-axis
-            val unit100X = (size.width - 2 * paddingX) / 3.0
+            unit100X = (size.width - 2 * paddingX) / 3.0
             drawLine(
                 start = Offset(x = paddingX, y = size.height - paddingY),
                 end = Offset(x = size.width, y = size.height - paddingY),
@@ -170,7 +220,7 @@ class ReflectanceActivity : ComponentActivity() {
                 }
             }
 
-            val one_percent = (size.height - 2 * paddingY) / 200.0
+            val one_percent = (size.height - 2 * paddingY) / 100.0
             val ten_nm = (size.width - 2 * paddingX) / 30.0
 
             fun createPath(spectralReflectance: SpectralReflectance, color: Color) {
@@ -183,10 +233,11 @@ class ReflectanceActivity : ComponentActivity() {
                     it.moveTo(paddingX, size.height - paddingY)
 
                     // draw curve topology
-                    for (i in 0 until spectralReflectance.percent.size) {
-                        val percent = (1.0 - spectralReflectance.percent[i]) * 100.0
+                    var i = 0
+                    for (knot in spectralReflectance.knots) {
+                        val percent = (1.0 - knot.second) * 100.0
                         val ypos = percent * one_percent + paddingY
-                        val xpos = ten_nm * i + paddingX
+                        val xpos = ten_nm * (knot.first - 400)/10 + paddingX
                         it.lineTo(xpos.toFloat(), ypos.toFloat())
                     }
 

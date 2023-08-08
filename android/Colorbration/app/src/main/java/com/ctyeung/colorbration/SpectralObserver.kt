@@ -6,6 +6,11 @@ class SpectralObserver : BaseSpectralData {
 
     var tristimulus = ArrayList<Double>()
 
+    val wavelength:ArrayList<Int>
+        get() {
+            return _wavelength
+        }
+
     constructor(data: List<Double>) {
 
         data.let {

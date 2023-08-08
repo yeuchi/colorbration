@@ -25,19 +25,16 @@ class ReflectanceViewModel @Inject constructor(
         getDefault()
     }
 
-    fun getDefault() {
-        _event.value = SpectralEvent.Success(attenuatorRepository.default)
-
+    private fun getDefault() {
+        _event.value = SpectralEvent.Success(attenuatorRepository.sample)
     }
 
     fun clear() {
     }
 
     fun add(p: MyPoint) {
-        /*
-         * TODO need to replace existing point if exist
-         *  Or add new knot
-         */
+        attenuatorRepository.add(p)
+        _event.value = SpectralEvent.Success(attenuatorRepository.sample)
     }
 
     fun invalidate() {
