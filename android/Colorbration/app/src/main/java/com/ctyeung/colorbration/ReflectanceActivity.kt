@@ -97,7 +97,7 @@ class ReflectanceActivity : ComponentActivity() {
                 /*
                  * TODO - this needs to be fixed
                  */
-                return 1.0 - (y - paddingY) / unit25Y * .25
+                return 1.0 - (y - paddingY) / unit25Y * .20
             }
         }
     }
