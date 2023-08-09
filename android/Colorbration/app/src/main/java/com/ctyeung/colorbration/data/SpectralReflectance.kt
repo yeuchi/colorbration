@@ -3,32 +3,17 @@ package com.ctyeung.colorbration.data
 import com.ctyeung.colorbration.data.math.MyPoint
 
 class SpectralReflectance : BaseSpectralData {
+    private var _percent = ArrayList<Double>()
     val percent: List<Double>
         get() {
-            map?.apply {
-                return values.toList()
-            }
-            return emptyList<Double>()
+            return _percent
         }
-
-    val knots:List<Pair<Int, Double>>
-        get() {
-            map?.apply {
-                return this.toList().sortedBy { it.first }
-            }
-            return emptyList()
-        }
-
-    private var map: HashMap<Int, Double>? = null
 
     constructor(data: List<Double>) {
 
         data.let {
-            map = HashMap<Int, Double>()
-            map?.let { m ->
-                for (i in 0 until _wavelength.size) {
-                    m.set(_wavelength[i], data[i])
-                }
+            for(item in data) {
+                _percent.add(item)
             }
         }
     }
@@ -37,11 +22,7 @@ class SpectralReflectance : BaseSpectralData {
      * TODO add Cubic Spline for a smooth curve
      */
 
-    fun add(point: MyPoint) {
-        map?.apply {
-            this[point.x.toInt()] = point.y
-        }
+    fun updateBy(index:Int, value:Double) {
+        _percent[index] = value
     }
-
-    fun clear() = map?.clear()
 }

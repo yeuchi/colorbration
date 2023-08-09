@@ -26,9 +26,9 @@ class AttenuatorRepository @Inject constructor(
             }
         }
 
-    fun add(p:MyPoint) {
+    fun updateBy(index:Int, value:Double) {
         spectralReflectance?.let {
-            it.add(p)
+            it.updateBy(index, value)
         }
     }
 }

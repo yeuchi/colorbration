@@ -25,22 +25,21 @@ package com.ctyeung.colorbration.data.math
 // 20Nov11		ported it to javascript, working in HTML5 canvas.			cty
 // 12Nov17      upgrade to ECMAScript6                                      cty
 // ============================================================================
-open class CubicSpline {
+open class CubicSpline : Bisection() {
     /*
      * TODO implement standard cubic spline
      */
 
-    private val arraySrcX = ArrayList<Double>()
-    private val arraySrcY = ArrayList<Double>()
+    protected val arraySrcY = ArrayList<Double>()
 
-    private var arrayB: DoubleArray? = null
-    private var arrayC: DoubleArray? = null
-    private var arrayD: DoubleArray? = null
-    private var arrayH: DoubleArray? = null
-    private var arraySIG: DoubleArray? = null
-    private var arrayL: DoubleArray? = null
-    private var arrayU: DoubleArray? = null
-    private var arrayZ: DoubleArray? = null
+    protected var arrayB: DoubleArray? = null
+    protected var arrayC: DoubleArray? = null
+    protected var arrayD: DoubleArray? = null
+    protected var arrayH: DoubleArray? = null
+    protected var arraySIG: DoubleArray? = null
+    protected var arrayL: DoubleArray? = null
+    protected var arrayU: DoubleArray? = null
+    protected var arrayZ: DoubleArray? = null
 
     open fun clear() {
         arraySrcX.clear()
@@ -87,32 +86,14 @@ open class CubicSpline {
                 }
             }
             else -> {
-                val index = bisection(p.x) + 1
+                val index = findNearest(p.x) + 1
                 arraySrcX.add(index, p.x)
                 arraySrcY.add(index, p.y)
             }
         }
     }
 
-    /*
-     * bisection search to locate x-axis values for input
-     * - intended as a private method
-     */
-    private fun bisection(ab: Double): Int {                                               // x-axis value
-        var ju = arraySrcX.size                                                // upper limit
-        var jl = 0                                                                // lower limit
-        var jm: Int?                                                            // midpoint
 
-        while (ju - jl > 1) {
-            jm = (ju + jl) / 2                                    // midpoint formula
-
-            if (ab > arraySrcX[jm])
-                jl = jm
-            else
-                ju = jm
-        }
-        return jl
-    }
 
     fun formulate() {
         val numKnots = arraySrcX.size
@@ -205,7 +186,7 @@ open class CubicSpline {
     }
 
     fun interpolateY(x: Double): Double {
-        val index = bisection(x)
+        val index = findNearest(x)
         return if (arraySrcX[index] == x) {
             arraySrcY[index]
         } else {

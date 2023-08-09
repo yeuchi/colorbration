@@ -29,15 +29,10 @@ class ReflectanceViewModel @Inject constructor(
         _event.value = SpectralEvent.Success(attenuatorRepository.sample)
     }
 
-    fun clear() {
-    }
-
-    fun add(p: MyPoint) {
-        attenuatorRepository.add(p)
+    fun updateBy(index:Int, value:Double) {
+        //val index = (wavelength - 400) / 10
+        attenuatorRepository.updateBy(index, value)
         _event.value = SpectralEvent.Success(attenuatorRepository.sample)
-    }
-
-    fun invalidate() {
     }
 }
 

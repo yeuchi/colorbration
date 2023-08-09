@@ -25,6 +25,7 @@ import androidx.lifecycle.Observer
 import com.ctyeung.colorbration.data.math.MyPoint
 import com.ctyeung.colorbration.data.BaseSpectralData
 import com.ctyeung.colorbration.data.SpectralReflectance
+import com.ctyeung.colorbration.data.math.Bisection
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import com.ctyeung.colorbration.viewmodels.ReflectanceViewModel
 import com.ctyeung.colorbration.viewmodels.SpectralEvent
@@ -49,7 +50,8 @@ class ReflectanceActivity : ComponentActivity() {
     protected var unit100X: Double = 0.0
     protected var unit25Y: Double = 0.0
 
-    protected var iconPaddingY: Float = 0f
+    private var mapX: HashMap<Int, Int>? = null // display pixel, wavelength
+    private var bisection: Bisection? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,22 +67,16 @@ class ReflectanceActivity : ComponentActivity() {
         viewModel.event.observe(this, Observer(::onViewModelEvent))
     }
 
-    private fun convertCoord(x: Float, y: Float): MyPoint? {
-        when {
-            x < paddingX -> {
-                // do nothing
-            }
-
-            x > (width - paddingX) -> {
-                // do nothing
-            }
-
-            else -> {
-                val wavelength = 400 + (x - paddingX) / unit100X * 100
-                return MyPoint(wavelength, convertCoordY(y))
-            }
+    private fun findNearestWavelenthBy(displayX: Int): Int {
+        /*
+         * TODO reconcile error conditions
+         */
+        bisection?.let {
+            val index = it.findNearest(displayX.toDouble())
+            val knot = it.arraySrcX[index].toInt()
+            return mapX?.get(knot) ?: -1
         }
-        return null
+        return -1
     }
 
     private fun convertCoordY(y: Float): Double {
@@ -111,17 +107,18 @@ class ReflectanceActivity : ComponentActivity() {
                     when (it.action) {
                         MotionEvent.ACTION_DOWN -> {
                             viewModel.apply {
-                                convertCoord(it.rawX, it.rawY)?.let {
-                                    add(it)
-                                }
+                                val index = findNearestWavelenthBy(it.rawX.toInt())
+                                val y = convertCoordY(it.rawY)
+                                updateBy(index, y)
                             }
                         }
 
                         MotionEvent.ACTION_MOVE -> {
                             viewModel.apply {
-                                convertCoord(it.rawX, it.rawY)?.let {
-                                    add(it)
-                                }
+                                // TODO consolidate with above
+                                val index = findNearestWavelenthBy(it.rawX.toInt())
+                                val y = convertCoordY(it.rawY)
+                                updateBy(index, y)
                             }
                         }
 
@@ -232,13 +229,32 @@ class ReflectanceActivity : ComponentActivity() {
                     // initial position
                     it.moveTo(paddingX, size.height - paddingY)
 
+                    val firstTime = if (mapX == null) {
+                        mapX = HashMap<Int, Int>()
+                        true
+                    } else {
+                        false
+                    }
+
                     // draw curve topology
-                    var i = 0
-                    for (knot in spectralReflectance.knots) {
-                        val percent = (1.0 - knot.second) * 100.0
+                    for (i in 0 until spectralReflectance.percent.size) {
+                        val percent = (1.0 - spectralReflectance.percent[i]) * 100.0
                         val ypos = percent * one_percent + paddingY
-                        val xpos = ten_nm * (knot.first - 400)/10 + paddingX
+                        val xpos = ten_nm * i + paddingX
+                        if (firstTime) {
+                            mapX?.set(xpos.toInt(), i)
+                        }
                         it.lineTo(xpos.toFloat(), ypos.toFloat())
+                    }
+                    if (firstTime) {
+                        mapX?.let {
+                            Bisection().apply {
+                                bisection = this
+                                for (key in it.keys.sorted()) {
+                                    arraySrcX.add(key.toDouble())
+                                }
+                            }
+                        }
                     }
 
                     // end position
