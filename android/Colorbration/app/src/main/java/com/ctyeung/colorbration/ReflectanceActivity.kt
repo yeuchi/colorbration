@@ -79,7 +79,7 @@ class ReflectanceActivity : ComponentActivity() {
         return -1
     }
 
-    private fun convertCoordY(y: Float): Double {
+    private fun convertCoordY(y: Int): Double {
         when {
             y < paddingY -> {
                 return 1.0
@@ -98,6 +98,13 @@ class ReflectanceActivity : ComponentActivity() {
         }
     }
 
+    private fun convertCoord(x:Int, y:Int) {
+        viewModel.apply {
+            val index = findNearestWavelenthBy(x)
+            val y = convertCoordY(y)
+            updateBy(index, y)
+        }
+    }
     @OptIn(ExperimentalComposeUiApi::class)
     fun onViewModelEvent(event: SpectralEvent) {
         setContent {
@@ -105,23 +112,8 @@ class ReflectanceActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Column(modifier = Modifier.pointerInteropFilter {
                     when (it.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            viewModel.apply {
-                                val index = findNearestWavelenthBy(it.rawX.toInt())
-                                val y = convertCoordY(it.rawY)
-                                updateBy(index, y)
-                            }
-                        }
-
-                        MotionEvent.ACTION_MOVE -> {
-                            viewModel.apply {
-                                // TODO consolidate with above
-                                val index = findNearestWavelenthBy(it.rawX.toInt())
-                                val y = convertCoordY(it.rawY)
-                                updateBy(index, y)
-                            }
-                        }
-
+                        MotionEvent.ACTION_DOWN,
+                        MotionEvent.ACTION_MOVE -> convertCoord(it.rawX.toInt(), it.rawY.toInt())
                         MotionEvent.ACTION_UP -> {
                             /* end collect -> invoke render update (invalidate) */
                         }
