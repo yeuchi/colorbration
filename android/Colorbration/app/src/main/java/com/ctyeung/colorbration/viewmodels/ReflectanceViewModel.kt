@@ -1,14 +1,18 @@
 package com.ctyeung.colorbration.viewmodels
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ctyeung.colorbration.data.AttenuatorEvent
 import com.ctyeung.colorbration.data.AttenuatorRepository
 import com.ctyeung.colorbration.data.math.MyPoint
 import com.ctyeung.colorbration.data.SpectralReflectance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +26,32 @@ class ReflectanceViewModel @Inject constructor(
     val event: LiveData<SpectralEvent> = _event
 
     init {
-        getDefault()
+        initAttenuatorEventListener()
+        //getDefault()
+    }
+
+    private fun initAttenuatorEventListener() {
+        kotlin.runCatching {
+            viewModelScope.launch {
+                attenuatorRepository.event.collect() {
+                   when(it) {
+                       is AttenuatorEvent.Success -> {
+                           _event.value = SpectralEvent.Success(it.curve)
+                       }
+
+                       is AttenuatorEvent.Error -> {
+                           _event.value = SpectralEvent.Error(it.msg)
+                       }
+
+                       else -> {
+                           _event.value = SpectralEvent.Error("unknown")
+                       }
+                   }
+                }
+            }
+        }.onFailure {
+            Log.e("WeatherViewModel.initUnitListener", it.toString())
+        }
     }
 
     private fun getDefault() {
@@ -30,7 +59,6 @@ class ReflectanceViewModel @Inject constructor(
     }
 
     fun updateBy(index:Int, value:Double) {
-        //val index = (wavelength - 400) / 10
         attenuatorRepository.updateBy(index, value)
         _event.value = SpectralEvent.Success(attenuatorRepository.sample)
     }
