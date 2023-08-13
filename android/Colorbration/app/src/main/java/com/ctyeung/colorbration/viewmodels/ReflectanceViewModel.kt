@@ -49,7 +49,7 @@ class ReflectanceViewModel @Inject constructor(
                 }
             }
         }.onFailure {
-            Log.e("WeatherViewModel.initUnitListener", it.toString())
+            Log.e("ReflectanceViewModel", it.toString())
         }
     }
 
