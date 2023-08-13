@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 @Composable
 fun BottomNavigation(currentSelection: String, activity: Activity) {
     val items = listOf(
@@ -51,7 +50,10 @@ fun BottomNavigation(currentSelection: String, activity: Activity) {
         items.forEach { item ->
             BottomNavigationItem(
                 icon = {
-                    Icon(imageVector = ImageVector.vectorResource(item.iconId), contentDescription = item.title)
+                    Icon(
+                        imageVector = ImageVector.vectorResource(item.iconId),
+                        contentDescription = item.title
+                    )
                 },
                 label = {
                     Text(
@@ -160,8 +162,6 @@ fun ComposeSpinner() {
         CircularProgressIndicator()
     }
 }
-
-
 
 @Composable
 fun ComposeSnackbar(msg: String) {

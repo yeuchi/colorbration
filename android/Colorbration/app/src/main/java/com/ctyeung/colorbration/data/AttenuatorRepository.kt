@@ -2,9 +2,6 @@ package com.ctyeung.colorbration.data
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.viewModelScope
-import com.ctyeung.colorbration.data.math.MyPoint
-import com.ctyeung.colorbration.viewmodels.SpectralEvent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +19,6 @@ class AttenuatorRepository @Inject constructor(
             AttenuatorEvent.Success(defaultSample),
         )
     val event: StateFlow<AttenuatorEvent> = _event
-
 
     private var spectralReflectance: SpectralReflectance? = null
 

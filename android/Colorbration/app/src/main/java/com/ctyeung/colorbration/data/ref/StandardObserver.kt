@@ -14,9 +14,6 @@ object StandardObserver : BaseSpectralData() {
             return _wavelength
         }
 
-    /*
-     * TODO move to data file for db ?
-     */
     val standardObserver10Degree1964X = listOf<Double>(
         .0191, .0847, .2045, .3147, .3837,
         .3707, .3023, .1956, .0805, .0162,

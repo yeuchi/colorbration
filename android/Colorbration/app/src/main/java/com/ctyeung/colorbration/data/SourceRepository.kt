@@ -3,7 +3,6 @@ package com.ctyeung.colorbration.data
 import android.content.Context
 import android.util.Log
 import com.ctyeung.colorbration.data.ref.LightSources
-import com.ctyeung.colorbration.data.ref.StandardObserver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -92,6 +91,6 @@ class SourceRepository @Inject constructor(
 }
 
 sealed class SourceDataEvent() {
-    class Success(val selectedSource:String) : SourceDataEvent()
+    class Success(val selectedSource: String) : SourceDataEvent()
     class Error(val msg: String) : SourceDataEvent()
 }

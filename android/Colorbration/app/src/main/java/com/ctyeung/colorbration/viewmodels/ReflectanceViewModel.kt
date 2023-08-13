@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ctyeung.colorbration.data.AttenuatorEvent
 import com.ctyeung.colorbration.data.AttenuatorRepository
-import com.ctyeung.colorbration.data.math.MyPoint
 import com.ctyeung.colorbration.data.SpectralReflectance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -33,19 +32,19 @@ class ReflectanceViewModel @Inject constructor(
         kotlin.runCatching {
             viewModelScope.launch {
                 attenuatorRepository.event.collect() {
-                   when(it) {
-                       is AttenuatorEvent.Success -> {
-                           _event.value = SpectralEvent.Success(it.curve)
-                       }
+                    when (it) {
+                        is AttenuatorEvent.Success -> {
+                            _event.value = SpectralEvent.Success(it.curve)
+                        }
 
-                       is AttenuatorEvent.Error -> {
-                           _event.value = SpectralEvent.Error(it.msg)
-                       }
+                        is AttenuatorEvent.Error -> {
+                            _event.value = SpectralEvent.Error(it.msg)
+                        }
 
-                       else -> {
-                           _event.value = SpectralEvent.Error("unknown")
-                       }
-                   }
+                        else -> {
+                            _event.value = SpectralEvent.Error("unknown")
+                        }
+                    }
                 }
             }
         }.onFailure {
@@ -53,7 +52,7 @@ class ReflectanceViewModel @Inject constructor(
         }
     }
 
-    fun updateBy(index:Int, value:Double) {
+    fun updateBy(index: Int, value: Double) {
         viewModelScope.launch {
             attenuatorRepository.updateBy(index, value)
         }

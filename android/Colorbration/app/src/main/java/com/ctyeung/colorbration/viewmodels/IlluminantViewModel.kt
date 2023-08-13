@@ -26,9 +26,6 @@ class SourceViewModel @Inject constructor(
     private val _event = MutableLiveData<SourceEvent>()
     val event: LiveData<SourceEvent> = _event
 
-    /*
-     * TODO replace with preference storage later
-     */
     private var _selectedIlluminant: String = LightSources.ILLUMINANT_A
     val selectedIlluminant: String
         get() {

@@ -76,6 +76,7 @@ open class CubicSpline : Bisection() {
                 arraySrcX.add(p.x)
                 arraySrcY.add(p.y)
             }
+
             1 -> {
                 if (p.x < arraySrcX[0]) {
                     arraySrcX.add(0, p.x)
@@ -85,6 +86,7 @@ open class CubicSpline : Bisection() {
                     arraySrcY.add(p.y)
                 }
             }
+
             else -> {
                 val index = findNearest(p.x) + 1
                 arraySrcX.add(index, p.x)
@@ -92,8 +94,6 @@ open class CubicSpline : Bisection() {
             }
         }
     }
-
-
 
     fun formulate() {
         val numKnots = arraySrcX.size
@@ -132,7 +132,7 @@ open class CubicSpline : Bisection() {
         for (aa in 1 until numKnots - 1) {
             arrayL?.set(
                 aa,
-                (2.0 * (arraySrcX.get(aa + 1) - arraySrcX.get(aa - 1)))- (arrayH!!.get(aa - 1) * arrayU!!.get(
+                (2.0 * (arraySrcX.get(aa + 1) - arraySrcX.get(aa - 1))) - (arrayH!!.get(aa - 1) * arrayU!!.get(
                     aa - 1
                 ))
             )
@@ -141,7 +141,10 @@ open class CubicSpline : Bisection() {
 
             arrayZ?.set(
                 aa,
-                (arraySIG!!.get(aa) - (arrayH!!.get(aa - 1) * arrayZ!!.get(aa - 1))) / arrayL!!.get(aa))
+                (arraySIG!!.get(aa) - (arrayH!!.get(aa - 1) * arrayZ!!.get(aa - 1))) / arrayL!!.get(
+                    aa
+                )
+            )
         }
 
         // STEP 5		TAIL BOUNDARY @ 0
@@ -207,6 +210,7 @@ open class CubicSpline : Bisection() {
                 MyPoint(arraySrcX[0], arraySrcY[0]),
                 MyPoint(arraySrcX[1], arraySrcY[1])
             )
+
             else -> interpolateAll()
         }
     }

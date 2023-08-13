@@ -190,7 +190,12 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Top,
         ) {
             val radioOptions =
-                viewModel.let { listOf(StandardObserver.FUNC_2D_1931, StandardObserver.FUNC_10D_1964) }
+                viewModel.let {
+                    listOf(
+                        StandardObserver.FUNC_2D_1931,
+                        StandardObserver.FUNC_10D_1964
+                    )
+                }
             radioOptions.forEach { text ->
                 Row(
                     Modifier
@@ -213,7 +218,7 @@ class MainActivity : ComponentActivity() {
                         // below line is use to add
                         // padding to radio button.
                         .padding(horizontal = 10.dp),
-                    ) {
+                ) {
                     // val context = ContextAmbient.current
 
                     // below line is use to

@@ -22,8 +22,6 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.lifecycle.Observer
-import com.ctyeung.colorbration.data.math.MyPoint
-import com.ctyeung.colorbration.data.BaseSpectralData
 import com.ctyeung.colorbration.data.SpectralReflectance
 import com.ctyeung.colorbration.data.math.Bisection
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme

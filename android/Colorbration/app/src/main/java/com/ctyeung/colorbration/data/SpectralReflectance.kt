@@ -1,8 +1,5 @@
 package com.ctyeung.colorbration.data
 
-import com.ctyeung.colorbration.data.math.MyPoint
-import java.lang.StringBuilder
-
 class SpectralReflectance : BaseSpectralData {
     private var _percent = ArrayList<Double>()
     val percent: List<Double>

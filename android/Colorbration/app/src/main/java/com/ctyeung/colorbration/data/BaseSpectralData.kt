@@ -1,7 +1,5 @@
 package com.ctyeung.colorbration.data
 
-import android.graphics.PointF
-
 /*
  * TODO Don't inherit, use cubic spline as composition to interpolate
  */

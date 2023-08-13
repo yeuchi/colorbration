@@ -14,7 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 
 sealed class BottomNavItem(var title:String, var iconId:Int, var screen_route:String) {
-
     object Observers : BottomNavItem("Observers", R.drawable.ic_observers, "observers")
     object Illuminant : BottomNavItem("Illuminant", R.drawable.ic_light, "illuminant")
     object Reflectance : BottomNavItem("Reflectance", R.drawable.ic_graph, "reflectance")
