@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class AttenuatorRepository @Inject constructor(
     @ApplicationContext val context: Context,
-    val prefStoreRepository: PrefStoreRepository
+    private val prefStoreRepository: PrefStoreRepository
 ) {
     private val _event =
         MutableStateFlow<AttenuatorEvent>(
@@ -69,7 +69,7 @@ class AttenuatorRepository @Inject constructor(
                 }
             }
         }.onFailure {
-            Log.e("WeatherViewModel.initUnitListener", it.toString())
+            Log.e("AttenuatorRepository", it.toString())
         }
     }
 

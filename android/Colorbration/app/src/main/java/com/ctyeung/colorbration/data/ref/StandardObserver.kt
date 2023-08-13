@@ -4,8 +4,8 @@ import com.ctyeung.colorbration.data.BaseSpectralData
 
 object StandardObserver : BaseSpectralData() {
 
-    const val FUNC_2D_1931: String = "2degree1931"
-    const val FUNC_10D_1964: String = "10degree1964"
+    const val FUNC_2D_1931: String = "2 degree 1931"
+    const val FUNC_10D_1964: String = "10 degree 1964"
 
     val count = 31
 

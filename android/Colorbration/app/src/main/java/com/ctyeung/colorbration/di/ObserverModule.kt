@@ -21,8 +21,11 @@ object ObserverModule {
     ): MainViewModel = MainViewModel(context, observerRepository)
 
     @Provides
-    fun provideObserverRepository(@ApplicationContext context: Context): ObserverRepository =
-        ObserverRepository(context)
+    fun provideObserverRepository(
+        @ApplicationContext context: Context,
+        prefStoreRepository: PrefStoreRepository
+    ): ObserverRepository =
+        ObserverRepository(context, prefStoreRepository)
 
     @Provides
     fun providePreferenceStoreRepository(@ApplicationContext context: Context): PrefStoreRepository =

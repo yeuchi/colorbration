@@ -1,12 +1,10 @@
-package com.ctyeung.colorbration
-
-import com.ctyeung.colorbration.data.BaseSpectralData
+package com.ctyeung.colorbration.data
 
 class SpectralObserver : BaseSpectralData {
 
     var tristimulus = ArrayList<Double>()
 
-    val wavelength:ArrayList<Int>
+    val wavelength: ArrayList<Int>
         get() {
             return _wavelength
         }

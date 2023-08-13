@@ -44,7 +44,7 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class IlluminantActivity : ComponentActivity() {
-    protected val viewModel: SourceViewModel by viewModels()
+    private val viewModel: SourceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -240,7 +240,7 @@ class IlluminantActivity : ComponentActivity() {
                         // adding selected with a option.
                         selected = (text == viewModel.selectedIlluminant),
                         onClick = {
-                            MainViewModel.apply {
+                            viewModel.apply {
                                 when (text) {
                                     SourceViewModel.ILLUMINANT_A -> viewModel.selectIlluminantA()
                                     SourceViewModel.ILLUMINANT_B -> viewModel.selectIlluminantB()

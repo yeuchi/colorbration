@@ -29,7 +29,8 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
-import com.ctyeung.colorbration.data.BaseSpectralData
+import com.ctyeung.colorbration.data.SpectralObserver
+import com.ctyeung.colorbration.data.ref.StandardObserver
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import com.ctyeung.colorbration.viewmodels.MainViewModel
 import com.ctyeung.colorbration.viewmodels.ObserverEvent
@@ -189,7 +190,7 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Top,
         ) {
             val radioOptions =
-                MainViewModel.let { listOf(it.OBSERVER_2_DEGREES, it.OBSERVER_10_DEGREES) }
+                viewModel.let { listOf(StandardObserver.FUNC_2D_1931, StandardObserver.FUNC_10D_1964) }
             radioOptions.forEach { text ->
                 Row(
                     Modifier
@@ -206,12 +207,7 @@ class MainActivity : ComponentActivity() {
                             // below method is called on
                             // clicking of radio button.
                             onClick = {
-                                MainViewModel.apply {
-                                    when (text) {
-                                        OBSERVER_2_DEGREES -> viewModel.select2degrees()
-                                        OBSERVER_10_DEGREES -> viewModel.select10degrees()
-                                    }
-                                }
+                                viewModel.updateBy(text)
                             }
                         )
                         // below line is use to add
@@ -227,12 +223,7 @@ class MainActivity : ComponentActivity() {
                         // adding selected with a option.
                         selected = (text == viewModel.selectedObserver),
                         onClick = {
-                            MainViewModel.apply {
-                                when (text) {
-                                    OBSERVER_2_DEGREES -> viewModel.select2degrees()
-                                    OBSERVER_10_DEGREES -> viewModel.select10degrees()
-                                }
-                            }
+                            viewModel.updateBy(text)
                             // after clicking a radio button
                             // we are displaying a toast message.
                             //Toast.makeText(context, text, Toast.LENGTH_LONG).show()
