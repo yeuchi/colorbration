@@ -65,7 +65,6 @@ class MainActivity : ComponentActivity() {
                     is ObserverEvent.InProgress -> ComposeSpinner()
                     is ObserverEvent.Success -> ComposeScreen(event.data)
                     is ObserverEvent.Error -> ComposeError(error = event.msg)
-                    else -> {}
                 }
             }
         }

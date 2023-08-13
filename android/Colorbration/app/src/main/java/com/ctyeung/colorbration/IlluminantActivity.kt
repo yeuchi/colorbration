@@ -67,7 +67,6 @@ class IlluminantActivity : ComponentActivity() {
                     is SourceEvent.InProgress -> ComposeSpinner()
                     is SourceEvent.Success -> ComposeScreen(event.data)
                     is SourceEvent.Error -> ComposeError(error = event.msg)
-                    else -> {}
                 }
             }
         }

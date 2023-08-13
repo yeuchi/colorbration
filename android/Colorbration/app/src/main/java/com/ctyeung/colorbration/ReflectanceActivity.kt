@@ -101,8 +101,8 @@ class ReflectanceActivity : ComponentActivity() {
     private fun convertCoord(x:Int, y:Int) {
         viewModel.apply {
             val index = findNearestWavelenthBy(x)
-            val y = convertCoordY(y)
-            updateBy(index, y)
+            val yy = convertCoordY(y)
+            updateBy(index, yy)
         }
     }
     @OptIn(ExperimentalComposeUiApi::class)
@@ -126,7 +126,6 @@ class ReflectanceActivity : ComponentActivity() {
                         is SpectralEvent.InProgress -> ComposeSpinner()
                         is SpectralEvent.Success -> ComposeScreen(event.curve)
                         is SpectralEvent.Error -> ComposeError(error = event.msg)
-                        else -> {}
                     }
                 }
             }

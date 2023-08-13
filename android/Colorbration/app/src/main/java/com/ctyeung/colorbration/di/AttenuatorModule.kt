@@ -2,6 +2,7 @@ package com.ctyeung.colorbration.di
 
 import android.content.Context
 import com.ctyeung.colorbration.data.AttenuatorRepository
+import com.ctyeung.colorbration.data.PrefStoreRepository
 import com.ctyeung.colorbration.viewmodels.ChromaticityViewModel
 import com.ctyeung.colorbration.viewmodels.ReflectanceViewModel
 import dagger.Module
@@ -25,6 +26,9 @@ object AttenuatorModule {
         ReflectanceViewModel(context, attenuatorRepository)
 
     @Provides
-    fun provideAttenuatorRepository(@ApplicationContext context: Context): AttenuatorRepository =
-        AttenuatorRepository(context)
+    fun provideAttenuatorRepository(
+        @ApplicationContext context: Context,
+        prefStoreRepository: PrefStoreRepository
+    ): AttenuatorRepository =
+        AttenuatorRepository(context, prefStoreRepository)
 }

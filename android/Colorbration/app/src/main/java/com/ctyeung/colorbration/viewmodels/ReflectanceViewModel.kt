@@ -27,7 +27,6 @@ class ReflectanceViewModel @Inject constructor(
 
     init {
         initAttenuatorEventListener()
-        //getDefault()
     }
 
     private fun initAttenuatorEventListener() {
@@ -54,13 +53,10 @@ class ReflectanceViewModel @Inject constructor(
         }
     }
 
-    private fun getDefault() {
-        _event.value = SpectralEvent.Success(attenuatorRepository.sample)
-    }
-
     fun updateBy(index:Int, value:Double) {
-        attenuatorRepository.updateBy(index, value)
-        _event.value = SpectralEvent.Success(attenuatorRepository.sample)
+        viewModelScope.launch {
+            attenuatorRepository.updateBy(index, value)
+        }
     }
 }
 

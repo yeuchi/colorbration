@@ -1,6 +1,7 @@
 package com.ctyeung.colorbration.data
 
 import com.ctyeung.colorbration.data.math.MyPoint
+import java.lang.StringBuilder
 
 class SpectralReflectance : BaseSpectralData {
     private var _percent = ArrayList<Double>()
@@ -24,5 +25,13 @@ class SpectralReflectance : BaseSpectralData {
 
     fun updateBy(index:Int, value:Double) {
         _percent[index] = value
+    }
+
+    override fun toString():String {
+        val strBuilder = StringBuilder()
+        for (item in _percent) {
+            strBuilder.append("${item},")
+        }
+        return strBuilder.toString().dropLast(1)
     }
 }

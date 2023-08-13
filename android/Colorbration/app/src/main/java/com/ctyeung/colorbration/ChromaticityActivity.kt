@@ -56,7 +56,6 @@ class ChromaticityActivity : ComponentActivity() {
                     is ChromaticEvent.InProgress -> ComposeSpinner()
                     is ChromaticEvent.Success -> ComposeScreen(event.points)
                     is ChromaticEvent.Error -> ComposeError(error = event.msg)
-                    else -> {}
                 }
             }
         }
