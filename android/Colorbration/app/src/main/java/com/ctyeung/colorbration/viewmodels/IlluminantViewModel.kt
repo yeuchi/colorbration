@@ -1,14 +1,20 @@
 package com.ctyeung.colorbration.viewmodels
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ctyeung.colorbration.data.SourceRepository
 import com.ctyeung.colorbration.data.BaseSpectralData
+import com.ctyeung.colorbration.data.ObserverDataEvent
+import com.ctyeung.colorbration.data.SourceDataEvent
 import com.ctyeung.colorbration.data.SpectralReflectance
+import com.ctyeung.colorbration.data.ref.LightSources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,53 +23,82 @@ class SourceViewModel @Inject constructor(
     private val sourceRepository: SourceRepository
 ) : ViewModel() {
 
-    companion object {
-        const val ILLUMINANT_A = "illuminant A"
-        const val ILLUMINANT_B = "illuminant B"
-        const val ILLUMINANT_C = "illuminant C"
-        const val ILLUMINANT_D50 = "illuminant D50"
-        const val ILLUMINANT_D65 = "illuminant D65"
-    }
-
     private val _event = MutableLiveData<SourceEvent>()
     val event: LiveData<SourceEvent> = _event
 
     /*
      * TODO replace with preference storage later
      */
-    private var _selectedIlluminant: String = ILLUMINANT_A
+    private var _selectedIlluminant: String = LightSources.ILLUMINANT_A
     val selectedIlluminant: String
         get() {
             return _selectedIlluminant
         }
 
     init {
-        selectIlluminantA()
+        initSourceDataEventListener()
     }
 
-    fun selectIlluminantA() {
-        _selectedIlluminant = ILLUMINANT_A
+    private fun initSourceDataEventListener() {
+        kotlin.runCatching {
+            viewModelScope.launch {
+                sourceRepository.event.collect() {
+                    when(it) {
+                        is SourceDataEvent.Success -> {
+                            _selectedIlluminant = it.selectedSource
+                            loadSourceCurve()
+                        }
+
+                        is SourceDataEvent.Error -> {
+                            _event.value = SourceEvent.Error(it.msg)
+                        }
+                    }
+                }
+            }
+        }.onFailure {
+            Log.e("IlluminantViewModel", it.toString())
+        }
+    }
+
+    private fun loadSourceCurve() {
+        when(_selectedIlluminant) {
+            LightSources.ILLUMINANT_A -> selectIlluminantA()
+            LightSources.ILLUMINANT_B -> selectIlluminantB()
+            LightSources.ILLUMINANT_C -> selectIlluminantC()
+            LightSources.ILLUMINANT_D50 -> selectIlluminantD50()
+            LightSources.ILLUMINANT_D65 -> selectIlluminantD65()
+        }
+    }
+
+    private fun selectIlluminantA() {
+        _selectedIlluminant = LightSources.ILLUMINANT_A
         _event.value = SourceEvent.Success(sourceRepository.illuminantA)
     }
 
-    fun selectIlluminantB() {
-        _selectedIlluminant = ILLUMINANT_B
+    private fun selectIlluminantB() {
+        _selectedIlluminant = LightSources.ILLUMINANT_B
         _event.value = SourceEvent.Success(sourceRepository.illuminantB)
     }
 
-    fun selectIlluminantC() {
-        _selectedIlluminant = ILLUMINANT_C
+    private fun selectIlluminantC() {
+        _selectedIlluminant = LightSources.ILLUMINANT_C
         _event.value = SourceEvent.Success(sourceRepository.illuminantC)
     }
 
-    fun selectIlluminantD50() {
-        _selectedIlluminant = ILLUMINANT_D50
+    private fun selectIlluminantD50() {
+        _selectedIlluminant = LightSources.ILLUMINANT_D50
         _event.value = SourceEvent.Success(sourceRepository.illuminantD50)
     }
 
-    fun selectIlluminantD65() {
-        _selectedIlluminant = ILLUMINANT_D65
+    private fun selectIlluminantD65() {
+        _selectedIlluminant = LightSources.ILLUMINANT_D65
         _event.value = SourceEvent.Success(sourceRepository.illuminantD65)
+    }
+
+    fun updateBy(selectedSource: String) {
+        viewModelScope.launch {
+            sourceRepository.updateBy(selectedSource)
+        }
     }
 }
 

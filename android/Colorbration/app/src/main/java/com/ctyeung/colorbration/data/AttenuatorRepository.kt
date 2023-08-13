@@ -82,7 +82,6 @@ class AttenuatorRepository @Inject constructor(
 }
 
 sealed class AttenuatorEvent() {
-    object InProgress : AttenuatorEvent()
     class Success(val curve: SpectralReflectance) : AttenuatorEvent()
     class Error(val msg: String) : AttenuatorEvent()
 }

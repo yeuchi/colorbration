@@ -49,7 +49,7 @@ class MainViewModel @Inject constructor(
                 }
             }
         }.onFailure {
-            Log.e("WeatherViewModel.initUnitListener", it.toString())
+            Log.e("MainViewModel", it.toString())
         }
     }
 
@@ -60,12 +60,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun select10degrees() {
+    private fun select10degrees() {
         _selectedObserver = StandardObserver.FUNC_10D_1964
         _event.value = ObserverEvent.Success(observerRepository.standardObserver2Degree)
     }
 
-    fun select2degrees() {
+    private fun select2degrees() {
         _selectedObserver = StandardObserver.FUNC_2D_1931
         _event.value = ObserverEvent.Success(observerRepository.standardObserver10Degree)
     }

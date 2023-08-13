@@ -1,9 +1,12 @@
 package com.ctyeung.colorbration.data.ref
 
 object LightSources {
-    /*
-     * TODO move to data file for db ?
-     */
+    const val ILLUMINANT_A = "illuminant A"
+    const val ILLUMINANT_B = "illuminant B"
+    const val ILLUMINANT_C = "illuminant C"
+    const val ILLUMINANT_D50 = "illuminant D50"
+    const val ILLUMINANT_D65 = "illuminant D65"
+
     val illuminantA = listOf<Double>(
         14.71, 17.68, 20.99, 24.67, 28.70,
         33.09, 37.81, 42.87, 48.24, 53.91,

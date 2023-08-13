@@ -24,6 +24,7 @@ class PrefStoreRepository @Inject constructor(
     companion object {
         const val OBSERVER_SELECTED = "observer_selected"
         const val ATTENUATOR_DATA = "attenuator_data"
+        const val SOURCE_DATA = "source_data"
 
         const val STRING_FLAG = "string_flag"
         const val LONG_FLAG = "long_flag"

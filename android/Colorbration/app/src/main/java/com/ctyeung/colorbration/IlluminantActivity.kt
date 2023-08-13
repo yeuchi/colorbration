@@ -32,8 +32,8 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import com.ctyeung.colorbration.data.SpectralReflectance
+import com.ctyeung.colorbration.data.ref.LightSources
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
-import com.ctyeung.colorbration.viewmodels.MainViewModel
 import com.ctyeung.colorbration.viewmodels.SourceEvent
 import com.ctyeung.colorbration.viewmodels.SourceViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -191,7 +191,7 @@ class IlluminantActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Top,
         ) {
             val radioOptions =
-                SourceViewModel.let {
+                LightSources.let {
                     listOf(
                         it.ILLUMINANT_A,
                         it.ILLUMINANT_B,
@@ -216,15 +216,7 @@ class IlluminantActivity : ComponentActivity() {
                             // below method is called on
                             // clicking of radio button.
                             onClick = {
-                                SourceViewModel.apply {
-                                    when (text) {
-                                        ILLUMINANT_A -> viewModel.selectIlluminantA()
-                                        ILLUMINANT_B -> viewModel.selectIlluminantB()
-                                        ILLUMINANT_C -> viewModel.selectIlluminantC()
-                                        ILLUMINANT_D50 -> viewModel.selectIlluminantD50()
-                                        ILLUMINANT_D65 -> viewModel.selectIlluminantD65()
-                                    }
-                                }
+                                viewModel.updateBy(text)
                             }
                         )
                         // below line is use to add
@@ -240,15 +232,8 @@ class IlluminantActivity : ComponentActivity() {
                         // adding selected with a option.
                         selected = (text == viewModel.selectedIlluminant),
                         onClick = {
-                            viewModel.apply {
-                                when (text) {
-                                    SourceViewModel.ILLUMINANT_A -> viewModel.selectIlluminantA()
-                                    SourceViewModel.ILLUMINANT_B -> viewModel.selectIlluminantB()
-                                    SourceViewModel.ILLUMINANT_C -> viewModel.selectIlluminantC()
-                                    SourceViewModel.ILLUMINANT_D50 -> viewModel.selectIlluminantD50()
-                                    SourceViewModel.ILLUMINANT_D65 -> viewModel.selectIlluminantD65()
-                                }
-                            }
+                            viewModel.updateBy(text)
+
                             // after clicking a radio button
                             // we are displaying a toast message.
                             //Toast.makeText(context, text, Toast.LENGTH_LONG).show()
