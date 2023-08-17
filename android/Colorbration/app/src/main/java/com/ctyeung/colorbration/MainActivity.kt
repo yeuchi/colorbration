@@ -47,11 +47,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ColorbrationTheme {
-                ComposeScreen(emptyList())
-            }
-        }
     }
 
     override fun onResume() {

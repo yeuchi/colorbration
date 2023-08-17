@@ -53,11 +53,6 @@ class ReflectanceActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ColorbrationTheme {
-                ComposeScreen()
-            }
-        }
     }
 
     override fun onResume() {
@@ -96,13 +91,14 @@ class ReflectanceActivity : ComponentActivity() {
         }
     }
 
-    private fun convertCoord(x:Int, y:Int) {
+    private fun convertCoord(x: Int, y: Int) {
         viewModel.apply {
             val index = findNearestWavelenthBy(x)
             val yy = convertCoordY(y)
             updateBy(index, yy)
         }
     }
+
     @OptIn(ExperimentalComposeUiApi::class)
     fun onViewModelEvent(event: SpectralEvent) {
         setContent {
@@ -112,6 +108,7 @@ class ReflectanceActivity : ComponentActivity() {
                     when (it.action) {
                         MotionEvent.ACTION_DOWN,
                         MotionEvent.ACTION_MOVE -> convertCoord(it.rawX.toInt(), it.rawY.toInt())
+
                         MotionEvent.ACTION_UP -> {
                             /* end collect -> invoke render update (invalidate) */
                         }
@@ -122,7 +119,7 @@ class ReflectanceActivity : ComponentActivity() {
                 }) {
                     when (event) {
                         is SpectralEvent.InProgress -> ComposeSpinner()
-                        is SpectralEvent.Success -> ComposeScreen(event.curve)
+                        is SpectralEvent.Success -> ComposeScreen(event.sRGB, event.curve)
                         is SpectralEvent.Error -> ComposeError(error = event.msg)
                     }
                 }
@@ -132,16 +129,16 @@ class ReflectanceActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
-    private fun ComposeScreen(curve: SpectralReflectance? = null) {
+    private fun ComposeScreen(sRGB: Color, curve: SpectralReflectance? = null) {
         Scaffold(
             bottomBar = { BottomNavigation(BottomNavItem.Reflectance.screen_route, this) },
         ) {
-            Render(curve, it)
+            Render(sRGB, curve, it)
         }
     }
 
     @Composable
-    private fun Render(curve: SpectralReflectance?, paddingValues: PaddingValues) {
+    private fun Render(sRGB: Color, curve: SpectralReflectance?, paddingValues: PaddingValues) {
         Column(
             // in this column we are specifying modifier
             // and aligning it center of the screen on below lines.
@@ -152,13 +149,13 @@ class ReflectanceActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center
         ) {
             curve?.apply {
-                ComposeCanvas(this)
+                ComposeCanvas(sRGB, this)
             }
         }
     }
 
     @Composable
-    private fun ComposeCanvas(curve: SpectralReflectance) {
+    private fun ComposeCanvas(sRGB: Color, curve: SpectralReflectance) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             width = size.width
             height = size.height
@@ -261,7 +258,7 @@ class ReflectanceActivity : ComponentActivity() {
             /*
              * TODO Replace with calculated sRGB color
              */
-            createPath(curve, Color.LightGray)
+            createPath(curve, sRGB)
         }
     }
 }

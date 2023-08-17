@@ -2,6 +2,7 @@ package com.ctyeung.colorbration.viewmodels
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,7 +35,7 @@ class ReflectanceViewModel @Inject constructor(
                 attenuatorRepository.event.collect() {
                     when (it) {
                         is AttenuatorEvent.Success -> {
-                            _event.value = SpectralEvent.Success(it.curve)
+                            _event.value = SpectralEvent.Success(it.sRGB, it.curve)
                         }
 
                         is AttenuatorEvent.Error -> {
@@ -61,6 +62,6 @@ class ReflectanceViewModel @Inject constructor(
 
 sealed class SpectralEvent() {
     object InProgress : SpectralEvent()
-    class Success(val curve: SpectralReflectance) : SpectralEvent()
+    class Success(val sRGB:Color, val curve: SpectralReflectance) : SpectralEvent()
     class Error(val msg: String) : SpectralEvent()
 }

@@ -22,7 +22,7 @@ class AttenuatorRepository @Inject constructor(
 ) {
     private val _event =
         MutableStateFlow<AttenuatorEvent>(
-            AttenuatorEvent.Success(colorDataRepository.defaultSample),
+            AttenuatorEvent.Success(Color.LightGray, colorDataRepository.defaultSample),
         )
     val event: StateFlow<AttenuatorEvent> = _event
 
@@ -36,7 +36,7 @@ class AttenuatorRepository @Inject constructor(
                 colorDataRepository.event.collect() {
                     when (it) {
                         is ColorDataEvent.Sample -> {
-                            _event.value = AttenuatorEvent.Success(it.curve)
+                            _event.value = AttenuatorEvent.Success(Color.LightGray, it.curve)
                         }
 
                         else -> {
@@ -52,7 +52,7 @@ class AttenuatorRepository @Inject constructor(
         }
     }
 
-    private fun findsRGB(source:SpectralReflectance,
+    fun findsRGB(source:SpectralReflectance,
     sample:SpectralReflectance,
     observerType:String): android.graphics.Color? {
         val sourceXYZ = Spectral2XYZ.findIlluminantXYZ(source, observerType)
@@ -65,6 +65,6 @@ class AttenuatorRepository @Inject constructor(
 }
 
 sealed class AttenuatorEvent() {
-    class Success(val curve: SpectralReflectance) : AttenuatorEvent()
+    class Success(val sRGB:Color, val curve: SpectralReflectance) : AttenuatorEvent()
     class Error(val msg: String) : AttenuatorEvent()
 }

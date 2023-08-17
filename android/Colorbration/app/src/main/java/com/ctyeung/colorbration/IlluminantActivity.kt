@@ -48,11 +48,6 @@ class IlluminantActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ColorbrationTheme {
-                ComposeScreen(null)
-            }
-        }
     }
 
     override fun onResume() {
