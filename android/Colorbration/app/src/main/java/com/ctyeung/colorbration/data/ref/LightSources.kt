@@ -7,6 +7,18 @@ object LightSources {
     const val ILLUMINANT_D50 = "illuminant D50"
     const val ILLUMINANT_D65 = "illuminant D65"
 
+    fun retrieve(type: String): List<Double> {
+        return when (type) {
+            ILLUMINANT_B -> illuminantB
+            ILLUMINANT_C -> illuminantC
+            ILLUMINANT_D50 -> illuminantD50
+            ILLUMINANT_D65 -> illuminantD65
+
+//            ILLUMINANT_A,
+            else -> illuminantA
+        }
+    }
+
     val illuminantA = listOf<Double>(
         14.71, 17.68, 20.99, 24.67, 28.70,
         33.09, 37.81, 42.87, 48.24, 53.91,

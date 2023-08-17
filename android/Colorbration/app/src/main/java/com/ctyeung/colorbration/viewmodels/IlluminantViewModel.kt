@@ -58,38 +58,8 @@ class SourceViewModel @Inject constructor(
     }
 
     private fun loadSourceCurve() {
-        when(_selectedIlluminant) {
-            LightSources.ILLUMINANT_A -> selectIlluminantA()
-            LightSources.ILLUMINANT_B -> selectIlluminantB()
-            LightSources.ILLUMINANT_C -> selectIlluminantC()
-            LightSources.ILLUMINANT_D50 -> selectIlluminantD50()
-            LightSources.ILLUMINANT_D65 -> selectIlluminantD65()
-        }
-    }
-
-    private fun selectIlluminantA() {
-        _selectedIlluminant = LightSources.ILLUMINANT_A
-        _event.value = SourceEvent.Success(sourceRepository.illuminantA)
-    }
-
-    private fun selectIlluminantB() {
-        _selectedIlluminant = LightSources.ILLUMINANT_B
-        _event.value = SourceEvent.Success(sourceRepository.illuminantB)
-    }
-
-    private fun selectIlluminantC() {
-        _selectedIlluminant = LightSources.ILLUMINANT_C
-        _event.value = SourceEvent.Success(sourceRepository.illuminantC)
-    }
-
-    private fun selectIlluminantD50() {
-        _selectedIlluminant = LightSources.ILLUMINANT_D50
-        _event.value = SourceEvent.Success(sourceRepository.illuminantD50)
-    }
-
-    private fun selectIlluminantD65() {
-        _selectedIlluminant = LightSources.ILLUMINANT_D65
-        _event.value = SourceEvent.Success(sourceRepository.illuminantD65)
+        val list = LightSources.retrieve(_selectedIlluminant)
+        _event.value = SourceEvent.Success(SpectralReflectance(list))
     }
 
     fun updateBy(selectedSource: String) {

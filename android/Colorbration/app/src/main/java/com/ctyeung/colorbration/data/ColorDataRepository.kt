@@ -22,7 +22,27 @@ class ColorDataRepository @Inject constructor(
         )
     val event: StateFlow<ColorDataEvent> = _event
 
-    private var spectralReflectance: SpectralReflectance? = null
+    private var _sample: SpectralReflectance? = null
+    private var _sourceType: String = LightSources.ILLUMINANT_A
+    private var _observerType: String = StandardObserver.FUNC_2D_1931
+
+    val sample: SpectralReflectance?
+        get() {
+            return _sample
+        }
+    val sourceType: String
+        get() {
+            return _sourceType
+        }
+    val source: SpectralReflectance
+        get() {
+            val list = LightSources.retrieve(_sourceType)
+            return SpectralReflectance(list)
+        }
+    val observerType: String
+        get() {
+            return _observerType
+        }
 
     init {
         initPrefStoreListener()
@@ -46,8 +66,8 @@ class ColorDataRepository @Inject constructor(
                                     list.add(item.toDouble())
                                 }
                             }
-                            spectralReflectance = SpectralReflectance(list)
-                            spectralReflectance?.let {
+                            _sample = SpectralReflectance(list)
+                            _sample?.let {
                                 _event.value = ColorDataEvent.Sample(it)
                             }
                         }
@@ -60,7 +80,10 @@ class ColorDataRepository @Inject constructor(
                             _event.value = ColorDataEvent.Source(LightSources.ILLUMINANT_A)
                         }
 
-                        else -> _event.value = ColorDataEvent.Source(it)
+                        else -> {
+                            _sourceType = it
+                            _event.value = ColorDataEvent.Source(it)
+                        }
                     }
                 }
 
@@ -70,7 +93,10 @@ class ColorDataRepository @Inject constructor(
                             _event.value = ColorDataEvent.Source(StandardObserver.FUNC_2D_1931)
                         }
 
-                        else -> _event.value = ColorDataEvent.Observer(it)
+                        else -> {
+                            _observerType = it
+                            _event.value = ColorDataEvent.Observer(it)
+                        }
                     }
                 }
             }
@@ -83,20 +109,20 @@ class ColorDataRepository @Inject constructor(
         get() {
             val list = ArrayList<Double>()
             for (i in 0..30) {
-                list.add(.50)
+                list.add(50.0)
             }
             SpectralReflectance(list).apply {
-                spectralReflectance = this
+                _sample = this
                 return this
             }
         }
 
     suspend fun updateBy(index: Int, value: Double) {
-        spectralReflectance?.let {
+        _sample?.let {
             it.updateBy(index, value)
             prefStoreRepository.setString(
                 PrefStoreRepository.ATTENUATOR_DATA,
-                spectralReflectance.toString()
+                _sample.toString()
             )
         }
     }

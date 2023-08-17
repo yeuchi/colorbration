@@ -224,7 +224,7 @@ class ReflectanceActivity : ComponentActivity() {
 
                     // draw curve topology
                     for (i in 0 until spectralReflectance.percent.size) {
-                        val percent = (1.0 - spectralReflectance.percent[i]) * 100.0
+                        val percent = 100 - spectralReflectance.percent[i]
                         val ypos = percent * one_percent + paddingY
                         val xpos = ten_nm * i + paddingX
                         if (firstTime) {

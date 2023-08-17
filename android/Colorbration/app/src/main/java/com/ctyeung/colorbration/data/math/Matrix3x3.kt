@@ -2,34 +2,18 @@ package com.ctyeung.colorbration.data.math
 
 open class Matrix3x3 {
 
-    var dMtx = ArrayList<Double>()
+    var dMtx = DoubleArray(9)
     var iMtx = ArrayList<Double>()
-    var out1 = 0.0
-    var out2 = 0.0
-    var out3 = 0.0
-
-    open fun empty() {
-        dMtx.clear()
-        iMtx.clear()
-    }
-
-    open fun isEmpty(): Boolean {
-        return (dMtx.isEmpty() && iMtx.isEmpty())
-    }
 
     fun multiply(
         in1: Double,
         in2: Double,
         in3: Double
-    )
-            : Boolean {
-        if (isEmpty())
-            return false;
-
-        out1 = in1 * dMtx[0] + in2 * dMtx[1] + in3 * dMtx[2];
-        out2 = in1 * dMtx[3] + in2 * dMtx[4] + in3 * dMtx[5];
-        out3 = in1 * dMtx[6] + in2 * dMtx[7] + in3 * dMtx[8];
-        return true;
+    ): Triple<Double, Double, Double> {
+        val out1 = in1 * dMtx[0] + in2 * dMtx[1] + in3 * dMtx[2];
+        val out2 = in1 * dMtx[3] + in2 * dMtx[4] + in3 * dMtx[5];
+        val out3 = in1 * dMtx[6] + in2 * dMtx[7] + in3 * dMtx[8];
+        return Triple(out1, out2, out3);
     }
 
     fun inverse(): Boolean {

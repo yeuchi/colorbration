@@ -18,14 +18,9 @@ class XYZ2sRGB : Matrix3x3() {
         dMtx[8] = 1.0570;
     }
 
-    fun forward(x:Double, y:Double, z:Double): Color? {
-        if (!multiply(x / 100.0, y / 100.0, z / 100.0))
-            return null
-
-        var linear = arrayListOf<Double>(0.0, 0.0, 0.0)
-        linear[0] = out1;
-        linear[1] = out2;
-        linear[2] = out3;
+    fun forward(tristimulus: Tristimulus): Color? {
+        val triple = multiply(tristimulus.X / 100.0, tristimulus.Y / 100.0, tristimulus.Z / 100.0)
+        var linear = arrayListOf<Double>(triple.first, triple.second, triple.third)
 
         for (i in 0 until 3) {
             linear[i] =

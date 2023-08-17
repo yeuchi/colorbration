@@ -55,7 +55,7 @@ class ReflectanceViewModel @Inject constructor(
 
     fun updateBy(index: Int, value: Double) {
         viewModelScope.launch {
-            attenuatorRepository.updateBy(index, value)
+            attenuatorRepository.updateBy(index, value * 100)
         }
     }
 }
