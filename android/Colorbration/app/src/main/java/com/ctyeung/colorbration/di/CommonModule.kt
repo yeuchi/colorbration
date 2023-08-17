@@ -1,11 +1,9 @@
 package com.ctyeung.colorbration.di
 
 import android.content.Context
-import com.ctyeung.colorbration.data.AttenuatorRepository
 import com.ctyeung.colorbration.data.ColorDataRepository
 import com.ctyeung.colorbration.data.PrefStoreRepository
 import com.ctyeung.colorbration.viewmodels.ChromaticityViewModel
-import com.ctyeung.colorbration.viewmodels.ReflectanceViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,18 +12,19 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AttenuatorModule {
+class CommonModule {
     @Provides
-    fun provideReflectanceViewModel(
-        @ApplicationContext context: Context,
-        attenuatorRepository: AttenuatorRepository
-    ): ReflectanceViewModel =
-        ReflectanceViewModel(context, attenuatorRepository)
+    fun provideChromaticityViewModel(@ApplicationContext context: Context): ChromaticityViewModel =
+        ChromaticityViewModel(context)
 
     @Provides
-    fun provideAttenuatorRepository(
+    fun providePreferenceStoreRepository(@ApplicationContext context: Context): PrefStoreRepository =
+        PrefStoreRepository(context)
+
+    @Provides
+    fun provideColorDataRepository(
         @ApplicationContext context: Context,
-        colorDataRepository: ColorDataRepository
-    ): AttenuatorRepository =
-        AttenuatorRepository(context, colorDataRepository)
+        prefStoreRepository: PrefStoreRepository
+    ): ColorDataRepository =
+        ColorDataRepository(context, prefStoreRepository)
 }

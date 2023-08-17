@@ -25,8 +25,4 @@ object ObserverModule {
         prefStoreRepository: PrefStoreRepository
     ): ObserverRepository =
         ObserverRepository(context, prefStoreRepository)
-
-    @Provides
-    fun providePreferenceStoreRepository(@ApplicationContext context: Context): PrefStoreRepository =
-        PrefStoreRepository(context)
 }

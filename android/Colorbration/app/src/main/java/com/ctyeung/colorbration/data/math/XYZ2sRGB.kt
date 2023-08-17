@@ -1,13 +1,9 @@
 package com.ctyeung.colorbration.data.math
 
+import android.graphics.Color
+
 // Reference:	http://en.wikipedia.org/wiki/SRGB#The_forward_transformation_.28CIE_xyY_or_CIE_XYZ_to_sRGB.29
 class XYZ2sRGB : Matrix3x3() {
-    var X: Double = 0.0
-    var Y: Double = 0.0
-    var Z: Double = 0.0
-    var R: Double = 0.0
-    var G: Double = 0.0
-    var B: Double = 0.0
 
     init {
         // xyz = m * sRGB
@@ -22,25 +18,9 @@ class XYZ2sRGB : Matrix3x3() {
         dMtx[8] = 1.0570;
     }
 
-    override fun empty() {
-        super.empty();
-        X = 0.0
-        Y = 0.0
-        Z = 0.0
-        R = 0.0
-        G = 0.0
-        B = 0.0
-    }
-
-    override fun isEmpty(): Boolean {
-        if (X == 0.0 && Y == 0.0 && Z == 0.0 && R == 0.0 && G == 0.0 && B == 0.0)
-            return true;
-        return false;
-    }
-
-    fun forward(): Boolean {
-        if (!multiply(X / 100.0, Y / 100.0, Z / 100.0))
-            return false;
+    fun forward(x:Double, y:Double, z:Double): Color? {
+        if (!multiply(x / 100.0, y / 100.0, z / 100.0))
+            return null
 
         var linear = arrayListOf<Double>(0.0, 0.0, 0.0)
         linear[0] = out1;
@@ -55,19 +35,19 @@ class XYZ2sRGB : Matrix3x3() {
                     1.055 * Math.pow(linear[i], (1.0 / 2.4)) - .055
                 }
         }
-        R = linear[0] * 255.0;
-        G = linear[1] * 255.0;
-        B = linear[2] * 255.0;
+        val R = linear[0] * 255.0;
+        val G = linear[1] * 255.0;
+        val B = linear[2] * 255.0;
 
-        R = requant(R);
-        G = requant(G);
-        B = requant(B);
-        return true;
+        val r = requant(R.toFloat())
+        val g = requant(G.toFloat())
+        val b = requant(B.toFloat())
+        return Color.valueOf(r, g, b)
     }
 
-    fun requant(n: Double): Double {
-        if (n < 0.0) return 0.0;
-        else if (n > 255) return 255.0;
+    fun requant(n: Float): Float {
+        if (n < 0F) return 0F;
+        else if (n > 255) return 255F;
         else return n;
     }
 }
