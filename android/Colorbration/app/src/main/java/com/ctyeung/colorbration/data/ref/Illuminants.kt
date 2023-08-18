@@ -1,6 +1,6 @@
 package com.ctyeung.colorbration.data.ref
 
-object LightSources {
+object Illuminants {
     const val ILLUMINANT_A = "illuminant A"
     const val ILLUMINANT_B = "illuminant B"
     const val ILLUMINANT_C = "illuminant C"

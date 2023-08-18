@@ -1,6 +1,6 @@
 package com.ctyeung.colorbration.data.math
 
-import com.ctyeung.colorbration.data.SpectralReflectance
+import com.ctyeung.colorbration.data.SpectralAttenuator
 import com.ctyeung.colorbration.data.ref.StandardObserver
 
 data class Tristimulus(val X:Double, val Y:Double, val Z:Double)
@@ -11,8 +11,8 @@ object Spectral2XYZ {
     // take the integral of sample and standard observer curves.
     // ----------------------------------------------------------
     fun findAttenuatorXYZ(
-        source: SpectralReflectance,
-        sample: SpectralReflectance,
+        source: SpectralAttenuator,
+        sample: SpectralAttenuator,
         observerType: String,
         Yw: Double,
     ): Tristimulus {
@@ -35,7 +35,7 @@ object Spectral2XYZ {
     }
 
     fun findIlluminantXYZ(
-        source: SpectralReflectance,
+        source: SpectralAttenuator,
         observerType: String
     ): Tristimulus {
         var Xw = 0.0

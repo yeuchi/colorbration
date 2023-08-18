@@ -72,7 +72,7 @@ fun BottomNavigation(currentSelection: String, activity: Activity) {
                         when (item.screen_route) {
                             BottomNavItem.Observers.screen_route -> {
                                 activity.startActivity(
-                                    Intent(activity, MainActivity::class.java)
+                                    Intent(activity, ObserverActivity::class.java)
                                 )
                             }
 
@@ -84,7 +84,7 @@ fun BottomNavigation(currentSelection: String, activity: Activity) {
 
                             BottomNavItem.Reflectance.screen_route -> {
                                 activity.startActivity(
-                                    Intent(activity, ReflectanceActivity::class.java)
+                                    Intent(activity, AttenuatorActivity::class.java)
                                 )
                             }
 

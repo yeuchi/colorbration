@@ -3,8 +3,6 @@ package com.ctyeung.colorbration.data
 import android.content.Context
 import android.util.Log
 import androidx.compose.ui.graphics.Color
-import com.ctyeung.colorbration.data.math.Spectral2XYZ
-import com.ctyeung.colorbration.data.math.XYZ2sRGB
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +68,6 @@ class AttenuatorRepository @Inject constructor(
 }
 
 sealed class AttenuatorEvent() {
-    class Success(val sRGB:Color, val curve: SpectralReflectance) : AttenuatorEvent()
+    class Success(val sRGB:Color, val curve: SpectralAttenuator) : AttenuatorEvent()
     class Error(val msg: String) : AttenuatorEvent()
 }

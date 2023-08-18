@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.lifecycle.Observer
-import com.ctyeung.colorbration.data.SpectralReflectance
+import com.ctyeung.colorbration.data.SpectralAttenuator
 import com.ctyeung.colorbration.data.math.Bisection
 import com.ctyeung.colorbration.ui.theme.ColorbrationTheme
 import com.ctyeung.colorbration.viewmodels.ReflectanceViewModel
@@ -39,7 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * TODO User touch to render spectral curve
  */
 @AndroidEntryPoint
-class ReflectanceActivity : ComponentActivity() {
+class AttenuatorActivity : ComponentActivity() {
     protected val viewModel: ReflectanceViewModel by viewModels()
     protected var paddingX: Float = 0f
     protected var paddingY: Float = 0f
@@ -129,7 +129,7 @@ class ReflectanceActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
-    private fun ComposeScreen(sRGB: Color, curve: SpectralReflectance? = null) {
+    private fun ComposeScreen(sRGB: Color, curve: SpectralAttenuator? = null) {
         Scaffold(
             bottomBar = { BottomNavigation(BottomNavItem.Reflectance.screen_route, this) },
         ) {
@@ -138,7 +138,7 @@ class ReflectanceActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun Render(sRGB: Color, curve: SpectralReflectance?, paddingValues: PaddingValues) {
+    private fun Render(sRGB: Color, curve: SpectralAttenuator?, paddingValues: PaddingValues) {
         Column(
             // in this column we are specifying modifier
             // and aligning it center of the screen on below lines.
@@ -155,7 +155,7 @@ class ReflectanceActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun ComposeCanvas(sRGB: Color, curve: SpectralReflectance) {
+    private fun ComposeCanvas(sRGB: Color, curve: SpectralAttenuator) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             width = size.width
             height = size.height
@@ -206,7 +206,7 @@ class ReflectanceActivity : ComponentActivity() {
             val one_percent = (size.height - 2 * paddingY) / 100.0
             val ten_nm = (size.width - 2 * paddingX) / 30.0
 
-            fun createPath(spectralReflectance: SpectralReflectance, color: Color) {
+            fun createPath(spectralAttenuator: SpectralAttenuator, color: Color) {
                 /*
                  * TODO step through more points for smoother lines - use cubic spline interpolation
                  */
@@ -223,8 +223,8 @@ class ReflectanceActivity : ComponentActivity() {
                     }
 
                     // draw curve topology
-                    for (i in 0 until spectralReflectance.percent.size) {
-                        val percent = 100 - spectralReflectance.percent[i]
+                    for (i in 0 until spectralAttenuator.percent.size) {
+                        val percent = 100 - spectralAttenuator.percent[i]
                         val ypos = percent * one_percent + paddingY
                         val xpos = ten_nm * i + paddingX
                         if (firstTime) {

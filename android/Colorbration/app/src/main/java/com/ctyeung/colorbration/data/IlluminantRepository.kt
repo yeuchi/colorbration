@@ -2,7 +2,7 @@ package com.ctyeung.colorbration.data
 
 import android.content.Context
 import android.util.Log
-import com.ctyeung.colorbration.data.ref.LightSources
+import com.ctyeung.colorbration.data.ref.Illuminants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ class SourceRepository @Inject constructor(
 ) {
     private val _event =
         MutableStateFlow<SourceDataEvent>(
-            SourceDataEvent.Success(LightSources.ILLUMINANT_A),
+            SourceDataEvent.Success(Illuminants.ILLUMINANT_A),
         )
     val event: StateFlow<SourceDataEvent> = _event
 
@@ -31,7 +31,7 @@ class SourceRepository @Inject constructor(
                 prefStoreRepository.getString(PrefStoreRepository.SOURCE_DATA).collect() {
                     when {
                         it.isNullOrBlank() || it.isEmpty() -> {
-                            _event.value = SourceDataEvent.Success(LightSources.ILLUMINANT_A)
+                            _event.value = SourceDataEvent.Success(Illuminants.ILLUMINANT_A)
                         }
 
                         else -> {
@@ -45,42 +45,42 @@ class SourceRepository @Inject constructor(
         }
     }
 
-    val illuminantA: SpectralReflectance
+    val illuminantA: SpectralAttenuator
         get() {
-            val reflectance = LightSources.let {
-                SpectralReflectance(it.illuminantA)
+            val reflectance = Illuminants.let {
+                SpectralAttenuator(it.illuminantA)
             }
             return reflectance
         }
 
-    val illuminantB: SpectralReflectance
+    val illuminantB: SpectralAttenuator
         get() {
-            val reflectance = LightSources.let {
-                SpectralReflectance(it.illuminantB)
+            val reflectance = Illuminants.let {
+                SpectralAttenuator(it.illuminantB)
             }
             return reflectance
         }
 
-    val illuminantC: SpectralReflectance
+    val illuminantC: SpectralAttenuator
         get() {
-            val reflectance = LightSources.let {
-                SpectralReflectance(it.illuminantC)
+            val reflectance = Illuminants.let {
+                SpectralAttenuator(it.illuminantC)
             }
             return reflectance
         }
 
-    val illuminantD50: SpectralReflectance
+    val illuminantD50: SpectralAttenuator
         get() {
-            val reflectance = LightSources.let {
-                SpectralReflectance(it.illuminantD50)
+            val reflectance = Illuminants.let {
+                SpectralAttenuator(it.illuminantD50)
             }
             return reflectance
         }
 
-    val illuminantD65: SpectralReflectance
+    val illuminantD65: SpectralAttenuator
         get() {
-            val reflectance = LightSources.let {
-                SpectralReflectance(it.illuminantD65)
+            val reflectance = Illuminants.let {
+                SpectralAttenuator(it.illuminantD65)
             }
             return reflectance
         }

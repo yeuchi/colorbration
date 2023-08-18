@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ctyeung.colorbration.data.AttenuatorEvent
 import com.ctyeung.colorbration.data.AttenuatorRepository
-import com.ctyeung.colorbration.data.SpectralReflectance
+import com.ctyeung.colorbration.data.SpectralAttenuator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -62,6 +62,6 @@ class ReflectanceViewModel @Inject constructor(
 
 sealed class SpectralEvent() {
     object InProgress : SpectralEvent()
-    class Success(val sRGB:Color, val curve: SpectralReflectance) : SpectralEvent()
+    class Success(val sRGB:Color, val curve: SpectralAttenuator) : SpectralEvent()
     class Error(val msg: String) : SpectralEvent()
 }

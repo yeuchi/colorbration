@@ -42,7 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint
  *  Refactor common code between Main, Reflective and Illuminant Activites
  */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class ObserverActivity : ComponentActivity() {
     protected val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

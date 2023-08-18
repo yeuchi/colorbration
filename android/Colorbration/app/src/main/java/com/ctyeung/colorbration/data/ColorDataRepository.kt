@@ -2,7 +2,7 @@ package com.ctyeung.colorbration.data
 
 import android.content.Context
 import android.util.Log
-import com.ctyeung.colorbration.data.ref.LightSources
+import com.ctyeung.colorbration.data.ref.Illuminants
 import com.ctyeung.colorbration.data.ref.StandardObserver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -22,11 +22,11 @@ class ColorDataRepository @Inject constructor(
         )
     val event: StateFlow<ColorDataEvent> = _event
 
-    private var _sample: SpectralReflectance? = null
-    private var _sourceType: String = LightSources.ILLUMINANT_A
+    private var _sample: SpectralAttenuator? = null
+    private var _sourceType: String = Illuminants.ILLUMINANT_A
     private var _observerType: String = StandardObserver.FUNC_2D_1931
 
-    val sample: SpectralReflectance?
+    val sample: SpectralAttenuator?
         get() {
             return _sample
         }
@@ -34,10 +34,10 @@ class ColorDataRepository @Inject constructor(
         get() {
             return _sourceType
         }
-    val source: SpectralReflectance
+    val source: SpectralAttenuator
         get() {
-            val list = LightSources.retrieve(_sourceType)
-            return SpectralReflectance(list)
+            val list = Illuminants.retrieve(_sourceType)
+            return SpectralAttenuator(list)
         }
     val observerType: String
         get() {
@@ -66,7 +66,7 @@ class ColorDataRepository @Inject constructor(
                                     list.add(item.toDouble())
                                 }
                             }
-                            _sample = SpectralReflectance(list)
+                            _sample = SpectralAttenuator(list)
                             _sample?.let {
                                 _event.value = ColorDataEvent.Sample(it)
                             }
@@ -77,7 +77,7 @@ class ColorDataRepository @Inject constructor(
                 prefStoreRepository.getString(PrefStoreRepository.SOURCE_DATA).collect() {
                     when {
                         it.isNullOrBlank() || it.isEmpty() -> {
-                            _event.value = ColorDataEvent.Source(LightSources.ILLUMINANT_A)
+                            _event.value = ColorDataEvent.Source(Illuminants.ILLUMINANT_A)
                         }
 
                         else -> {
@@ -105,13 +105,13 @@ class ColorDataRepository @Inject constructor(
         }
     }
 
-    val defaultSample: SpectralReflectance
+    val defaultSample: SpectralAttenuator
         get() {
             val list = ArrayList<Double>()
             for (i in 0..30) {
                 list.add(50.0)
             }
-            SpectralReflectance(list).apply {
+            SpectralAttenuator(list).apply {
                 _sample = this
                 return this
             }
@@ -129,7 +129,7 @@ class ColorDataRepository @Inject constructor(
 }
 
 sealed class ColorDataEvent() {
-    class Sample(val curve: SpectralReflectance) : ColorDataEvent()
+    class Sample(val curve: SpectralAttenuator) : ColorDataEvent()
     class Source(val illuminantType: String) : ColorDataEvent()
     class Observer(val observerType: String) : ColorDataEvent()
     class Error(val msg: String) : ColorDataEvent()

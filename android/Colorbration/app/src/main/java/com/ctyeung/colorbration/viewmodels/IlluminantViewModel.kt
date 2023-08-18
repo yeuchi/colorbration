@@ -7,11 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ctyeung.colorbration.data.SourceRepository
-import com.ctyeung.colorbration.data.BaseSpectralData
-import com.ctyeung.colorbration.data.ObserverDataEvent
 import com.ctyeung.colorbration.data.SourceDataEvent
-import com.ctyeung.colorbration.data.SpectralReflectance
-import com.ctyeung.colorbration.data.ref.LightSources
+import com.ctyeung.colorbration.data.SpectralAttenuator
+import com.ctyeung.colorbration.data.ref.Illuminants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -26,7 +24,7 @@ class SourceViewModel @Inject constructor(
     private val _event = MutableLiveData<SourceEvent>()
     val event: LiveData<SourceEvent> = _event
 
-    private var _selectedIlluminant: String = LightSources.ILLUMINANT_A
+    private var _selectedIlluminant: String = Illuminants.ILLUMINANT_A
     val selectedIlluminant: String
         get() {
             return _selectedIlluminant
@@ -58,8 +56,8 @@ class SourceViewModel @Inject constructor(
     }
 
     private fun loadSourceCurve() {
-        val list = LightSources.retrieve(_selectedIlluminant)
-        _event.value = SourceEvent.Success(SpectralReflectance(list))
+        val list = Illuminants.retrieve(_selectedIlluminant)
+        _event.value = SourceEvent.Success(SpectralAttenuator(list))
     }
 
     fun updateBy(selectedSource: String) {
@@ -71,6 +69,6 @@ class SourceViewModel @Inject constructor(
 
 sealed class SourceEvent() {
     object InProgress : SourceEvent()
-    class Success(val data: SpectralReflectance) : SourceEvent()
+    class Success(val data: SpectralAttenuator) : SourceEvent()
     class Error(val msg: String) : SourceEvent()
 }

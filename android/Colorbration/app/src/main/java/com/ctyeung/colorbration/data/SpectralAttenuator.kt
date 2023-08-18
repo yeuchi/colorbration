@@ -1,6 +1,6 @@
 package com.ctyeung.colorbration.data
 
-class SpectralReflectance : BaseSpectralData {
+class SpectralAttenuator : BaseSpectralData {
     private var _percent = ArrayList<Double>()
     val percent: List<Double>
         get() {
