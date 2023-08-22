@@ -43,3 +43,6 @@ Build on May 12, 2023
 
 2. sRGB conversion \
 http://en.wikipedia.org/wiki/SRGB#The_forward_transformation_.28CIE_xyY_or_CIE_XYZ_to_sRGB.29
+
+3. Color: from spectrum to tristimulus, Rip's Applied Mathematics Blog, October 26, 2009 \
+https://rip94550.wordpress.com/2009/10/26/color-from-spectrum-to-tristimulus/
