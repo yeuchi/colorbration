@@ -17,7 +17,7 @@ open class Matrix3x3 {
     }
 
     fun inverse(): Boolean {
-        var det: Number;
+        var det: Number
         det = dMtx[0] * (dMtx[4] * dMtx[8] - dMtx[5] * dMtx[7])
         -dMtx[1] * (dMtx[3] * dMtx[8] - dMtx[5] * dMtx[6])
         +dMtx[2] * (dMtx[3] * dMtx[7] - dMtx[4] * dMtx[6]);
