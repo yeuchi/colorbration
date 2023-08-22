@@ -3,6 +3,8 @@ package com.ctyeung.colorbration.data
 import android.content.Context
 import android.util.Log
 import androidx.compose.ui.graphics.Color
+import com.ctyeung.colorbration.data.math.Spectral2XYZ
+import com.ctyeung.colorbration.data.math.XYZ2sRGB
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,18 +51,18 @@ class AttenuatorRepository @Inject constructor(
     }
 
     fun findsRGB(): Color {
-//        colorDataRepository.apply {
-//            sample?.let {
-//                val sourceXYZ = Spectral2XYZ.findIlluminantXYZ(source, observerType)
-//                val sampleXYZ =
-//                    Spectral2XYZ.findAttenuatorXYZ(source, it, observerType, sourceXYZ.Y)
-//                val transform = XYZ2sRGB()
-//                val color = transform.forward(sampleXYZ)
-//                return color?.let {
-//                    Color(it.toArgb())
-//                } ?: Color.LightGray
-//            }
-//        }
+        colorDataRepository.apply {
+            sample?.let {
+                val sourceXYZ = Spectral2XYZ.findIlluminantXYZ(source, observerType)
+                val sampleXYZ =
+                    Spectral2XYZ.findAttenuatorXYZ(source, it, observerType, sourceXYZ.scaleW)
+                val transform = XYZ2sRGB()
+                val color = transform.forward(sampleXYZ)
+                return color?.let {
+                    Color(it.toArgb())
+                } ?: Color.LightGray
+            }
+        }
         return Color.LightGray
     }
 

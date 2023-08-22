@@ -104,19 +104,7 @@ class AttenuatorActivity : ComponentActivity() {
         setContent {
             ColorbrationTheme {
                 // A surface container using the 'background' color from the theme
-                Column(modifier = Modifier.pointerInteropFilter {
-                    when (it.action) {
-                        MotionEvent.ACTION_DOWN,
-                        MotionEvent.ACTION_MOVE -> convertCoord(it.rawX.toInt(), it.rawY.toInt())
-
-                        MotionEvent.ACTION_UP -> {
-                            /* end collect -> invoke render update (invalidate) */
-                        }
-
-                        else -> false
-                    }
-                    true
-                }) {
+                Column() {
                     when (event) {
                         is SpectralEvent.InProgress -> ComposeSpinner()
                         is SpectralEvent.Success -> ComposeScreen(event.sRGB, event.curve)
@@ -137,16 +125,30 @@ class AttenuatorActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     private fun Render(sRGB: Color, curve: SpectralAttenuator?, paddingValues: PaddingValues) {
         Column(
             // in this column we are specifying modifier
             // and aligning it center of the screen on below lines.
             modifier = Modifier
+                .pointerInteropFilter {
+                    when (it.action) {
+                        MotionEvent.ACTION_DOWN,
+                        MotionEvent.ACTION_MOVE -> convertCoord(it.rawX.toInt(), it.rawY.toInt())
+
+                        MotionEvent.ACTION_UP -> {
+                            /* end collect -> invoke render update (invalidate) */
+                        }
+
+                        else -> false
+                    }
+                    true
+                }
                 .fillMaxSize()
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             curve?.apply {
                 ComposeCanvas(sRGB, this)

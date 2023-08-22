@@ -3,7 +3,7 @@ package com.ctyeung.colorbration.data.math
 import com.ctyeung.colorbration.data.SpectralAttenuator
 import com.ctyeung.colorbration.data.ref.StandardObserver
 
-data class Tristimulus(val X:Double, val Y:Double, val Z:Double)
+data class Tristimulus(val X:Double, val Y:Double, val Z:Double, val scaleW:Double)
 object Spectral2XYZ {
 
     // ----------------------------------------------------------
@@ -14,7 +14,7 @@ object Spectral2XYZ {
         source: SpectralAttenuator,
         sample: SpectralAttenuator,
         observerType: String,
-        Yw: Double,
+        Kw: Double,
     ): Tristimulus {
         var Xs = 0.0
         var Ys = 0.0
@@ -25,13 +25,7 @@ object Spectral2XYZ {
             Ys += observer[1][i] * sample.percent[i] / 100.0 * source.percent[i] / 100.0
             Zs += observer[2][i] * sample.percent[i] / 100.0 * source.percent[i] / 100.0
         }
-        var Kw = 100.0 / Yw
-
-        Xs *= Kw
-        Ys *= Kw
-        Zs *= Kw
-
-        return Tristimulus(Xs, Ys, Zs)
+        return Tristimulus(Kw*Xs, Kw*Ys, Kw*Zs, Kw)
     }
 
     fun findIlluminantXYZ(
@@ -47,12 +41,8 @@ object Spectral2XYZ {
             Yw += observer[1][i] * source.percent[i] / 100.0
             Zw += observer[2][i] * source.percent[i] / 100.0
         }
-        var Kw = 100.0 / Yw;
-        Xw *= Kw
-        Yw *= Kw
-        Zw *= Kw
-
-        return Tristimulus(Xw, Yw, Zw)
+        val Kw = 100.0 / Yw
+        return Tristimulus(Kw*Xw, Kw*Yw, Kw*Zw, Kw)
     }
 
     private fun retrieveObserverCurves(type: String): List<List<Double>> {
